@@ -1,36 +1,71 @@
 use super::*;
 
+/// used for building byte streams in EO format
+///
+/// [StreamBuilder] is generally used for writing data in the format
+/// that EO uses in it's data (pub/data/map) files and server/client communications.
+///
+/// # Example
+/// You might use a [StreamBuilder] in a client application to build the
+/// Init request packet data like so
+/// ```
+/// use eo::data::StreamBuilder;
+///
+/// let hdid = String::from("2901132");
+/// let mut builder = StreamBuilder::with_capacity(10 + hdid.len());
+/// builder.add_three(42); // TODO: generate challenge
+/// builder.add_char(0); // version major
+/// builder.add_char(0); // version minor
+/// builder.add_char(28); // version build
+/// builder.add_char(112); // ?
+/// builder.add_prefix_string(&hdid);
+///
+/// let buf = builder.get();
+/// ```
+///
 pub struct StreamBuilder {
     data: Vec<EOByte>,
 }
 
 impl StreamBuilder {
+    /// Creates a [StreamBuilder] with a default capacity
+    ///
+    /// default capacity of a [Vec] is 0, but changes to 4 when an item is
+    /// pushed. Then it doubles every time you exceed that capacity.
+    /// See [Capacity and reallocation](https://doc.rust-lang.org/std/vec/struct.Vec.html#capacity-and-reallocation)
+    /// for more information
     pub fn new() -> Self {
         Self { data: Vec::new() }
     }
+    /// Creates a [StreamBuilder] with a pre-allocated capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             data: Vec::with_capacity(capacity),
         }
     }
+    /// Adds a single [EOByte] to the data stream
     pub fn add_byte(&mut self, number: EOByte) {
         self.data.push(number);
     }
+    /// Adds an [EOChar] encoded as a single byte to the data stream
     pub fn add_char(&mut self, number: EOChar) {
         let bytes = encode_number(number.into());
         self.data.push(bytes[0]);
     }
+    /// Adds an [EOShort] encoded as two bytes to the data stream
     pub fn add_short(&mut self, number: EOShort) {
         let bytes = encode_number(number.into());
         self.data.push(bytes[0]);
         self.data.push(bytes[1]);
     }
+    /// Adds an [EOThree] encoded as three bytes to the data stream
     pub fn add_three(&mut self, number: EOThree) {
         let bytes = encode_number(number);
         self.data.push(bytes[0]);
         self.data.push(bytes[1]);
         self.data.push(bytes[2]);
     }
+    /// Adds an [EOInt] encoded as four bytes to the data stream
     pub fn add_int(&mut self, number: EOInt) {
         let bytes = encode_number(number);
         self.data.push(bytes[0]);
@@ -38,17 +73,23 @@ impl StreamBuilder {
         self.data.push(bytes[2]);
         self.data.push(bytes[3]);
     }
+    /// Adds the UTF-8 encoded version of `string` to the data stream
     pub fn add_string(&mut self, string: &str) {
         self.data.extend_from_slice(string.as_bytes());
     }
+    /// Adds the UTF-8 encoded version of `string` + [EO_BREAK_CHAR] to
+    /// the data stream
     pub fn add_break_string(&mut self, string: &str) {
         self.add_string(string);
         self.data.push(EO_BREAK_CHAR);
     }
+    /// Adds an [EOChar] of `string.len()` + the UTF-8 encoded version
+    /// of `string` to the data stream
     pub fn add_prefix_string(&mut self, string: &str) {
         self.add_char(string.len() as EOChar);
         self.add_string(string);
     }
+    /// Returns the data stream
     pub fn get(self) -> Vec<EOByte> {
         self.data
     }
