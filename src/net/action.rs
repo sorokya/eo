@@ -1,4 +1,4 @@
-/// Part of every [Packet](super::Packet). An identifier that tells what the packet is meant to do
+/// an identifier that tells what the packet is meant to do
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
 pub enum Action {
     Request = 1,

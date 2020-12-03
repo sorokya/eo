@@ -1,4 +1,4 @@
-/// Part of every [Packet](super::Packet). It's used like a grouping to associate [Action](super::Action)s
+/// it's used like a grouping to associate [Action](super::Action)s
 /// with different game entities.
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
 pub enum Family {

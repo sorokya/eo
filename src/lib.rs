@@ -6,7 +6,13 @@
 extern crate enum_primitive_derive;
 extern crate num_traits;
 
-/// Contains EO primitive types, stream reader, and stream builder
+/// character related data structures
+pub mod character;
+/// EO primitive types, stream reader, and stream builder
 pub mod data;
-/// Contains Network related types for EO
+/// network related data structures
 pub mod net;
+/// quest related data structures
+pub mod quest;
+/// world related data structures
+pub mod world;
