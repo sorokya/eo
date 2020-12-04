@@ -1,8 +1,12 @@
 [package]
-authors = ["Richard Leek <richard@richardleek.com>"]
-edition = "2018"
 name = "eo"
 version = "0.1.0"
+authors = ["Richard Leek <richard@richardleek.com>"]
+description = "Data structures and methods for Endless Online"
+edition = "2018"
+license = "MIT"
+repository = "https://github.com/sorokya/eo"
+readme = "README.md"
 
 [dependencies]
 enum-primitive-derive = "0.2"
