@@ -183,7 +183,7 @@ pub fn encode_number(mut number: EOInt) -> [EOByte; 4] {
 pub fn decode_number(bytes: &[EOByte]) -> EOInt {
     let mut data: [EOInt; 4] = [254, 254, 254, 254];
     for i in 0..4 {
-        if bytes.len() > i {
+        if bytes.len() > i && bytes[i] != 0 {
             data[i] = bytes[i].into();
         }
         if data[i] == 254 {
@@ -200,6 +200,9 @@ pub use stream_builder::StreamBuilder;
 
 mod stream_reader;
 pub use stream_reader::StreamReader;
+
+/// contains data structures and enums for pub files
+pub mod pubs;
 
 #[cfg(test)]
 mod tests {
