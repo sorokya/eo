@@ -1,23 +1,23 @@
 use std::io::{prelude::*, SeekFrom};
 
-use crate::data::{pubs::item::*, pubs::*, *};
+use crate::data::{pubs::class::*, pubs::*, *};
 
-/// represents an EO item file
+/// represents an EO class file
 ///
-/// The item file contains a list of every item in the game world.
+/// The class file contains a list of every class in the game world.
 /// It is saved on the server and send to clients on login.
 ///
 /// It contains a revision number. If the server revision differs
 /// from the client's revision number the file is re-downloaded.
 #[derive(Debug, Default)]
-pub struct ItemFile {
+pub struct ClassFile {
     pub revision: EOInt,
     length: usize,
-    pub records: Vec<ItemRecord>,
+    pub records: Vec<ClassRecord>,
 }
 
-impl ItemFile {
-    /// creates a new ItemFile with no records
+impl ClassFile {
+    /// creates a new ClassFile with no records
     pub fn new() -> Self {
         Self {
             revision: 0,
@@ -25,15 +25,15 @@ impl ItemFile {
             records: Vec::default(),
         }
     }
-    /// returns the number of records in the ItemFile
+    /// returns the number of records in the ClassFile
     pub fn len(&self) -> EOShort {
         self.records.len() as EOShort
     }
-    /// returns True if the ItemFile contains no records
+    /// returns True if the ClassFile contains no records
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
-    /// reads the content of a [Read]+[Seek] implemented struct into the ItemFile
+    /// reads the content of a [Read]+[Seek] implemented struct into the ClassFile
     pub fn read<R: Read + Seek>(&mut self, buf: &mut R) -> std::io::Result<()> {
         buf.seek(SeekFrom::Start(3))?;
         self.read_revision(buf)?;
@@ -63,10 +63,10 @@ impl ItemFile {
 
     fn read_record<R: Read + Seek>(&mut self, id: usize, buf: &mut R) -> std::io::Result<()> {
         let name_length = self.get_record_name_length(buf)?;
-        let mut data_buf: Vec<EOByte> = vec![0; EIF_DATA_SIZE + name_length + 1];
+        let mut data_buf: Vec<EOByte> = vec![0; ECF_DATA_SIZE + name_length + 1];
         buf.read_exact(&mut data_buf)?;
 
-        let mut record = ItemRecord::new(id as EOInt);
+        let mut record = ClassRecord::new(id as EOInt);
         record.deserialize(&data_buf);
         if record.name != "eof" {
             self.records.push(record);
@@ -91,37 +91,48 @@ mod tests {
     use std::io::Cursor;
 
     #[test]
-    fn read_valid_eif() -> std::io::Result<()> {
-        let mut eif = ItemFile::new();
-        let mut records: Vec<ItemRecord> = Vec::new();
+    fn read_valid_ecf() -> std::io::Result<()> {
+        let mut ecf = ClassFile::new();
+        let mut records: Vec<ClassRecord> = Vec::new();
 
         {
-            let mut record = ItemRecord::new(1);
-            record.name = "Gold".to_string();
+            let mut record = ClassRecord::new(1);
+            record.name = "Peasant".to_string();
             records.push(record);
         }
 
         {
-            let mut record = ItemRecord::new(2);
+            let mut record = ClassRecord::new(2);
+            record.name = "Warrior".to_string();
+            record.class_type = ClassType::Melee;
+            record.strength = 2;
+            records.push(record);
+        }
+
+        {
+            let mut record = ClassRecord::new(3);
             record.name = "eof".to_string();
             records.push(record);
         }
 
-        let mut buf = build_fake_eif(19283, records).unwrap();
-        eif.read(&mut buf)?;
+        let mut buf = build_fake_ecf(19283, records).unwrap();
+        ecf.read(&mut buf)?;
 
-        assert_eq!(eif.records[0].name, "Gold");
-        assert_eq!(eif.records.len(), 1);
+        assert_eq!(ecf.records[0].name, "Peasant");
+        assert_eq!(ecf.records[1].name, "Warrior");
+        assert_eq!(ecf.records[1].class_type, ClassType::Melee);
+        assert_eq!(ecf.records[1].strength, 2);
+        assert_eq!(ecf.records.len(), 2);
 
         Ok(())
     }
 
-    fn build_fake_eif(
+    fn build_fake_ecf(
         rid: EOInt,
-        records: Vec<ItemRecord>,
+        records: Vec<ClassRecord>,
     ) -> std::io::Result<Cursor<Vec<EOByte>>> {
         let mut buf: Cursor<Vec<EOByte>> = Cursor::new(Vec::new());
-        buf.write_all(b"EIF")?;
+        buf.write_all(b"ECF")?;
         buf.write_all(&encode_number(rid))?;
         buf.write_all(&encode_number(records.len() as EOInt)[0..2])?;
         buf.write_all(&encode_number(1)[0..1])?;
