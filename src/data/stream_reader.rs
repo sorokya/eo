@@ -133,8 +133,7 @@ impl<'a> StreamReader<'a> {
     /// reads the next byte as a length and uses that length to get a fixed string in UTF-8 encoding
     pub fn get_prefix_string(&mut self) -> String {
         let length = self.get_char() as usize;
-        let string = self.get_fixed_string(length);
-        string
+        self.get_fixed_string(length)
     }
     /// returns a UTF-8 encoded string from the current read position to the end of the data stream
     pub fn get_end_string(&mut self) -> String {
