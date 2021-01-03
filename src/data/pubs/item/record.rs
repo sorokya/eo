@@ -71,10 +71,9 @@ impl ItemRecord {
     pub fn dual_wield_doll_graphic(&self) -> EOChar {
         self.item_specific_param_3
     }
-    pub fn new(id: EOInt, name: &str) -> Self {
+    pub fn new(id: EOInt) -> Self {
         let mut item = Self::default();
         item.id = id;
-        item.name = name.to_string();
         item
     }
 }
@@ -82,6 +81,7 @@ impl ItemRecord {
 impl PubRecord for ItemRecord {
     fn deserialize(&mut self, buf: &[EOByte]) {
         let mut reader = StreamReader::new(&buf);
+        self.name = reader.get_prefix_string();
         self.graphic = reader.get_short();
         self.r#type = match ItemType::from_u8(reader.get_char()) {
             Some(b) => b,

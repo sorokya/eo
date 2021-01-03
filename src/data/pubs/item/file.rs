@@ -64,30 +64,25 @@ impl ItemFile {
     }
 
     fn read_record<R: Read + Seek>(&mut self, id: usize, buf: &mut R) -> std::io::Result<()> {
-        let name = self.get_record_name(buf)?;
-        if name != "eof" {
-            let mut data_buf: Vec<EOByte> = vec![0; EIF_DATA_SIZE];
-            buf.read_exact(&mut data_buf)?;
-            let mut record = ItemRecord::new(id as EOInt, &name);
-            record.deserialize(&data_buf);
+        let name_length = self.get_record_name_length(buf)?;
+        let mut data_buf: Vec<EOByte> = vec![0; EIF_DATA_SIZE + name_length + 1];
+        buf.read_exact(&mut data_buf)?;
+
+        let mut record = ItemRecord::new(id as EOInt);
+        record.deserialize(&data_buf);
+        if record.name != "eof" {
             self.records.push(record);
         }
 
         Ok(())
     }
 
-    fn get_record_name<R: Read + Seek>(&self, buf: &mut R) -> std::io::Result<String> {
+    fn get_record_name_length<R: Read + Seek>(&self, buf: &mut R) -> std::io::Result<usize> {
         let mut size_of_name_bytes: Vec<EOByte> = vec![0; 1];
         buf.read_exact(&mut size_of_name_bytes)?;
+        buf.seek(SeekFrom::Current(-1))?;
 
-        let size_of_name = decode_number(&size_of_name_bytes) as usize;
-        let mut name_bytes: Vec<EOByte> = vec![0; size_of_name];
-        buf.read_exact(&mut name_bytes)?;
-
-        let name =
-            String::from_utf8(name_bytes.to_vec()).expect("Failed to convert byte array to string");
-
-        Ok(name)
+        Ok(decode_number(&size_of_name_bytes) as usize)
     }
 }
 
@@ -101,8 +96,19 @@ mod tests {
     fn read_valid_eif() -> std::io::Result<()> {
         let mut eif = ItemFile::new();
         let mut records: Vec<ItemRecord> = Vec::new();
-        records.push(ItemRecord::new(1, "Gold"));
-        records.push(ItemRecord::new(1, "eof"));
+
+        {
+            let mut record = ItemRecord::new(1);
+            record.name = "Gold".to_string();
+            records.push(record);
+        }
+
+        {
+            let mut record = ItemRecord::new(2);
+            record.name = "eof".to_string();
+            records.push(record);
+        }
+
         let mut buf = build_fake_eif(19283, records).unwrap();
         eif.read(&mut buf)?;
 
