@@ -134,7 +134,6 @@ impl<'a> StreamReader<'a> {
     pub fn get_prefix_string(&mut self) -> String {
         let length = self.get_char() as usize;
         let string = self.get_fixed_string(length);
-        self.position += length;
         string
     }
     /// returns a UTF-8 encoded string from the current read position to the end of the data stream
