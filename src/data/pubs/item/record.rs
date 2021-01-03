@@ -94,10 +94,7 @@ impl PubRecord for ItemRecord {
         let special_char = reader.get_char();
         self.special = match ItemSpecial::from_u8(special_char) {
             Some(b) => b,
-            None => panic!(
-                "Failed to convert byte to ItemSpecial: {}\n{:?}",
-                special_char, self
-            ),
+            None => panic!("Failed to convert byte to ItemSpecial: {}", special_char),
         };
         self.hp = reader.get_short();
         self.tp = reader.get_short();
