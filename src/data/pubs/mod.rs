@@ -4,3 +4,5 @@ mod item;
 pub use item::*;
 mod class;
 pub use class::*;
+mod spell;
+pub use spell::*;
