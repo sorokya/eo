@@ -6,3 +6,5 @@ mod class;
 pub use class::*;
 mod spell;
 pub use spell::*;
+mod npc;
+pub use npc::*;
