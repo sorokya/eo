@@ -1,29 +1,57 @@
 use num_traits::FromPrimitive;
 
-use crate::data::{pubs::spell::*, pubs::*, *};
+use crate::data::{
+    pubs::spell::{SpellTargetRestrict, SpellTargetType, SpellType, ESF_DATA_SIZE},
+    pubs::PubRecord,
+    {EOByte, EOChar, EOInt, EOShort, EOThree, StreamBuilder, StreamReader},
+};
 
+/// data structure of a single esf record
 #[derive(Debug, Clone, Default)]
 pub struct SpellRecord {
+    /// used to identify a spell
+    ///
+    /// it is the record's index in the [SpellFile]
     pub id: EOInt,
+    /// the spell's name
     pub name: String,
+    /// "shout" that appears above casters head when spell is used
     pub shout: String,
+    /// graphic index for the spell's icon displayed in the players spell tab
     pub icon_id: EOShort,
+    /// used by the client to find the spell's graphics in the resource files
     pub graphic_id: EOShort,
+    /// amount of tp consumed when spell is used
     pub tp_cost: EOShort,
+    /// amount of sp consumed when spell is used
     pub sp_cost: EOShort,
+    /// time it takes for a spell to cast
+    ///
+    /// as far as I can tell the unit is 470ms (from eoserv) + the client has
+    /// a global cool down of 600ms that may also be enforced by the server.
     pub cast_time: EOChar,
+    /// the spell's type
     pub spell_type: SpellType,
+    /// the spell's element
     pub element: EOChar,
+    /// the spell's element power
     pub element_power: EOShort,
+    /// restricts the target of the spell by target attributes
     pub target_restrict: SpellTargetRestrict,
+    /// specifies the type of target
     pub target_type: SpellTargetType,
+    /// base min_damage the spell does
     pub min_damage: EOShort,
+    /// base max_damage the spell does
     pub max_damage: EOShort,
+    /// accuracy points used to calculate damage the spell does
     pub accuracy: EOShort,
+    /// amount of hp the spell restores
     pub hp: EOShort,
 }
 
 impl SpellRecord {
+    /// creates a new SpellRecord with the given id
     pub fn new(id: EOInt) -> Self {
         let mut record = Self::default();
         record.id = id;

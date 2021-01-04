@@ -1,14 +1,70 @@
-use std::io::{prelude::*, SeekFrom};
+use std::io::{
+    prelude::{Read, Seek},
+    SeekFrom,
+};
 
-use crate::data::{pubs::item::*, pubs::*, *};
+use crate::data::{
+    pubs::{item::ItemRecord, PubRecord},
+    {EOByte, EOInt, EOShort, StreamReader},
+};
 
-/// represents an EO item file
+/// represents eif files
 ///
-/// The item file contains a list of every item in the game world.
-/// It is saved on the server and send to clients on login.
+/// The item file contains a list of every item
+/// in the game. See [ItemRecord] for details on the data
+/// in each record.
 ///
-/// It contains a revision number. If the server revision differs
-/// from the client's revision number the file is re-downloaded.
+/// The file layout is:
+///```text
+/// "EIF" (fixed string)
+/// RID (4 bytes)
+/// Length (2 bytes)
+/// Record*Length
+/// {
+///     name (prefixed string)
+///     graphic (2 bytes)
+///     type (1 byte)
+///     sub_type (1 byte)
+///     special (1 byte)
+///     hp (2 bytes)
+///     tp (2 bytes)
+///     min_damage (2 bytes)
+///     max_damage (2 bytes)
+///     accuracy (2 bytes)
+///     evade (2 bytes)
+///     armor (2 bytes)
+///     unknown (1 byte)
+///     intelligence (1 byte)
+///     wisdom (1 byte)
+///     agility (1 byte)
+///     constitution (1 byte)
+///     charisma (1 byte)
+///     light (1 byte) - unused
+///     dark (1 byte) - unused
+///     earth (1 byte) - unused
+///     air (1 byte) - unused
+///     water (1 byte) - unused
+///     fire (1 byte) - unused
+///     item_specific_param_1 (3 bytes)
+///     item_specific_param_2 (1 byte)
+///     item_specific_param_3 (1 byte)
+///     level_req (2 bytes)
+///     class_req (2 bytes)
+///     strength_req (2 bytes)
+///     intelligence_req (2 bytes)
+///     wisdom_req (2 bytes)
+///     agility_req (2 bytes)
+///     constitution_req (2 bytes)
+///     charisma_req (2 bytes)
+///     element (1 byte)
+///     element_power (1 byte)
+///     weight (1 byte)
+///     unknown (1 byte)
+///     item_size (1 byte)
+/// }
+///```
+/// RID is the files "revision" number. It's used to signal the client
+/// that a new version is available and needs to be downloaded.
 #[derive(Debug, Default)]
 pub struct ItemFile {
     pub revision: EOInt,
@@ -64,9 +120,9 @@ impl ItemFile {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{EOByte, EOInt, ItemFile, ItemRecord, PubRecord};
     use crate::data::encode_number;
-    use std::io::Cursor;
+    use std::io::{prelude::Write, Cursor};
 
     #[test]
     fn read_valid_eif() -> std::io::Result<()> {

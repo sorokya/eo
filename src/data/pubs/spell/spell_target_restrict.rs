@@ -1,3 +1,4 @@
+/// restricts the target of a spell by attributes
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
 pub enum SpellTargetRestrict {
     NPCOnly = 0,

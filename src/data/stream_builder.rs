@@ -1,4 +1,4 @@
-use super::*;
+use super::{encode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR};
 
 /// used for building byte streams in EO format
 ///
@@ -103,7 +103,7 @@ impl Default for StreamBuilder {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{StreamBuilder, EO_BREAK_CHAR};
     #[test]
     fn add_byte() {
         let mut builder = StreamBuilder::with_capacity(1);

@@ -1,14 +1,40 @@
-use std::io::{prelude::*, SeekFrom};
+use std::io::{
+    prelude::{Read, Seek},
+    SeekFrom,
+};
 
-use crate::data::{pubs::class::*, pubs::*, *};
+use crate::data::{
+    pubs::class::ClassRecord,
+    pubs::PubRecord,
+    {EOByte, EOInt, EOShort, StreamReader},
+};
 
-/// represents an EO class file
+/// represents ecf files
 ///
-/// The class file contains a list of every class in the game world.
-/// It is saved on the server and send to clients on login.
+/// The class file contains a list of every player class
+/// in the game. See [ClassRecord] for details on the data
+/// in each record.
 ///
-/// It contains a revision number. If the server revision differs
-/// from the client's revision number the file is re-downloaded.
+/// The file layout is:
+///```text
+/// "ECF" (fixed string)
+/// RID (4 bytes)
+/// Length (2 bytes)
+/// Record*Length
+/// {
+///     name (prefixed string)
+///     base (1 byte)
+///     class_type (1 byte)
+///     strength (2 bytes)
+///     intelligence (2 bytes)
+///     wisdom (2 bytes)
+///     agility (2 bytes)
+///     constitution (2 bytes)
+///     charisma (2 bytes)
+/// }
+///```
+/// RID is the files "revision" number. It's used to signal the client
+/// that a new version is available and needs to be downloaded.
 #[derive(Debug, Default)]
 pub struct ClassFile {
     pub revision: EOInt,
@@ -64,9 +90,9 @@ impl ClassFile {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{ClassFile, ClassRecord, EOByte, EOInt, PubRecord};
     use crate::data::encode_number;
-    use std::io::Cursor;
+    use std::io::{prelude::Write, Cursor};
 
     #[test]
     fn read_valid_ecf() -> std::io::Result<()> {
@@ -82,7 +108,7 @@ mod tests {
         {
             let mut record = ClassRecord::new(2);
             record.name = "Warrior".to_string();
-            record.class_type = ClassType::Melee;
+            record.class_type = 0;
             record.strength = 2;
             records.push(record);
         }
@@ -98,7 +124,7 @@ mod tests {
 
         assert_eq!(ecf.records[0].name, "Peasant");
         assert_eq!(ecf.records[1].name, "Warrior");
-        assert_eq!(ecf.records[1].class_type, ClassType::Melee);
+        assert_eq!(ecf.records[1].class_type, 0);
         assert_eq!(ecf.records[1].strength, 2);
         assert_eq!(ecf.records.len(), 2);
 

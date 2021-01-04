@@ -8,7 +8,7 @@ use crate::data::{EOByte, EOInt};
 ///
 /// # Example
 /// ```
-/// use eo::net::*;
+/// use eo::net::{Family, Action, packet_id_hash};
 ///
 /// assert_eq!(packet_id_hash(Family::Connection, Action::Request), 257)
 /// ```
@@ -168,7 +168,7 @@ impl PacketProcessor {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{Action, Family, PacketProcessor};
     #[test]
     fn packet_id_hash() {
         assert_eq!(super::packet_id_hash(Family::Init, Action::Init), 65535);

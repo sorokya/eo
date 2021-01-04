@@ -1,4 +1,4 @@
-use super::*;
+use super::{decode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR};
 use std::cmp;
 
 /// used for reading byte streams
@@ -147,7 +147,7 @@ impl<'a> StreamReader<'a> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{StreamReader, EO_BREAK_CHAR};
     #[test]
     fn get_byte() {
         let bytes = [0];

@@ -1,3 +1,4 @@
+/// specifies the target type of a spell
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
 pub enum SpellTargetType {
     Normal = 0,

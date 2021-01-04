@@ -1,14 +1,51 @@
-use std::io::{prelude::*, SeekFrom};
+use std::io::{
+    prelude::{Read, Seek},
+    SeekFrom,
+};
 
-use crate::data::{pubs::npc::*, pubs::*, *};
+use crate::data::{
+    pubs::{npc::NPCRecord, PubRecord},
+    {EOByte, EOInt, EOShort, StreamReader},
+};
 
-/// represents an EO npc file
+/// represents enf files
 ///
-/// The npc file contains a list of every npc in the game world.
-/// It is saved on the server and send to clients on login.
+/// The npc file contains a list of every npc
+/// in the game. See [NPCRecord] for details on the data
+/// in each record.
 ///
-/// It contains a revision number. If the server revision differs
-/// from the client's revision number the file is re-downloaded.
+/// The file layout is:
+///```text
+/// "ENF" (fixed string)
+/// RID (4 bytes)
+/// Length (2 bytes)
+/// Record*Length
+/// {
+///     name (prefixed string)
+///     graphic_id (2 bytes)
+///     unknown (1 byte)
+///     boss (2 bytes)
+///     child (2 bytes)
+///     type (2 bytes)
+///     vendor_id (2 bytes)
+///     hp (3 bytes)
+///     unknown (2 bytes)
+///     min_damage (2 bytes)
+///     max_damage (2 bytes)
+///     accuracy (2 bytes)
+///     evade (2 bytes)
+///     armor (2 bytes)
+///     unknown (2 bytes)
+///     unknown (1 byte)
+///     unknown (1 byte)
+///     element_weak (2 bytes)
+///     element_weak_power (2 bytes)
+///     unknown (1 byte)
+///     experience (3 bytes)
+/// }
+///```
+/// RID is the files "revision" number. It's used to signal the client
+/// that a new version is available and needs to be downloaded.
 #[derive(Debug, Default)]
 pub struct NPCFile {
     pub revision: EOInt,
@@ -64,9 +101,9 @@ impl NPCFile {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::data::encode_number;
-    use std::io::Cursor;
+    use super::{EOByte, EOInt, NPCFile, NPCRecord, PubRecord};
+    use crate::data::{encode_number, pubs::NPCType};
+    use std::io::{prelude::Write, Cursor};
 
     #[test]
     fn read_valid_enf() -> std::io::Result<()> {
@@ -87,8 +124,8 @@ mod tests {
             record.element_weak_power = 5;
             record.graphic_id = 6;
             record.vendor_id = 7;
-            record.boss = 8;
-            record.child = 9;
+            record.boss = true;
+            record.child = false;
             record.npc_type = NPCType::Passive;
             records.push(record);
         }
@@ -115,8 +152,8 @@ mod tests {
         assert_eq!(enf.records[0].element_weak_power, 5);
         assert_eq!(enf.records[0].graphic_id, 6);
         assert_eq!(enf.records[0].vendor_id, 7);
-        assert_eq!(enf.records[0].boss, 8);
-        assert_eq!(enf.records[0].child, 9);
+        assert_eq!(enf.records[0].boss, true);
+        assert_eq!(enf.records[0].child, false);
         assert_eq!(enf.records[0].npc_type, NPCType::Passive);
         Ok(())
     }

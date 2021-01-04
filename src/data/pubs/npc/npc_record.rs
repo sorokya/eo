@@ -1,28 +1,52 @@
 use num_traits::FromPrimitive;
 
-use crate::data::{pubs::npc::*, pubs::*, *};
+use crate::data::{
+    pubs::npc::{NPCType, ENF_DATA_SIZE},
+    pubs::PubRecord,
+    {EOByte, EOInt, EOShort, EOThree, StreamBuilder, StreamReader},
+};
 
+/// data structure of a single enf record
 #[derive(Debug, Clone, Default)]
 pub struct NPCRecord {
+    /// used to identify an NPC
+    ///
+    /// it is the record's index in the [NPCFile]
     pub id: EOInt,
+    /// the name of the NPC
     pub name: String,
+    /// used by the client to find the npc graphics in the resource files
     pub graphic_id: EOShort,
-    pub boss: EOShort,
-    pub child: EOShort,
+    /// true if npc is a boss
+    pub boss: bool,
+    /// true if npc is a child
+    pub child: bool,
+    /// the npc's type
     pub npc_type: NPCType,
+    /// an identifier used for shops and inns
     pub vendor_id: EOShort,
+    /// the npc's start hp
     pub hp: EOThree,
+    /// base min_damage stat an npc can do
     pub min_damage: EOShort,
+    /// base max_damage stat an npc can do
     pub max_damage: EOShort,
+    /// accuracy points used for damage calculations
     pub accuracy: EOShort,
+    /// evade points used for damage calculations
     pub evade: EOShort,
+    /// armor points used for damage calculations
     pub armor: EOShort,
+    /// element weakness
     pub element_weak: EOShort,
+    /// element weakness power
     pub element_weak_power: EOShort,
+    /// experience points granted when npc is killed
     pub experience: EOThree,
 }
 
 impl NPCRecord {
+    /// creates a new NPCRecord with the given id
     pub fn new(id: EOInt) -> Self {
         let mut record = Self::default();
         record.id = id;
@@ -35,8 +59,8 @@ impl PubRecord for NPCRecord {
         self.name = reader.get_prefix_string();
         self.graphic_id = reader.get_short();
         reader.get_char();
-        self.boss = reader.get_short();
-        self.child = reader.get_short();
+        self.boss = reader.get_short() == 1;
+        self.child = reader.get_short() == 1;
         let type_short = reader.get_short();
         self.npc_type = match NPCType::from_u16(type_short) {
             Some(npc_type) => npc_type,
@@ -63,9 +87,9 @@ impl PubRecord for NPCRecord {
         builder.add_prefix_string(&self.name);
         builder.add_short(self.graphic_id);
         builder.add_char(0);
-        builder.add_short(self.boss);
-        builder.add_short(self.child);
-        builder.add_short(self.npc_type as u16);
+        builder.add_short(self.boss as EOShort);
+        builder.add_short(self.child as EOShort);
+        builder.add_short(self.npc_type as EOShort);
         builder.add_short(self.vendor_id);
         builder.add_three(self.hp);
         builder.add_short(0);

@@ -1,3 +1,4 @@
+/// used to categorize an npc by function
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
 pub enum NPCType {
     NPC = 0,

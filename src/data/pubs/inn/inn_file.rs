@@ -1,14 +1,45 @@
-use std::io::{prelude::*, SeekFrom};
+use std::io::{
+    prelude::{Read, Seek},
+    SeekFrom,
+};
 
-use crate::data::{pubs::inn::*, pubs::*, *};
+use crate::data::{
+    pubs::inn::InnRecord,
+    pubs::PubRecord,
+    {EOByte, EOShort, StreamReader},
+};
 
-/// represents an EO inn file
+/// represents eid files
 ///
-/// The inn file contains a list of every inn in the game world.
-/// It is saved on the server and send to clients on login.
+/// The inn file contains a list of homes a player can be
+/// registered to in the game. See [InnRecord] for details
+/// on the data in each record.
 ///
-/// It contains a revision number. If the server revision differs
-/// from the client's revision number the file is re-downloaded.
+/// The file layout is:
+///```text
+/// "EID" (fixed string)
+/// Record*
+/// {
+///     id (2 bytes)
+///     name (prefixed string)
+///     spawn_map (2 bytes)
+///     spawn_x (1 byte)
+///     spawn_y (1 byte)
+///     inn_sleep_map (2 bytes)
+///     inn_sleep_x (1 byte)
+///     inn_sleep_y (1 byte)
+///     alt_spawn_enabled (1 byte)
+///     alt_spawn_map (2 bytes)
+///     alt_spawn_x (1 byte)
+///     alt_spawn_y (1 byte)
+///     question1 (prefixed string)
+///     answer1 (prefixed string)
+///     question2 (prefixed string)
+///     answer2 (prefixed string)
+///     question3 (prefixed string)
+///     answer3 (prefixed string)
+/// }
+///```
 #[derive(Debug, Default)]
 pub struct InnFile {
     pub records: Vec<InnRecord>,
@@ -55,8 +86,8 @@ impl InnFile {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::io::Cursor;
+    use super::{EOByte, InnFile, InnRecord, PubRecord};
+    use std::io::{prelude::Write, Cursor};
 
     #[test]
     fn read_valid_eid() -> std::io::Result<()> {

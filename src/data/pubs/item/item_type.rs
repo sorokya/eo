@@ -1,3 +1,7 @@
+/// an item's type
+///
+/// Used to categorize items based on functionality.
+/// Tell's the server/client what an item does and how it can be used.
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
 pub enum ItemType {
     Static = 0,

@@ -1,14 +1,65 @@
-use std::io::{prelude::*, SeekFrom};
+use std::io::{
+    prelude::{Read, Seek},
+    SeekFrom,
+};
 
-use crate::data::{pubs::spell::*, pubs::*, *};
+use crate::data::{
+    pubs::spell::SpellRecord,
+    pubs::PubRecord,
+    {EOByte, EOInt, EOShort, StreamReader},
+};
 
-/// represents an EO spell file
+/// represents esf files
 ///
-/// The spell file contains a list of every spell in the game world.
-/// It is saved on the server and send to clients on login.
+/// The spell file contains a list of every spell
+/// in the game. See [SpellRecord] for details on the data
+/// in each record.
 ///
-/// It contains a revision number. If the server revision differs
-/// from the client's revision number the file is re-downloaded.
+/// The file layout is:
+///```text
+/// "ESF" (fixed string)
+/// RID (4 bytes)
+/// Length (2 bytes)
+/// Record*Length
+/// {
+///     name_length (1 byte)
+///     shout_length (1 byte)
+///     name (fixed string)
+///     shout (fixed string)
+///     icon_id (2 bytes)
+///     graphic_id (2 bytes)
+///     tp_cost (2 bytes)
+///     sp_cost (2 bytes)
+///     cast_time (1 byte)
+///     unknown (1 byte)
+///     unknown (1 byte)
+///     type (3 bytes)
+///     element (1 byte)
+///     element_power (2 bytes)
+///     target_restrict (1 byte)
+///     target_type (1 byte)
+///     unknown (1 byte)
+///     unknown (1 byte)
+///     unknown (2 bytes)
+///     min_damage (2 bytes)
+///     max_damage (2 bytes)
+///     accuracy (2 bytes)
+///     unknown (2 bytes)
+///     unknown (2 bytes)
+///     unknown (1 byte)
+///     hp (2 bytes)
+///     unknown (2 bytes)
+///     unknown (1 byte)
+///     unknown (2 bytes)
+///     unknown (2 bytes)
+///     unknown (2 bytes)
+///     unknown (2 bytes)
+///     unknown (2 bytes)
+///     unknown (2 bytes)
+/// }
+///```
+/// RID is the files "revision" number. It's used to signal the client
+/// that a new version is available and needs to be downloaded.
 #[derive(Debug, Default)]
 pub struct SpellFile {
     pub revision: EOInt,
@@ -64,9 +115,12 @@ impl SpellFile {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::data::encode_number;
-    use std::io::Cursor;
+    use super::{EOByte, EOInt, PubRecord, SpellFile, SpellRecord};
+    use crate::data::{
+        encode_number,
+        pubs::{SpellTargetRestrict, SpellTargetType, SpellType},
+    };
+    use std::io::{Cursor, Write};
 
     #[test]
     fn read_valid_esf() -> std::io::Result<()> {

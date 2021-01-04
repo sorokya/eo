@@ -1,31 +1,55 @@
 use crate::data::{
-    pubs::{inn::*, PubRecord},
-    *,
+    pubs::{inn::EID_DATA_SIZE, PubRecord},
+    {EOByte, EOChar, EOShort, StreamBuilder, StreamReader},
 };
 
+/// data structure of a single eid record
 #[derive(Debug, Clone, Default)]
 pub struct InnRecord {
+    /// links to the vendor_id of the inn keeper npc
     pub id: EOShort,
+    /// name of the home
     pub name: String,
+    /// default respawn map id
     pub spawn_map: EOShort,
+    /// default respawn map x
     pub spawn_x: EOChar,
+    /// default respawn map y
     pub spawn_y: EOChar,
+    /// map id player warps to after "sleeping"
     pub inn_sleep_map: EOShort,
+    /// map x player warps to after "sleeping"
     pub inn_sleep_x: EOChar,
+    /// map y player warps to after "sleeping"
     pub inn_sleep_y: EOChar,
+    /// tells the server if the inn uses an alternate spawn
+    ///
+    /// Only known use is the "Wanderer" home. Players will
+    /// respawn on nubland until a requirement is met on the server
+    /// then they will respawn at the alternate spawn location.
     pub alt_spawn_enabled: bool,
+    /// alternate respawn map id
     pub alt_spawn_map: EOShort,
+    /// alternate respawn map x
     pub alt_spawn_x: EOChar,
+    /// alternate respawn map y
     pub alt_spawn_y: EOChar,
+    /// question 1 text
     pub question1: String,
+    /// answer 1 text
     pub answer1: String,
+    /// question 2 text
     pub question2: String,
+    /// answer 2 text
     pub answer2: String,
+    /// question 3 text
     pub question3: String,
+    /// answer 3 text
     pub answer3: String,
 }
 
 impl InnRecord {
+    /// creates a new InnRecord with default values
     pub fn new() -> Self {
         Self::default()
     }

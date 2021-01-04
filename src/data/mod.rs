@@ -206,7 +206,7 @@ pub mod pubs;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{EOByte, EOInt};
     #[test]
     fn encode_number() {
         let mut test_numbers: Vec<(EOInt, [EOByte; 4])> = Vec::with_capacity(11);
