@@ -8,3 +8,5 @@ mod spell;
 pub use spell::*;
 mod npc;
 pub use npc::*;
+mod inn;
+pub use inn::*;
