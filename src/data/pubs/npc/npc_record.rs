@@ -59,7 +59,7 @@ impl PubRecord for NPCRecord {
         self.experience = reader.get_three();
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::new();
+        let mut builder = StreamBuilder::with_capacity(ENF_DATA_SIZE + self.name.len() + 1);
         builder.add_prefix_string(&self.name);
         builder.add_short(self.graphic_id);
         builder.add_char(0);

@@ -87,7 +87,8 @@ impl PubRecord for SpellRecord {
         reader.get_short();
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::new();
+        let mut builder =
+            StreamBuilder::with_capacity(ESF_DATA_SIZE + self.name.len() + self.shout.len() + 2);
         builder.add_char(self.name.len() as EOChar);
         builder.add_char(self.shout.len() as EOChar);
         builder.add_string(&self.name);
