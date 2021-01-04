@@ -8,7 +8,7 @@ use crate::data::{
 pub struct ClassRecord {
     /// used to identify a class
     ///
-    /// it is the record's index in the [ClassFile]
+    /// it is the record's index in the [super::ClassFile]
     pub id: EOInt,
     /// the name of the class
     pub name: String,

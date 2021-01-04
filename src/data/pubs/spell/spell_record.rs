@@ -11,7 +11,7 @@ use crate::data::{
 pub struct SpellRecord {
     /// used to identify a spell
     ///
-    /// it is the record's index in the [SpellFile]
+    /// it is the record's index in the [super::SpellFile]
     pub id: EOInt,
     /// the spell's name
     pub name: String,

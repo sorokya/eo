@@ -11,7 +11,7 @@ use crate::data::{
 pub struct NPCRecord {
     /// used to identify an NPC
     ///
-    /// it is the record's index in the [NPCFile]
+    /// it is the record's index in the [super::NPCFile]
     pub id: EOInt,
     /// the name of the NPC
     pub name: String,

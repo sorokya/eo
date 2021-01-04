@@ -11,7 +11,7 @@ use crate::data::{
 pub struct ItemRecord {
     /// used to identify an item
     ///
-    /// it is the record's index in the [ItemFile]
+    /// it is the record's index in the [super::ItemFile]
     pub id: EOInt,
     /// the name of the item
     pub name: String,
