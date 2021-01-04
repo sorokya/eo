@@ -79,8 +79,7 @@ impl ItemRecord {
 }
 
 impl PubRecord for ItemRecord {
-    fn deserialize(&mut self, buf: &[EOByte]) {
-        let mut reader = StreamReader::new(&buf);
+    fn deserialize(&mut self, reader: &mut StreamReader) {
         self.name = reader.get_prefix_string();
         self.graphic = reader.get_short();
         self.r#type = match ItemType::from_u8(reader.get_char()) {

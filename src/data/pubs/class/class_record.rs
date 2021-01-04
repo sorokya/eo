@@ -28,8 +28,7 @@ impl ClassRecord {
 }
 
 impl PubRecord for ClassRecord {
-    fn deserialize(&mut self, buf: &[EOByte]) {
-        let mut reader = StreamReader::new(&buf);
+    fn deserialize(&mut self, reader: &mut StreamReader) {
         self.name = reader.get_prefix_string();
         self.base = reader.get_char();
         let type_char = reader.get_char();

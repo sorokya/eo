@@ -31,8 +31,7 @@ impl NPCRecord {
 }
 
 impl PubRecord for NPCRecord {
-    fn deserialize(&mut self, buf: &[EOByte]) {
-        let mut reader = StreamReader::new(buf);
+    fn deserialize(&mut self, reader: &mut StreamReader) {
         self.name = reader.get_prefix_string();
         self.graphic_id = reader.get_short();
         reader.get_char();

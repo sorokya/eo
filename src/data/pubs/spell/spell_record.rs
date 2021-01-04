@@ -32,8 +32,7 @@ impl SpellRecord {
 }
 
 impl PubRecord for SpellRecord {
-    fn deserialize(&mut self, buf: &[EOByte]) {
-        let mut reader = StreamReader::new(buf);
+    fn deserialize(&mut self, reader: &mut StreamReader) {
         let name_length = reader.get_char();
         let shout_length = reader.get_char();
         self.name = reader.get_fixed_string(name_length as usize);

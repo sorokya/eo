@@ -35,51 +35,30 @@ impl NPCFile {
     }
     /// reads the content of a [Read]+[Seek] implemented struct into the NPCFile
     pub fn read<R: Read + Seek>(&mut self, buf: &mut R) -> std::io::Result<()> {
-        buf.seek(SeekFrom::Start(3))?;
-        self.read_revision(buf)?;
-        self.read_length(buf)?;
-        buf.seek(SeekFrom::Current(1))?;
+        let mut data_buf: Vec<EOByte> = Vec::new();
+        buf.seek(SeekFrom::Start(0))?;
+        buf.read_to_end(&mut data_buf)?;
+        let mut reader = StreamReader::new(&data_buf);
+        reader.seek(3);
+        self.revision = reader.get_int();
+        self.length = reader.get_short() as usize;
+        reader.get_char();
         self.records = Vec::with_capacity(self.length);
         for id in 1..self.length {
-            self.read_record(id, buf)?;
+            self.read_record(id, &mut reader)?;
         }
 
         Ok(())
     }
 
-    fn read_revision<R: Read + Seek>(&mut self, buf: &mut R) -> std::io::Result<()> {
-        let mut revision_bytes: Vec<EOByte> = vec![0; 4];
-        buf.read_exact(&mut revision_bytes)?;
-        self.revision = decode_number(revision_bytes.as_slice());
-        Ok(())
-    }
-
-    fn read_length<R: Read + Seek>(&mut self, buf: &mut R) -> std::io::Result<()> {
-        let mut length_bytes: Vec<EOByte> = vec![0; 2];
-        buf.read_exact(&mut length_bytes)?;
-        self.length = decode_number(length_bytes.as_slice()) as usize;
-        Ok(())
-    }
-
-    fn read_record<R: Read + Seek>(&mut self, id: usize, buf: &mut R) -> std::io::Result<()> {
-        let name_length = self.get_name_length(buf)?;
-        let mut data_buf: Vec<EOByte> = vec![0; ENF_DATA_SIZE + name_length + 1];
-        buf.read_exact(&mut data_buf)?;
-
+    fn read_record(&mut self, id: usize, reader: &mut StreamReader) -> std::io::Result<()> {
         let mut record = NPCRecord::new(id as EOInt);
-        record.deserialize(&data_buf);
+        record.deserialize(reader);
         if record.name != "eof" {
             self.records.push(record);
         }
 
         Ok(())
-    }
-
-    fn get_name_length<R: Read + Seek>(&self, buf: &mut R) -> std::io::Result<usize> {
-        let mut size_of_name_bytes: Vec<EOByte> = vec![0; 1];
-        buf.read_exact(&mut size_of_name_bytes)?;
-        buf.seek(SeekFrom::Current(-1))?;
-        Ok(decode_number(&size_of_name_bytes) as usize)
     }
 }
 
