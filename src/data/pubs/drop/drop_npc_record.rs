@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use crate::data::{
     pubs::{
         drop::{DropRecord, EDF_DROP_DATA_SIZE, EDF_NPC_DATA_SIZE},
@@ -8,6 +11,7 @@ use crate::data::{
 
 /// data structure of a single edf record
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct DropNPCRecord {
     /// links to an npc id
     pub npc_id: EOShort,
@@ -43,7 +47,7 @@ impl PubRecord for DropNPCRecord {
         builder.add_short(self.npc_id);
         builder.add_short(self.length);
         for drop in &self.drops {
-            builder.append(&mut drop.serialize());
+            builder.append(&mut PubRecord::serialize(drop));
         }
         builder.get()
     }

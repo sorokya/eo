@@ -1,9 +1,13 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use crate::data::{
     pubs::{shop::ESF_TRADE_DATA_SIZE, PubRecord},
     EOByte, EOChar, EOShort, EOThree, StreamBuilder, StreamReader,
 };
 
 #[derive(Default, Debug)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ShopTradeRecord {
     /// links to item id of the item to be bought/sold
     pub item_id: EOShort,

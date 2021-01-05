@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use crate::data::{
     pubs::{drop::EDF_DROP_DATA_SIZE, PubRecord},
     EOByte, EOShort, EOThree, StreamBuilder, StreamReader,
@@ -5,6 +8,7 @@ use crate::data::{
 
 /// data structure of a single eid record
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct DropRecord {
     /// links to item id
     pub item_id: EOShort,

@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use crate::data::{
     pubs::{class::ECF_DATA_SIZE, PubRecord},
     *,
@@ -5,6 +8,7 @@ use crate::data::{
 
 /// data structure of a single ecf record
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ClassRecord {
     /// used to identify a class
     ///

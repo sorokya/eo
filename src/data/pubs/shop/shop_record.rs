@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use crate::data::{
     pubs::{
         shop::{
@@ -11,6 +14,7 @@ use crate::data::{
 
 /// data structure of a single edf record
 #[derive(Debug, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ShopRecord {
     /// links to a vendor id
     pub vendor_id: EOShort,
@@ -75,11 +79,11 @@ impl PubRecord for ShopRecord {
         builder.add_char(self.crafts_length);
 
         for trade in &self.trades {
-            builder.append(&mut trade.serialize());
+            builder.append(&mut PubRecord::serialize(trade));
         }
 
         for craft in &self.crafts {
-            builder.append(&mut craft.serialize());
+            builder.append(&mut PubRecord::serialize(craft));
         }
 
         builder.get()

@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use crate::data::{
     pubs::{inn::EID_DATA_SIZE, PubRecord},
     {EOByte, EOChar, EOShort, StreamBuilder, StreamReader},
@@ -5,6 +8,7 @@ use crate::data::{
 
 /// data structure of a single eid record
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct InnRecord {
     /// links to the vendor_id of the inn keeper npc
     pub id: EOShort,

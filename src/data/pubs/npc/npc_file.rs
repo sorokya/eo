@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use std::io::{
     prelude::{Read, Seek},
     SeekFrom,
@@ -47,6 +50,7 @@ use crate::data::{
 /// RID is the files "revision" number. It's used to signal the client
 /// that a new version is available and needs to be downloaded.
 #[derive(Debug, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct NPCFile {
     pub revision: EOInt,
     length: usize,

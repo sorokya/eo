@@ -6,6 +6,9 @@
 extern crate enum_primitive_derive;
 extern crate num_traits;
 
+#[cfg(feature = "use_serde")]
+extern crate serde;
+
 /// character related data structures
 pub mod character;
 /// EO primitive types, stream reader, and stream builder

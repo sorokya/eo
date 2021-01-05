@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use num_traits::FromPrimitive;
 
 use crate::data::{
@@ -8,6 +11,7 @@ use crate::data::{
 
 /// data structure of a single esf record
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct SpellRecord {
     /// used to identify a spell
     ///

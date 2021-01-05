@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// these represent the different sizes an item can be in a player's inventory
 ///
 /// the NxN notation is Width by Height.
@@ -19,6 +22,7 @@
 /// XX
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum ItemSize {
     Size1x1 = 0,
     Size1x2 = 1,

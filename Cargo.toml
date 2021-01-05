@@ -8,7 +8,11 @@ license = "MIT"
 repository = "https://github.com/sorokya/eo"
 readme = "README.md"
 
+[features]
+use_serde = ["serde"]
+
 [dependencies]
 enum-primitive-derive = "0.2"
 num-traits = "0.2"
 rand = "0.7"
+serde = { version = "1.0.118", optional = true }

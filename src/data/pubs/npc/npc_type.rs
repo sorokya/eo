@@ -1,5 +1,9 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// used to categorize an npc by function
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum NPCType {
     NPC = 0,
     Passive = 1,

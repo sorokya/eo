@@ -1,5 +1,9 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// represents the type of magic a spell does
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum SpellType {
     Heal = 0,
     Damage = 1,

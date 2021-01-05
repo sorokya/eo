@@ -1,7 +1,11 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// an item's sub-type
 ///
 /// used to further categorize an item's type.
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum ItemSubType {
     None = 0,
     Ranged = 1,

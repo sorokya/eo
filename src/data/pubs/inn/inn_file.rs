@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use std::io::{
     prelude::{Read, Seek},
     SeekFrom,
@@ -41,6 +44,7 @@ use crate::data::{
 /// }
 ///```
 #[derive(Debug, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct InnFile {
     pub records: Vec<InnRecord>,
 }
