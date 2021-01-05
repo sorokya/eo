@@ -120,13 +120,6 @@ impl ItemRecord {
     pub fn scroll_y(&self) -> EOChar {
         self.item_specific_param_3
     }
-    /// graphic id used by client for equipable items
-    ///
-    /// used by the client to find the graphics index in the resource files
-    /// this is sent to the client as a shield graphic id
-    pub fn dual_wield_doll_graphic_id(&self) -> EOChar {
-        self.item_specific_param_3
-    }
     /// creates a new ItemRecord with the given id
     pub fn new(id: EOInt) -> Self {
         let mut item = Self::default();
