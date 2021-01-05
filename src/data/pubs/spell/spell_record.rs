@@ -57,9 +57,10 @@ pub struct SpellRecord {
 impl SpellRecord {
     /// creates a new SpellRecord with the given id
     pub fn new(id: EOInt) -> Self {
-        let mut record = Self::default();
-        record.id = id;
-        record
+        Self {
+            id,
+            ..Default::default()
+        }
     }
 }
 

@@ -41,9 +41,10 @@ pub struct ClassRecord {
 impl ClassRecord {
     /// creates a new record with the given id
     pub fn new(id: EOInt) -> Self {
-        let mut record = Self::default();
-        record.id = id;
-        record
+        Self {
+            id,
+            ..Default::default()
+        }
     }
 }
 

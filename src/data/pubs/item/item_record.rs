@@ -126,9 +126,10 @@ impl ItemRecord {
     }
     /// creates a new ItemRecord with the given id
     pub fn new(id: EOInt) -> Self {
-        let mut item = Self::default();
-        item.id = id;
-        item
+        Self {
+            id,
+            ..Default::default()
+        }
     }
 }
 
