@@ -100,8 +100,6 @@ mod tests {
             records.push(record);
         }
 
-        println!("{:?}", records);
-
         let mut buf = build_fake_edf(records).unwrap();
         edf.read(&mut buf)?;
 

@@ -9,7 +9,7 @@ use crate::data::{
     {EOByte, EOInt, EOShort, StreamReader},
 };
 
-/// represents esf files
+/// represents esf (spell) files
 ///
 /// The spell file contains a list of every spell
 /// in the game. See [SpellRecord] for details on the data

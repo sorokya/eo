@@ -12,3 +12,5 @@ mod inn;
 pub use inn::*;
 mod drop;
 pub use drop::*;
+mod shop;
+pub use shop::*;
