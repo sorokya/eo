@@ -10,3 +10,5 @@ mod npc;
 pub use npc::*;
 mod inn;
 pub use inn::*;
+mod drop;
+pub use drop::*;

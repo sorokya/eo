@@ -89,6 +89,10 @@ impl StreamBuilder {
         self.add_char(string.len() as EOChar);
         self.add_string(string);
     }
+    /// Appends data from other Vec to the end of this StreamBuilder
+    pub fn append(&mut self, other: &mut Vec<EOByte>) {
+        self.data.append(other);
+    }
     /// Returns the data stream
     pub fn get(self) -> Vec<EOByte> {
         self.data
@@ -103,7 +107,7 @@ impl Default for StreamBuilder {
 
 #[cfg(test)]
 mod tests {
-    use super::{StreamBuilder, EO_BREAK_CHAR};
+    use super::{EOByte, StreamBuilder, EO_BREAK_CHAR};
     #[test]
     fn add_byte() {
         let mut builder = StreamBuilder::with_capacity(1);
@@ -231,5 +235,16 @@ mod tests {
             builder.data,
             [0xE, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21]
         );
+    }
+    #[test]
+    fn append() {
+        let mut builder = StreamBuilder::new();
+        builder.add_short(42);
+
+        let mut vec: Vec<EOByte> = vec![1, 2, 3, 4, 5, 6];
+        builder.append(&mut vec);
+
+        assert_eq!(vec.len(), 0);
+        assert_eq!(builder.data, [43, 254, 1, 2, 3, 4, 5, 6]);
     }
 }
