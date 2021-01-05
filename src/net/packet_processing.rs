@@ -139,6 +139,7 @@ impl PacketProcessor {
     /// encodes a packet byte array in place
     ///
     /// Init_Init packets are ignored
+    #[allow(clippy::needless_range_loop)]
     pub fn encode(&self, bytes: &mut [EOByte]) {
         if self.valid_for_decode(&bytes) {
             let length = bytes.len();
