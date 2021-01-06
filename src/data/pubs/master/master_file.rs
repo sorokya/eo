@@ -96,7 +96,7 @@ mod tests {
 
     use super::{EOByte, EOShort, MasterFile, MasterRecord, PubRecord};
 
-    use crate::data::{pubs::MasterSkillRecord};
+    use crate::data::pubs::MasterSkillRecord;
 
     #[test]
     fn read_valid_emf() -> std::io::Result<()> {
@@ -133,7 +133,7 @@ mod tests {
         let mut buf = build_fake_emf(records).unwrap();
         emf.read(&mut buf)?;
 
-        assert_eq!(emf.records.len(), 1);
+        assert_eq!(emf.len(), 1);
         assert_eq!(emf.records[0].vendor_id, 1);
         assert_eq!(emf.records[0].name, "Aeven Skill Master");
         assert_eq!(emf.records[0].skills_length, 1);
