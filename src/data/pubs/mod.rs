@@ -14,3 +14,5 @@ mod drop;
 pub use drop::*;
 mod shop;
 pub use shop::*;
+mod master;
+pub use master::*;
