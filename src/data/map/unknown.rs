@@ -11,7 +11,6 @@ pub struct Unknown {
     pub unknown2: EOChar,
     pub unknown3: EOChar,
     pub unknown4: EOChar,
-    pub unknown5: EOChar,
 }
 
 impl Unknown {
@@ -27,7 +26,6 @@ impl Serializeable for Unknown {
         self.unknown2 = reader.get_char();
         self.unknown3 = reader.get_char();
         self.unknown4 = reader.get_char();
-        self.unknown5 = reader.get_char();
     }
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(UNKNOWN_SIZE);
@@ -35,7 +33,6 @@ impl Serializeable for Unknown {
         builder.add_char(self.unknown2);
         builder.add_char(self.unknown3);
         builder.add_char(self.unknown4);
-        builder.add_char(self.unknown5);
         builder.get()
     }
 }
