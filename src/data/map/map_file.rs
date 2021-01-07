@@ -183,15 +183,20 @@ impl MapFile {
         let signs_length = reader.get_char();
         self.signs = Vec::with_capacity(signs_length as usize);
         for _ in 0..signs_length {
+            if reader.remaining() <= 4 {
+                break;
+            }
             let mut sign = Sign::new();
             sign.x = reader.get_char();
             sign.y = reader.get_char();
             let text_length = reader.get_short() - 1;
-            let sign_text = decode_map_string(&mut reader.get_vec(text_length as usize));
-            let title_length = reader.get_char();
-            sign.title = sign_text.chars().take(title_length as usize).collect();
-            sign.message = sign_text.chars().skip(title_length as usize).collect();
-            self.signs.push(sign);
+            if reader.remaining() >= text_length as usize {
+                let sign_text = decode_map_string(&mut reader.get_vec(text_length as usize));
+                let title_length = reader.get_char();
+                sign.title = sign_text.chars().take(title_length as usize).collect();
+                sign.message = sign_text.chars().skip(title_length as usize).collect();
+                self.signs.push(sign);
+            }
         }
     }
 }
