@@ -2,8 +2,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::data::{
-    pubs::{inn::EID_DATA_SIZE, PubRecord},
-    {EOByte, EOChar, EOShort, StreamBuilder, StreamReader},
+    pubs::inn::EID_DATA_SIZE, EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader,
 };
 
 /// data structure of a single eid record
@@ -59,7 +58,7 @@ impl InnRecord {
     }
 }
 
-impl PubRecord for InnRecord {
+impl Serializeable for InnRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.id = reader.get_short();
         self.name = reader.get_prefix_string();

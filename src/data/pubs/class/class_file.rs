@@ -8,8 +8,7 @@ use std::io::{
 
 use crate::data::{
     pubs::class::ClassRecord,
-    pubs::PubRecord,
-    {EOByte, EOInt, EOShort, StreamReader},
+    {EOByte, EOInt, EOShort, Serializeable, StreamReader},
 };
 
 /// represents ecf files
@@ -94,7 +93,7 @@ impl ClassFile {
 
 #[cfg(test)]
 mod tests {
-    use super::{ClassFile, ClassRecord, EOByte, EOInt, PubRecord};
+    use super::{ClassFile, ClassRecord, EOByte, EOInt, Serializeable};
     use crate::data::encode_number;
     use std::io::{prelude::Write, Cursor};
 

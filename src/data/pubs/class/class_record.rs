@@ -2,8 +2,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::data::{
-    pubs::{class::ECF_DATA_SIZE, PubRecord},
-    *,
+    pubs::class::ECF_DATA_SIZE, EOByte, EOChar, EOInt, EOShort, Serializeable, StreamBuilder,
+    StreamReader,
 };
 
 /// data structure of a single ecf record
@@ -48,7 +48,7 @@ impl ClassRecord {
     }
 }
 
-impl PubRecord for ClassRecord {
+impl Serializeable for ClassRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.name = reader.get_prefix_string();
         self.base = reader.get_char();

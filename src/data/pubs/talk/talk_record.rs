@@ -2,8 +2,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::data::{
-    pubs::{talk::ETF_DATA_SIZE, PubRecord},
-    EOByte, EOChar, EOShort, StreamBuilder, StreamReader,
+    pubs::talk::ETF_DATA_SIZE, EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader,
 };
 
 /// data structure of a single etf record
@@ -27,7 +26,7 @@ impl TalkRecord {
     }
 }
 
-impl PubRecord for TalkRecord {
+impl Serializeable for TalkRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.id = reader.get_short();
         self.rate = reader.get_char();

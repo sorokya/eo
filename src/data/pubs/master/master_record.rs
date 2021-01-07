@@ -2,11 +2,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::data::{
-    pubs::{
-        master::{MasterSkillRecord, EMF_DATA_SIZE, EMF_SKILL_DATA_SIZE},
-        PubRecord,
-    },
-    {EOByte, EOShort, StreamBuilder, StreamReader},
+    pubs::master::{MasterSkillRecord, EMF_DATA_SIZE, EMF_SKILL_DATA_SIZE},
+    EOByte, EOShort, Serializeable, StreamBuilder, StreamReader,
 };
 
 /// data structure of a single emf record
@@ -30,7 +27,7 @@ impl MasterRecord {
     }
 }
 
-impl PubRecord for MasterRecord {
+impl Serializeable for MasterRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.vendor_id = reader.get_short();
         self.name = reader.get_prefix_string();
@@ -61,7 +58,7 @@ impl PubRecord for MasterRecord {
         builder.add_short(self.skills_length);
 
         for skill in &self.skills {
-            builder.append(&mut PubRecord::serialize(skill));
+            builder.append(&mut Serializeable::serialize(skill));
         }
 
         builder.get()

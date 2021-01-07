@@ -6,10 +6,7 @@ use std::io::{
     SeekFrom,
 };
 
-use crate::data::{
-    pubs::{item::ItemRecord, PubRecord},
-    {EOByte, EOInt, EOShort, StreamReader},
-};
+use crate::data::{pubs::item::ItemRecord, EOByte, EOInt, EOShort, Serializeable, StreamReader};
 
 /// represents eif files
 ///
@@ -124,7 +121,7 @@ impl ItemFile {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, EOInt, ItemFile, ItemRecord, PubRecord};
+    use super::{EOByte, EOInt, ItemFile, ItemRecord, Serializeable};
     use crate::data::encode_number;
     use std::io::{prelude::Write, Cursor};
 

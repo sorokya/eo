@@ -2,8 +2,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::data::{
-    pubs::{shop::ESF_TRADE_DATA_SIZE, PubRecord},
-    EOByte, EOChar, EOShort, EOThree, StreamBuilder, StreamReader,
+    pubs::shop::ESF_TRADE_DATA_SIZE, EOByte, EOChar, EOShort, EOThree, Serializeable,
+    StreamBuilder, StreamReader,
 };
 
 #[derive(Default, Debug)]
@@ -26,7 +26,7 @@ impl ShopTradeRecord {
     }
 }
 
-impl PubRecord for ShopTradeRecord {
+impl Serializeable for ShopTradeRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.item_id = reader.get_short();
         self.buy_price = reader.get_three();

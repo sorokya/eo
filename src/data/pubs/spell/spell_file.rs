@@ -6,11 +6,7 @@ use std::io::{
     SeekFrom,
 };
 
-use crate::data::{
-    pubs::spell::SpellRecord,
-    pubs::PubRecord,
-    {EOByte, EOInt, EOShort, StreamReader},
-};
+use crate::data::{pubs::spell::SpellRecord, EOByte, EOInt, EOShort, Serializeable, StreamReader};
 
 /// represents esf (spell) files
 ///
@@ -119,7 +115,7 @@ impl SpellFile {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, EOInt, PubRecord, SpellFile, SpellRecord};
+    use super::{EOByte, EOInt, Serializeable, SpellFile, SpellRecord};
     use crate::data::{
         encode_number,
         pubs::{SpellTargetRestrict, SpellTargetType, SpellType},

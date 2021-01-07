@@ -2,11 +2,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::data::{
-    pubs::{
-        drop::{DropRecord, EDF_DROP_DATA_SIZE, EDF_NPC_DATA_SIZE},
-        PubRecord,
-    },
-    {EOByte, EOShort, StreamBuilder, StreamReader},
+    pubs::drop::{DropRecord, EDF_DROP_DATA_SIZE, EDF_NPC_DATA_SIZE},
+    {EOByte, EOShort, Serializeable, StreamBuilder, StreamReader},
 };
 
 /// data structure of a single edf record
@@ -28,7 +25,7 @@ impl DropNPCRecord {
     }
 }
 
-impl PubRecord for DropNPCRecord {
+impl Serializeable for DropNPCRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.npc_id = reader.get_short();
         self.length = reader.get_short();
@@ -47,7 +44,7 @@ impl PubRecord for DropNPCRecord {
         builder.add_short(self.npc_id);
         builder.add_short(self.length);
         for drop in &self.drops {
-            builder.append(&mut PubRecord::serialize(drop));
+            builder.append(&mut Serializeable::serialize(drop));
         }
         builder.get()
     }

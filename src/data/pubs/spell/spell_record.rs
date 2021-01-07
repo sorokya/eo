@@ -5,8 +5,7 @@ use num_traits::FromPrimitive;
 
 use crate::data::{
     pubs::spell::{SpellTargetRestrict, SpellTargetType, SpellType, ESF_DATA_SIZE},
-    pubs::PubRecord,
-    {EOByte, EOChar, EOInt, EOShort, EOThree, StreamBuilder, StreamReader},
+    EOByte, EOChar, EOInt, EOShort, EOThree, Serializeable, StreamBuilder, StreamReader,
 };
 
 /// data structure of a single esf record
@@ -64,7 +63,7 @@ impl SpellRecord {
     }
 }
 
-impl PubRecord for SpellRecord {
+impl Serializeable for SpellRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         let name_length = reader.get_char();
         let shout_length = reader.get_char();

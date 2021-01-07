@@ -2,8 +2,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::data::{
-    pubs::{drop::EDF_DROP_DATA_SIZE, PubRecord},
-    EOByte, EOShort, EOThree, StreamBuilder, StreamReader,
+    pubs::drop::EDF_DROP_DATA_SIZE, EOByte, EOShort, EOThree, Serializeable, StreamBuilder,
+    StreamReader,
 };
 
 /// data structure of a single eid record
@@ -27,7 +27,7 @@ impl DropRecord {
     }
 }
 
-impl PubRecord for DropRecord {
+impl Serializeable for DropRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.item_id = reader.get_short();
         self.min_amount = reader.get_three();

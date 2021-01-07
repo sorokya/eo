@@ -143,6 +143,12 @@ impl<'a> StreamReader<'a> {
     pub fn seek(&mut self, length: usize) {
         self.position += length;
     }
+    /// returns a Vec<EOByte> of the desired length
+    pub fn get_vec(&mut self, length: usize) -> Vec<EOByte> {
+        let buf = &self.data[self.position..cmp::min(self.length(), self.position + length)];
+        self.position += length;
+        buf.to_vec()
+    }
 }
 
 #[cfg(test)]
@@ -258,5 +264,27 @@ mod tests {
 
         let reader = StreamReader::new(&[255, 255, 255]);
         assert_eq!(reader.length(), 3);
+    }
+    #[test]
+    fn seek() {
+        let mut reader = StreamReader::new(&[1, 2]);
+        assert_eq!(reader.position, 0);
+        reader.seek(2);
+        assert_eq!(reader.position, 2);
+    }
+    #[test]
+    fn eof() {
+        let mut reader = StreamReader::new(&[1]);
+        assert_eq!(reader.eof(), false);
+        reader.get_byte();
+        assert_eq!(reader.eof(), true);
+    }
+    #[test]
+    fn get_vec() {
+        let mut reader = StreamReader::new(&[1, 2, 3, 4, 5]);
+        let buf = reader.get_vec(3);
+        assert_eq!(buf, vec![1, 2, 3]);
+        let buf = reader.get_vec(2);
+        assert_eq!(buf, vec![4, 5]);
     }
 }

@@ -6,10 +6,7 @@ use std::io::{
     SeekFrom,
 };
 
-use crate::data::{
-    pubs::{PubRecord, ShopRecord},
-    {EOByte, EOShort, StreamReader},
-};
+use crate::data::{pubs::ShopRecord, EOByte, EOShort, Serializeable, StreamReader};
 
 /// represents esf (shop) files
 ///
@@ -97,7 +94,7 @@ impl ShopFile {
 mod tests {
     use std::io::{prelude::Write, Cursor};
 
-    use super::{EOByte, EOShort, PubRecord, ShopFile, ShopRecord};
+    use super::{EOByte, EOShort, Serializeable, ShopFile, ShopRecord};
 
     use crate::data::{
         pubs::{ShopCraftRecord, ShopTradeRecord},

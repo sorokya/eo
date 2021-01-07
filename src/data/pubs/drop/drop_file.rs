@@ -7,8 +7,8 @@ use std::io::{
 };
 
 use crate::data::{
-    pubs::{DropNPCRecord, PubRecord},
-    {EOByte, EOShort, StreamReader},
+    pubs::DropNPCRecord,
+    {EOByte, EOShort, Serializeable, StreamReader},
 };
 
 /// represents edf files
@@ -81,7 +81,7 @@ impl DropFile {
 mod tests {
     use std::io::{prelude::Write, Cursor};
 
-    use super::{DropFile, DropNPCRecord, EOByte, EOShort, PubRecord};
+    use super::{DropFile, DropNPCRecord, EOByte, EOShort, Serializeable};
     use crate::data::pubs::DropRecord;
 
     #[test]

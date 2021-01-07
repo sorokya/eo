@@ -5,8 +5,7 @@ use num_traits::FromPrimitive;
 
 use crate::data::{
     pubs::item::{ItemSize, ItemSpecial, ItemSubType, ItemType, EIF_DATA_SIZE},
-    pubs::PubRecord,
-    {EOByte, EOChar, EOInt, EOShort, EOThree, StreamBuilder, StreamReader},
+    EOByte, EOChar, EOInt, EOShort, EOThree, Serializeable, StreamBuilder, StreamReader,
 };
 
 /// data structure of a single eif record
@@ -133,7 +132,7 @@ impl ItemRecord {
     }
 }
 
-impl PubRecord for ItemRecord {
+impl Serializeable for ItemRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.name = reader.get_prefix_string();
         self.graphic_id = reader.get_short();

@@ -2,8 +2,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::data::{
-    pubs::{master::EMF_SKILL_DATA_SIZE, PubRecord},
-    EOByte, EOChar, EOInt, EOShort, StreamBuilder, StreamReader,
+    pubs::master::EMF_SKILL_DATA_SIZE, EOByte, EOChar, EOInt, EOShort, Serializeable,
+    StreamBuilder, StreamReader,
 };
 
 #[derive(Default, Debug)]
@@ -46,7 +46,7 @@ impl MasterSkillRecord {
     }
 }
 
-impl PubRecord for MasterSkillRecord {
+impl Serializeable for MasterSkillRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.skill_id = reader.get_short();
         self.level_req = reader.get_char();

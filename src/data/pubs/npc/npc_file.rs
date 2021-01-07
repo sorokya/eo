@@ -6,10 +6,7 @@ use std::io::{
     SeekFrom,
 };
 
-use crate::data::{
-    pubs::{npc::NPCRecord, PubRecord},
-    {EOByte, EOInt, EOShort, StreamReader},
-};
+use crate::data::{pubs::npc::NPCRecord, EOByte, EOInt, EOShort, Serializeable, StreamReader};
 
 /// represents enf files
 ///
@@ -105,7 +102,7 @@ impl NPCFile {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, EOInt, NPCFile, NPCRecord, PubRecord};
+    use super::{EOByte, EOInt, NPCFile, NPCRecord, Serializeable};
     use crate::data::{encode_number, pubs::NPCType};
     use std::io::{prelude::Write, Cursor};
 

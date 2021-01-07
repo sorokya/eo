@@ -6,11 +6,7 @@ use std::io::{
     SeekFrom,
 };
 
-use crate::data::{
-    pubs::inn::InnRecord,
-    pubs::PubRecord,
-    {EOByte, EOShort, StreamReader},
-};
+use crate::data::{pubs::inn::InnRecord, EOByte, EOShort, Serializeable, StreamReader};
 
 /// represents eid files
 ///
@@ -90,7 +86,7 @@ impl InnFile {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InnFile, InnRecord, PubRecord};
+    use super::{EOByte, InnFile, InnRecord, Serializeable};
     use std::io::{prelude::Write, Cursor};
 
     #[test]

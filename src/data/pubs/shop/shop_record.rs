@@ -2,14 +2,10 @@
 use serde::{Deserialize, Serialize};
 
 use crate::data::{
-    pubs::{
-        shop::{
-            ShopCraftRecord, ShopTradeRecord, ESF_CRAFT_DATA_SIZE, ESF_DATA_SIZE,
-            ESF_TRADE_DATA_SIZE,
-        },
-        PubRecord,
+    pubs::shop::{
+        ShopCraftRecord, ShopTradeRecord, ESF_CRAFT_DATA_SIZE, ESF_DATA_SIZE, ESF_TRADE_DATA_SIZE,
     },
-    {EOByte, EOChar, EOShort, StreamBuilder, StreamReader},
+    EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader,
 };
 
 /// data structure of a single edf record
@@ -37,7 +33,7 @@ impl ShopRecord {
     }
 }
 
-impl PubRecord for ShopRecord {
+impl Serializeable for ShopRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.vendor_id = reader.get_short();
         self.name = reader.get_prefix_string();
@@ -79,11 +75,11 @@ impl PubRecord for ShopRecord {
         builder.add_char(self.crafts_length);
 
         for trade in &self.trades {
-            builder.append(&mut PubRecord::serialize(trade));
+            builder.append(&mut Serializeable::serialize(trade));
         }
 
         for craft in &self.crafts {
-            builder.append(&mut PubRecord::serialize(craft));
+            builder.append(&mut Serializeable::serialize(craft));
         }
 
         builder.get()

@@ -6,10 +6,7 @@ use std::io::{
     SeekFrom,
 };
 
-use crate::data::{
-    pubs::{talk::TalkRecord, PubRecord},
-    EOByte, EOShort, StreamReader,
-};
+use crate::data::{pubs::talk::TalkRecord, EOByte, EOShort, Serializeable, StreamReader};
 
 /// represents etf (npc talk) files
 ///
@@ -79,7 +76,7 @@ impl TalkFile {
 mod tests {
     use std::io::{prelude::Write, Cursor};
 
-    use super::{EOByte, PubRecord, TalkFile, TalkRecord};
+    use super::{EOByte, Serializeable, TalkFile, TalkRecord};
     use crate::data::EOChar;
 
     #[test]

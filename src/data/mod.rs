@@ -201,6 +201,10 @@ pub use stream_builder::StreamBuilder;
 mod stream_reader;
 pub use stream_reader::StreamReader;
 
+mod serializeable;
+pub use serializeable::Serializeable;
+
+pub mod map;
 /// contains data structures and enums for pub files
 pub mod pubs;
 

@@ -5,8 +5,7 @@ use num_traits::FromPrimitive;
 
 use crate::data::{
     pubs::npc::{NPCType, ENF_DATA_SIZE},
-    pubs::PubRecord,
-    {EOByte, EOInt, EOShort, EOThree, StreamBuilder, StreamReader},
+    EOByte, EOInt, EOShort, EOThree, Serializeable, StreamBuilder, StreamReader,
 };
 
 /// data structure of a single enf record
@@ -59,7 +58,7 @@ impl NPCRecord {
     }
 }
 
-impl PubRecord for NPCRecord {
+impl Serializeable for NPCRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.name = reader.get_prefix_string();
         self.graphic_id = reader.get_short();

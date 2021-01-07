@@ -6,10 +6,7 @@ use std::io::{
     SeekFrom,
 };
 
-use crate::data::{
-    pubs::{MasterRecord, PubRecord},
-    {EOByte, EOShort, StreamReader},
-};
+use crate::data::{pubs::MasterRecord, EOByte, EOShort, Serializeable, StreamReader};
 
 /// represents emf (skill master) files
 ///
@@ -94,7 +91,7 @@ impl MasterFile {
 mod tests {
     use std::io::{prelude::Write, Cursor};
 
-    use super::{EOByte, EOShort, MasterFile, MasterRecord, PubRecord};
+    use super::{EOByte, EOShort, MasterFile, MasterRecord, Serializeable};
 
     use crate::data::pubs::MasterSkillRecord;
 
