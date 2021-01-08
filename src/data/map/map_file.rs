@@ -10,7 +10,7 @@ use std::io::{
 
 use super::{
     decode_map_string, ChestSpawn, GfxRow, MapEffect, MapType, NPCSpawn, Sign, TileRow, Unknown,
-    WarpRow, NUMBER_OF_GFX_LAYERS,
+    WarpRow, MAP_NAME_LENGTH, NUMBER_OF_GFX_LAYERS,
 };
 use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamReader};
 
@@ -158,7 +158,7 @@ impl MapFile {
         let mut reader = StreamReader::new(&data_buf);
         reader.seek(3);
         self.revision = reader.get_int();
-        self.name = decode_map_string(&mut reader.get_vec(24));
+        self.name = decode_map_string(&mut reader.get_vec(MAP_NAME_LENGTH));
         let map_type_char = reader.get_char();
         self.map_type = match MapType::from_u8(map_type_char) {
             Some(map_type) => map_type,

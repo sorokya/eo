@@ -1,3 +1,4 @@
+const MAP_NAME_LENGTH: usize = 24;
 const NUMBER_OF_GFX_LAYERS: usize = 9;
 const NPC_SPAWN_SIZE: usize = 8;
 const CHEST_SPAWN_SIZE: usize = 12;
