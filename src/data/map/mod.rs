@@ -1,6 +1,7 @@
 const NPC_SPAWN_SIZE: usize = 8;
 const CHEST_SPAWN_SIZE: usize = 12;
 const UNKNOWN_SIZE: usize = 4;
+const WARP_SIZE: usize = 8;
 
 mod chest_spawn;
 pub use chest_spawn::ChestSpawn;

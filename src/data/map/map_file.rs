@@ -151,12 +151,7 @@ impl MapFile {
             let mut warp_row = WarpRow::new(y, inner_length as usize);
             for _ in 0..inner_length {
                 let mut warp = Warp::new();
-                warp.x = reader.get_char();
-                warp.warp_map = reader.get_short();
-                warp.warp_x = reader.get_char();
-                warp.warp_y = reader.get_char();
-                warp.level_req = reader.get_char();
-                warp.door = reader.get_short() == 1;
+                warp.deserialize(reader);
                 warp_row.tiles.push(warp);
             }
             self.warp_rows.push(warp_row);
