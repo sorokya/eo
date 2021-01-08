@@ -35,7 +35,7 @@ use crate::data::{
 ///     charisma (2 bytes)
 /// }
 ///```
-/// RID is the files "revision" number. It's used to signal the client
+/// RID is the file's "revision" number. It's used to signal the client
 /// that a new version is available and needs to be downloaded.
 #[derive(Debug, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
