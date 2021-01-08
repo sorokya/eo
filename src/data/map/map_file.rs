@@ -9,8 +9,8 @@ use std::io::{
 };
 
 use super::{
-    ChestSpawn, Gfx, GfxRow, MapEffect, MapType, NPCSpawn, Sign, Tile, TileRow, TileSpec, Unknown,
-    Warp, WarpRow,
+    decode_map_string, ChestSpawn, GfxRow, MapEffect, MapType, NPCSpawn, Sign, TileRow, Unknown,
+    WarpRow, NUMBER_OF_GFX_LAYERS,
 };
 use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamReader};
 
@@ -37,7 +37,7 @@ pub struct MapFile {
     pub tile_rows: Vec<TileRow>,
     pub warp_rows: Vec<WarpRow>,
     pub signs: Vec<Sign>,
-    pub gfx_rows: [Vec<GfxRow>; 9],
+    pub gfx_rows: [Vec<GfxRow>; NUMBER_OF_GFX_LAYERS],
 }
 
 impl MapFile {
@@ -81,7 +81,7 @@ impl MapFile {
         self.read_chest_spawns(&mut reader);
         self.read_tiles(&mut reader);
         self.read_warps(&mut reader);
-        for layer in 0..9 {
+        for layer in 0..NUMBER_OF_GFX_LAYERS {
             if !reader.eof() {
                 self.read_gfx_layer(layer, &mut reader);
             }
@@ -126,18 +126,8 @@ impl MapFile {
         let outer_length = reader.get_char();
         self.tile_rows = Vec::with_capacity(outer_length as usize);
         for _ in 0..outer_length {
-            let y = reader.get_char();
-            let inner_length = reader.get_char();
-            let mut tile_row = TileRow::new(y, inner_length as usize);
-            for _ in 0..inner_length {
-                let x = reader.get_char();
-                let spec_char = reader.get_char();
-                let spec = match TileSpec::from_u8(spec_char) {
-                    Some(spec) => spec,
-                    None => panic!("Failed to convert char to TileSpec: {}", spec_char),
-                };
-                tile_row.tiles.push(Tile::new(x, spec));
-            }
+            let mut tile_row = TileRow::new();
+            tile_row.deserialize(reader);
             self.tile_rows.push(tile_row);
         }
     }
@@ -146,14 +136,8 @@ impl MapFile {
         let outer_length = reader.get_char();
         self.warp_rows = Vec::with_capacity(outer_length as usize);
         for _ in 0..outer_length {
-            let y = reader.get_char();
-            let inner_length = reader.get_char();
-            let mut warp_row = WarpRow::new(y, inner_length as usize);
-            for _ in 0..inner_length {
-                let mut warp = Warp::new();
-                warp.deserialize(reader);
-                warp_row.tiles.push(warp);
-            }
+            let mut warp_row = WarpRow::new();
+            warp_row.deserialize(reader);
             self.warp_rows.push(warp_row);
         }
     }
@@ -162,14 +146,8 @@ impl MapFile {
         let outer_length = reader.get_char();
         self.gfx_rows[layer] = Vec::with_capacity(outer_length as usize);
         for _ in 0..outer_length {
-            let y = reader.get_char();
-            let inner_length = reader.get_char();
-            let mut gfx_row = GfxRow::new(y, inner_length as usize);
-            for _ in 0..inner_length {
-                let y = reader.get_char();
-                let tile = reader.get_short();
-                gfx_row.tiles.push(Gfx::new(y, tile));
-            }
+            let mut gfx_row = GfxRow::new();
+            gfx_row.deserialize(reader);
             self.gfx_rows[layer].push(gfx_row);
         }
     }
@@ -182,66 +160,8 @@ impl MapFile {
                 break;
             }
             let mut sign = Sign::new();
-            sign.x = reader.get_char();
-            sign.y = reader.get_char();
-            let text_length = reader.get_short() - 1;
-            if reader.remaining() >= text_length as usize {
-                let sign_text = decode_map_string(&mut reader.get_vec(text_length as usize));
-                let title_length = reader.get_char();
-                sign.title = sign_text.chars().take(title_length as usize).collect();
-                sign.message = sign_text.chars().skip(title_length as usize).collect();
-                self.signs.push(sign);
-            }
+            sign.deserialize(reader);
+            self.signs.push(sign);
         }
     }
-}
-
-fn encode_map_string(s: &str) -> Vec<EOByte> {
-    let mut buf = s.as_bytes().to_vec();
-    let mut flippy = buf.len() % 2 == 1;
-    for i in 0..buf.len() {
-        let mut c = buf[i];
-        if flippy {
-            if (0x22..=0x4F).contains(&c) {
-                c = 0x71 - c;
-            } else if (0x50..=0x7E).contains(&c) {
-                c = 0xCD - c;
-            }
-        } else if (0x22..=0x7E).contains(&c) {
-            c = 0x9F - c;
-        }
-        buf[i] = c;
-        flippy = !flippy;
-    }
-    buf.reverse();
-
-    buf
-}
-
-fn decode_map_string(buf: &mut [EOByte]) -> String {
-    buf.reverse();
-
-    let mut chars: Vec<EOByte> = vec![0xFF; buf.len()];
-    let mut flippy = buf.len() % 2 == 1;
-    for i in 0..buf.len() {
-        let mut c = buf[i];
-        if c == 0xFF {
-            chars.truncate(i);
-            break;
-        }
-
-        if flippy {
-            if (0x22..=0x4F).contains(&c) {
-                c = 0x71 - c;
-            } else if (0x50..=0x7E).contains(&c) {
-                c = 0xCD - c;
-            }
-        } else if (0x22..=0x7E).contains(&c) {
-            c = 0x9F - c;
-        }
-        chars[i] = c;
-        flippy = !flippy;
-    }
-
-    String::from_utf8(chars).expect("Failed to convert byte array to string")
 }
