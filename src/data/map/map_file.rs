@@ -14,6 +14,110 @@ use super::{
 };
 use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamReader};
 
+/// represents emf (map) files
+///
+/// The map file contains all of the properties, tiles, npcs, signs, and
+/// chest spawns associated with a single map in the game world.
+///
+/// The file layout is:
+///```text
+/// "EMF" (fixed string)
+/// RID (4 bytes)
+/// name (fixed string 24 bytes long)
+/// type (1 byte)
+/// effect (1 byte)
+/// music_id (1 byte)
+/// music_extra (1 byte)
+/// ambient_sound_id (2 bytes)
+/// width (1 byte)
+/// height (1 byte)
+/// fill_tile (2 bytes)
+/// map_available (1 byte)
+/// can_scroll (1 byte)
+/// relog_x (1 byte)
+/// relog_y (1 byte)
+/// unknown (1 byte)
+/// npc_spawns_length (1 byte)
+/// NPCSpawn*npc_spawns_length
+/// {
+///     x (1 byte)
+///     y (1 byte)
+///     id (2 bytes)
+///     type (1 byte)
+///     time (2 bytes)
+///     amount (1 byte)
+/// }
+/// unknowns_length (1 byte)
+/// Unknown*unknowns_length
+/// {
+///     unknown (1 byte)
+///     unknown (1 byte)
+///     unknown (1 byte)
+///     unknown (1 byte)
+/// }
+/// chest_spawns_length (1 byte)
+/// ChestSpawn*chest_spawns_length
+/// {
+///     x (1 byte)
+///     y (1 byte)
+///     key (2 bytes)
+///     slot (1 byte)
+///     item_id (2 bytes)
+///     respawn_time (2 bytes)
+///     amount (3 bytes)
+/// }
+/// tiles_outer_length (1 byte)
+/// TileRow*tiles_outer_length
+/// {
+///     y (1 byte)
+///     tiles_inner_length (1 byte)
+///     Tile*tiles_inner_length
+///     {
+///         x (1 byte)
+///         tile_spec (1 byte)
+///     }
+/// }
+/// warps_outer_length (1 byte)
+/// WarpRow*warps_outer_length
+/// {
+///     y (1 byte)
+///     warps_inner_length (1 byte)
+///     Warp*warps_inner_length
+///     {
+///         x (1 byte)
+///         warp_map (2 bytes)
+///         warp_x (1 byte)
+///         warp_y (1 byte)
+///         level_req (1 byte)
+///         door (2 bytes)
+///     }
+/// }
+/// GfxLayer*9
+/// {
+///     gfx_outer_length (1 byte)
+///     GfxRow*gfx_outer_length
+///     {
+///         y (1 byte)
+///         gfx_inner_length (1 byte)
+///         Gfx*gfx_inner_length
+///         {
+///             x (1 byte)
+///             tile (1 byte)
+///         }
+///     }
+/// }
+/// signs_length (1 byte)
+/// Sign*signs_length
+/// {
+///     x (1 byte)
+///     y (1 byte)
+///     text_length (2 bytes)
+///     text (fixed string with above length - 1)
+///     title_length (1 byte)
+/// }
+///```
+/// RID is the file's "revision" number. It's used to signal the client
+/// that a new version is available and needs to be downloaded.
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct MapFile {
@@ -36,8 +140,8 @@ pub struct MapFile {
     pub chest_spawns: Vec<ChestSpawn>,
     pub tile_rows: Vec<TileRow>,
     pub warp_rows: Vec<WarpRow>,
-    pub signs: Vec<Sign>,
     pub gfx_rows: [Vec<GfxRow>; NUMBER_OF_GFX_LAYERS],
+    pub signs: Vec<Sign>,
 }
 
 impl MapFile {
