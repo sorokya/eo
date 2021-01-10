@@ -86,7 +86,7 @@ mod tests {
         let mut records: Vec<TalkRecord> = Vec::with_capacity(1);
         {
             let mut record = TalkRecord::new();
-            record.id = 1;
+            record.npc_id = 1;
             record.rate = 10;
             record.messages = Vec::with_capacity(2);
             record.messages.push("Hello".to_string());
@@ -99,7 +99,7 @@ mod tests {
         etf.read(&mut buf)?;
 
         assert_eq!(etf.len(), 1);
-        assert_eq!(etf.records[0].id, 1);
+        assert_eq!(etf.records[0].npc_id, 1);
         assert_eq!(etf.records[0].rate, 10);
         assert_eq!(etf.records[0].messages_length, 2);
         assert_eq!(etf.records[0].messages[0], "Hello");

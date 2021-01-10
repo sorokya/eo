@@ -10,7 +10,7 @@ use crate::data::{
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct TalkRecord {
     /// linked to npc id
-    pub id: EOShort,
+    pub npc_id: EOShort,
     /// rate at which messages are spoken
     pub rate: EOChar,
     /// number of messages for the npc
@@ -28,7 +28,7 @@ impl TalkRecord {
 
 impl Serializeable for TalkRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
-        self.id = reader.get_short();
+        self.npc_id = reader.get_short();
         self.rate = reader.get_char();
         self.messages_length = reader.get_char();
         self.messages = Vec::with_capacity(self.messages_length as usize);
@@ -47,7 +47,7 @@ impl Serializeable for TalkRecord {
                     .sum::<usize>() as usize,
         );
 
-        builder.add_short(self.id);
+        builder.add_short(self.npc_id);
         builder.add_char(self.rate);
         builder.add_char(self.messages_length);
 
