@@ -97,6 +97,7 @@ mod tests {
         {
             let mut record = InnRecord::new();
             record.name = "Wanderer".to_string();
+            record.vendor_id = 0;
             record.spawn_map = 173;
             record.spawn_x = 8;
             record.spawn_y = 8;
@@ -106,6 +107,7 @@ mod tests {
         {
             let mut record = InnRecord::new();
             record.name = "Aeven".to_string();
+            record.vendor_id = 1;
             record.spawn_map = 5;
             record.spawn_x = 50;
             record.spawn_y = 50;
@@ -122,10 +124,12 @@ mod tests {
         eid.read(&mut buf)?;
 
         assert_eq!(eid.records.len(), 2);
+        assert_eq!(eid.records[0].vendor_id, 0);
         assert_eq!(eid.records[0].name, "Wanderer");
         assert_eq!(eid.records[0].spawn_map, 173);
         assert_eq!(eid.records[0].spawn_x, 8);
         assert_eq!(eid.records[0].spawn_y, 8);
+        assert_eq!(eid.records[1].vendor_id, 1);
         assert_eq!(eid.records[1].name, "Aeven");
         assert_eq!(eid.records[1].spawn_map, 5);
         assert_eq!(eid.records[1].spawn_x, 50);

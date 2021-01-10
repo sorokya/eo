@@ -10,7 +10,7 @@ use crate::data::{
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct InnRecord {
     /// links to the vendor_id of the inn keeper npc
-    pub id: EOShort,
+    pub vendor_id: EOShort,
     /// name of the home
     pub name: String,
     /// default respawn map id
@@ -60,7 +60,7 @@ impl InnRecord {
 
 impl Serializeable for InnRecord {
     fn deserialize(&mut self, reader: &mut StreamReader) {
-        self.id = reader.get_short();
+        self.vendor_id = reader.get_short();
         self.name = reader.get_prefix_string();
         self.spawn_map = reader.get_short();
         self.spawn_x = reader.get_char();
@@ -92,7 +92,7 @@ impl Serializeable for InnRecord {
                 + 7,
         );
 
-        builder.add_short(self.id);
+        builder.add_short(self.vendor_id);
         builder.add_prefix_string(&self.name);
         builder.add_short(self.spawn_map);
         builder.add_char(self.spawn_x);
