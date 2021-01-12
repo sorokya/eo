@@ -12,6 +12,7 @@ pub enum ItemSubType {
     Arrows = 2,
     Wings = 3,
     TwoHanded = 4,
+    Unknown1 = 5,
 }
 
 impl Default for ItemSubType {
