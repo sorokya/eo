@@ -6,7 +6,7 @@
 extern crate enum_primitive_derive;
 extern crate num_traits;
 
-#[cfg(feature = "use_serde")]
+#[cfg(feature = "serde")]
 extern crate serde;
 
 /// character related data structures
