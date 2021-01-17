@@ -22,7 +22,7 @@ use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamReader};
 /// The file layout is:
 ///```text
 /// "EMF" (fixed string)
-/// RID (4 bytes)
+/// hash (4 bytes)
 /// name (fixed string 24 bytes long)
 /// type (1 byte)
 /// effect (1 byte)
@@ -116,12 +116,10 @@ use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamReader};
 ///     title_length (1 byte)
 /// }
 ///```
-/// RID is the file's "revision" number. It's used to signal the client
-/// that a new version is available and needs to be downloaded.
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct MapFile {
-    pub revision: EOInt,
+    pub hash: EOInt,
     pub name: String,
     pub map_type: MapType,
     pub effect: MapEffect,
@@ -157,7 +155,7 @@ impl MapFile {
         buf.read_to_end(&mut data_buf)?;
         let mut reader = StreamReader::new(&data_buf);
         reader.seek(3);
-        self.revision = reader.get_int();
+        self.hash = reader.get_int();
         self.name = decode_map_string(&mut reader.get_vec(MAP_NAME_LENGTH));
         let map_type_char = reader.get_char();
         self.map_type = match MapType::from_u8(map_type_char) {

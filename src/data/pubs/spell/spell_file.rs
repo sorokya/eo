@@ -17,7 +17,7 @@ use crate::data::{pubs::spell::SpellRecord, EOByte, EOInt, EOShort, Serializeabl
 /// The file layout is:
 ///```text
 /// "ESF" (fixed string)
-/// RID (4 bytes)
+/// hash (4 bytes)
 /// Length (2 bytes)
 /// Record*Length
 /// {
@@ -57,12 +57,10 @@ use crate::data::{pubs::spell::SpellRecord, EOByte, EOInt, EOShort, Serializeabl
 ///     unknown (2 bytes)
 /// }
 ///```
-/// RID is the file's "revision" number. It's used to signal the client
-/// that a new version is available and needs to be downloaded.
 #[derive(Debug, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct SpellFile {
-    pub revision: EOInt,
+    pub hash: EOInt,
     length: usize,
     pub records: Vec<SpellRecord>,
 }
@@ -71,7 +69,7 @@ impl SpellFile {
     /// creates a new SpellFile with no records
     pub fn new() -> Self {
         Self {
-            revision: 0,
+            hash: 0,
             length: 0,
             records: Vec::default(),
         }
@@ -91,7 +89,7 @@ impl SpellFile {
         buf.read_to_end(&mut data_buf)?;
         let mut reader = StreamReader::new(&data_buf);
         reader.seek(3);
-        self.revision = reader.get_int();
+        self.hash = reader.get_int();
         self.length = reader.get_short() as usize;
         reader.get_char();
         self.records = Vec::with_capacity(self.length);
