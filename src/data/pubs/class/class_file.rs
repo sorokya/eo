@@ -45,6 +45,12 @@ pub struct ClassFile {
 
 impl ClassFile {
     /// creates a new ClassFile with no records
+    ///
+    /// # Examples
+    /// ```
+    /// use eo::data::pubs::ClassFile;
+    /// let mut class_file = ClassFile::new();
+    /// ```
     pub fn new() -> Self {
         Self {
             hash: 0,
@@ -53,14 +59,41 @@ impl ClassFile {
         }
     }
     /// returns the number of records in the ClassFile
+    ///
+    /// # Examples
+    /// ```
+    /// use eo::data::pubs::{ClassFile, ClassRecord};
+    /// let mut class_file = ClassFile::new();
+    /// class_file.records.push(ClassRecord::new(1));
+    /// class_file.records.push(ClassRecord::new(2));
+    /// assert_eq!(class_file.len(), 2);
+    /// ```
     pub fn len(&self) -> EOShort {
         self.records.len() as EOShort
     }
-    /// returns True if the ClassFile contains no records
+    /// returns `true` if the ClassFile contains no records
+    /// # Examples
+    /// ```
+    /// use eo::data::pubs::ClassFile;
+    /// let mut class_file = ClassFile::new();
+    /// assert_eq!(class_file.is_empty(), true);
+    /// ```
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
     /// reads the content of a [Read]+[Seek] implemented struct into the ClassFile
+    ///
+    /// # Examples
+    /// ```
+    /// use std::fs::File;
+    /// use eo::data::pubs::ClassFile;
+    ///
+    /// fn load_class_from_file(file: &mut File) -> std::io::Result<ClassFile> {
+    ///     let mut class_file = ClassFile::new();
+    ///     class_file.read(file)?;
+    ///     Ok(class_file)
+    /// }
+    /// ```
     pub fn read<R: Read + Seek>(&mut self, buf: &mut R) -> std::io::Result<()> {
         let mut data_buf: Vec<EOByte> = Vec::new();
         buf.seek(SeekFrom::Start(0))?;
