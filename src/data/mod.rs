@@ -204,8 +204,9 @@ pub use stream_reader::StreamReader;
 mod serializeable;
 pub use serializeable::Serializeable;
 
+/// provides structs and enums for reading and writing map files
 pub mod map;
-/// contains data structures and enums for pub files
+/// provides structs and enums for reading and writing pub files
 pub mod pubs;
 
 #[cfg(test)]

@@ -6,6 +6,7 @@ use crate::data::{
     StreamReader,
 };
 
+/// data structure of an item a shop can craft
 #[derive(Default, Debug)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ShopCraftRecord {
