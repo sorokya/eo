@@ -40,6 +40,14 @@ pub struct ClassRecord {
 
 impl ClassRecord {
     /// creates a new record with the given id
+    ///
+    /// # Examples
+    /// ```
+    /// use eo::data::pubs::ClassRecord;
+    ///
+    /// let record = ClassRecord::new(1);
+    /// assert_eq!(record.id, 1);
+    /// ```
     pub fn new(id: EOInt) -> Self {
         Self {
             id,
@@ -49,6 +57,22 @@ impl ClassRecord {
 }
 
 impl Serializeable for ClassRecord {
+    /// deserializes data from a [StreamReader] into [ClassRecord]
+    ///
+    /// # Examples
+    /// ```
+    /// use eo::data::{EOByte, pubs::ClassRecord, Serializeable, StreamReader};
+    /// let buf: Vec<EOByte> = vec![
+    ///     0x08, 0x57, 0x61, 0x72, 0x72, 0x69, 0x6F, 0x72, 0x01, 0x01, 0x03, 0xFE, 0x01, 0xFE,
+    ///     0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE,
+    /// ];
+    ///
+    /// let mut reader = StreamReader::new(&buf);
+    /// let mut record = ClassRecord::new(1);
+    /// record.deserialize(&mut reader);
+    /// assert_eq!(record.name, "Warrior");
+    /// assert_eq!(record.strength, 2);
+    /// ```
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.name = reader.get_prefix_string();
         self.base = reader.get_char();
@@ -60,6 +84,21 @@ impl Serializeable for ClassRecord {
         self.constitution = reader.get_short();
         self.charisma = reader.get_short();
     }
+    /// serializes data from a [ClassRecord] into a [Vec]
+    ///
+    /// # Examples
+    /// ```
+    /// use eo::data::{EOByte, pubs::ClassRecord, Serializeable};
+    ///
+    /// let mut record = ClassRecord::new(1);
+    /// record.name = "Warrior".to_string();
+    ///
+    /// let buf = record.serialize();
+    /// assert_eq!(buf, [
+    ///     0x08, 0x57, 0x61, 0x72, 0x72, 0x69, 0x6F, 0x72, 0x01, 0x01, 0x01, 0xFE, 0x01, 0xFE,
+    ///     0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE,
+    /// ]);
+    /// ```
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(ECF_DATA_SIZE + self.name.len() + 1);
         builder.add_prefix_string(&self.name);
