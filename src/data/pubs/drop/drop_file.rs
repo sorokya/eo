@@ -35,25 +35,59 @@ use crate::data::{
 #[derive(Debug, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct DropFile {
+    /// collection of [DropNPCRecord]s
     pub records: Vec<DropNPCRecord>,
 }
 
 impl DropFile {
     /// creates a new DropFile with no records
+    ///
+    /// # Examples
+    /// ```
+    /// use eo::data::pubs::DropFile;
+    /// let mut drop_file = DropFile::new();
+    /// ```
     pub fn new() -> Self {
         Self {
             records: Vec::default(),
         }
     }
     /// returns the number of records in the DropFile
+    ///
+    /// # Examples
+    /// ```
+    /// use eo::data::pubs::{DropFile, DropNPCRecord};
+    /// let mut drop_file = DropFile::new();
+    /// drop_file.records.push(DropNPCRecord::new());
+    /// drop_file.records.push(DropNPCRecord::new());
+    /// assert_eq!(drop_file.len(), 2);
+    /// ```
     pub fn len(&self) -> EOShort {
         self.records.len() as EOShort
     }
-    /// returns True if the DropFile contains no records
+    /// returns `true` if the DropFile contains no records
+    /// # Examples
+    /// ```
+    /// use eo::data::pubs::DropFile;
+    /// let mut drop_file = DropFile::new();
+    /// assert_eq!(drop_file.is_empty(), true);
+    /// ```
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
     /// reads the content of a [Read]+[Seek] implemented struct into the DropFile
+    ///
+    /// # Examples
+    /// ```
+    /// use std::fs::File;
+    /// use eo::data::pubs::DropFile;
+    ///
+    /// fn load_drops_from_file(file: &mut File) -> std::io::Result<DropFile> {
+    ///     let mut drop_file = DropFile::new();
+    ///     drop_file.read(file)?;
+    ///     Ok(drop_file)
+    /// }
+    /// ```
     pub fn read<R: Read + Seek>(&mut self, buf: &mut R) -> std::io::Result<()> {
         let mut data_buf: Vec<EOByte> = Vec::new();
         buf.seek(SeekFrom::Start(0))?;
