@@ -93,3 +93,30 @@ mod unknown;
 pub use unknown::Unknown;
 mod map_file;
 pub use map_file::MapFile;
+
+#[cfg(test)]
+mod tests {
+    use crate::data::EOByte;
+    #[test]
+    fn decode_map_string() {
+        let mut encoded_map_name: [EOByte; 16] = [
+            0x3D, 0x7C, 0x20, 0x31, 0x5E, 0x36, 0x5A, 0x31, 0x6C, 0x52, 0x20, 0x2B, 0x5A, 0x30,
+            0x65, 0x58,
+        ];
+        assert_eq!(
+            super::decode_map_string(&mut encoded_map_name),
+            "Ghost Mansion #4"
+        );
+    }
+
+    #[test]
+    fn encode_map_string() {
+        assert_eq!(
+            super::encode_map_string("Ghost Mansion #4"),
+            [
+                0x3D, 0x7C, 0x20, 0x31, 0x5E, 0x36, 0x5A, 0x31, 0x6C, 0x52, 0x20, 0x2B, 0x5A, 0x30,
+                0x65, 0x58,
+            ]
+        );
+    }
+}
