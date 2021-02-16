@@ -17,4 +17,4 @@ to create any kind of program for [Endless Online](https://game.eoserv.net/).
 * [x] Packet encoding
 * [x] EO StreamBuilder+StreamReader provides a tool for working with EO Byte arrays
 * [ ] Client pub file reading+writing (Reading works)
-* [ ] Server pub file reading+writing (Need to finish Skill masters and talk files)
+* [ ] Server pub file reading+writing (Reading works)
