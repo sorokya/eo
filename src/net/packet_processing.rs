@@ -61,7 +61,7 @@ pub fn packet_id_hash(family: Family, action: Action) -> EOInt {
 ///     21, 18, 145, 72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33
 /// ];
 /// // Data: ‘Hello, world!
-/// let processor = PacketProcessor::new(0, 6);
+/// let processor = PacketProcessor::with_multiples(0, 6);
 /// processor.encode(&mut packet_bytes);
 /// assert_eq!(packet_bytes, [
 ///     149, 161, 146, 228, 17, 242, 200, 236, 229, 239, 236, 247, 236, 160, 239, 172
@@ -75,12 +75,24 @@ pub struct PacketProcessor {
 }
 
 impl PacketProcessor {
+    /// creates a new PacketProcessor with default (0) encode/decode multiples
+    pub fn new() -> Self {
+        Self {
+            decode_multiple: 0,
+            encode_multiple: 0,
+        }
+    }
     /// creates a new PacketProcessor with the provided encode/decode multiples
-    pub fn new(decode_multiple: EOByte, encode_multiple: EOByte) -> Self {
+    pub fn with_multiples(decode_multiple: EOByte, encode_multiple: EOByte) -> Self {
         Self {
             decode_multiple,
             encode_multiple,
         }
+    }
+    /// sets the internal encode/decode multiples to the values provided
+    pub fn set_multiples(&mut self, decode_multiple: EOByte, encode_multiple: EOByte) {
+        self.decode_multiple = decode_multiple;
+        self.encode_multiple = encode_multiple;
     }
     fn swap_multiples(&self, bytes: &mut [EOByte], multiple: EOByte) {
         let bytes_length = bytes.len();
@@ -184,7 +196,7 @@ mod tests {
         let mut bytes = [
             149, 161, 146, 228, 17, 242, 200, 236, 229, 239, 236, 247, 236, 160, 239, 172,
         ];
-        let packet_processor = PacketProcessor::new(6, 0);
+        let packet_processor = PacketProcessor::with_multiples(6, 0);
         packet_processor.decode(&mut bytes);
         assert_eq!(
             [21, 18, 145, 72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33],
@@ -203,7 +215,7 @@ mod tests {
             2, 203, 2, 43, 254, 43, 254, 41, 254, 41, 254, 55, 254, 55, 254, 1, 77, 254, 5, 254,
             25, 25, 1, 254, 1, 254, 1, 254, 3, 254, 1, 255,
         ];
-        let packet_processor = PacketProcessor::new(0, 10);
+        let packet_processor = PacketProcessor::with_multiples(0, 10);
         packet_processor.encode(&mut bytes);
         assert_eq!(
             [
@@ -225,7 +237,7 @@ mod tests {
         let mut bytes = [
             255, 255, 21, 191, 11, 1, 1, 29, 113, 10, 50, 57, 55, 50, 54, 53, 48, 55, 56,
         ];
-        let packet_processor = PacketProcessor::new(0, 0);
+        let packet_processor = PacketProcessor::with_multiples(0, 0);
         packet_processor.encode(&mut bytes);
         assert_eq!(
             [255, 255, 21, 191, 11, 1, 1, 29, 113, 10, 50, 57, 55, 50, 54, 53, 48, 55, 56],
@@ -237,11 +249,24 @@ mod tests {
         let mut bytes = [
             255, 255, 21, 191, 11, 1, 1, 29, 113, 10, 50, 57, 55, 50, 54, 53, 48, 55, 56,
         ];
-        let packet_processor = PacketProcessor::new(0, 0);
+        let packet_processor = PacketProcessor::with_multiples(0, 0);
         packet_processor.decode(&mut bytes);
         assert_eq!(
             [255, 255, 21, 191, 11, 1, 1, 29, 113, 10, 50, 57, 55, 50, 54, 53, 48, 55, 56],
             bytes
         );
+    }
+    #[test]
+    fn default_multiples() {
+        let packet_processor = PacketProcessor::new();
+        assert_eq!(packet_processor.decode_multiple, 0);
+        assert_eq!(packet_processor.encode_multiple, 0);
+    }
+    #[test]
+    fn set_multiples() {
+        let mut packet_processor = PacketProcessor::new();
+        packet_processor.set_multiples(12, 6);
+        assert_eq!(packet_processor.decode_multiple, 12);
+        assert_eq!(packet_processor.encode_multiple, 6);
     }
 }
