@@ -26,3 +26,5 @@ mod login_reply;
 pub use login_reply::LoginReply;
 mod packet_processing;
 pub use packet_processing::*;
+mod client_state;
+pub use client_state::ClientState;
