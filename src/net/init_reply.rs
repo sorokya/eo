@@ -13,3 +13,9 @@ pub enum InitReply {
     FriendListPlayers = 11,
     FileClass = 12,
 }
+
+impl Default for InitReply {
+    fn default() -> Self {
+        Self::OK
+    }
+}
