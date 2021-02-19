@@ -1,3 +1,8 @@
+use crate::data::EOThree;
+
+/// number of bytes that describe a packet's data length
+pub const PACKET_LENGTH_SIZE: usize = 2;
+
 mod action;
 pub use action::Action;
 mod family;
@@ -28,3 +33,9 @@ mod packet_processing;
 pub use packet_processing::*;
 mod client_state;
 pub use client_state::ClientState;
+pub mod packets;
+
+pub fn stupid_hash(mut value: EOThree) -> EOThree {
+    value += 1;
+    110905 + (value % 9 + 1) * ((11092004 - value) % ((value % 11 + 1) * 119)) * 119 + value % 2004
+}
