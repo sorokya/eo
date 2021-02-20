@@ -4,3 +4,9 @@ pub enum InitBanType {
     Temporary = 0,
     Permanent = 2,
 }
+
+impl Default for InitBanType {
+    fn default() -> Self {
+        Self::Temporary
+    }
+}

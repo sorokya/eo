@@ -7,3 +7,9 @@ pub enum FileType {
     Spell = 4,
     Class = 5,
 }
+
+impl Default for FileType {
+    fn default() -> Self {
+        Self::Map
+    }
+}
