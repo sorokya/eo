@@ -11,3 +11,9 @@ pub enum PaperdollIcon {
     GameMasterParty = 9,
     HighGameMasterParty = 10,
 }
+
+impl Default for PaperdollIcon {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
