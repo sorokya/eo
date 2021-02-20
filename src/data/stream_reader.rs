@@ -104,11 +104,8 @@ impl<'a> StreamReader<'a> {
     /// returns a UTF-8 encoded string of length `length` from the data stream
     pub fn get_fixed_string(&mut self, length: usize) -> String {
         if self.remaining() >= length {
-            let bytes_to_read =
-                &self.data[self.position..cmp::min(self.length(), self.position + length)];
-            self.position += length;
-            String::from_utf8(bytes_to_read.to_vec())
-                .expect("Failed to convert byte array to string")
+            let bytes_to_read = self.get_vec(length);
+            String::from_utf8(bytes_to_read).expect("Failed to convert byte array to string")
         } else {
             String::from("")
         }
