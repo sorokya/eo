@@ -16,6 +16,13 @@ impl InitBanned {
     pub fn new() -> Self {
         Self::default()
     }
+
+    pub fn with_duration(duration: EOByte) -> Self {
+        Self {
+            ban_type: InitBanType::Temporary,
+            duration,
+        }
+    }
 }
 
 impl Serializeable for InitBanned {
