@@ -2,6 +2,8 @@ use crate::data::EOThree;
 
 /// number of bytes that describe a packet's data length
 pub const PACKET_LENGTH_SIZE: usize = 2;
+/// number of bytes that describe a packet's action/family
+pub const PACKET_HEADER_SIZE: usize = 2;
 
 mod action;
 pub use action::Action;
