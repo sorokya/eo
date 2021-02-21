@@ -7,3 +7,9 @@ pub enum AccountReply {
     ChangeFailed = 5,
     Changed = 6,
 }
+
+impl Default for AccountReply {
+    fn default() -> Self {
+        Self::Exists
+    }
+}

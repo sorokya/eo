@@ -10,12 +10,12 @@ use super::{
     InitFriendListPlayers, InitMapMutation, InitOk, InitOutOfDate, InitPlayers,
 };
 
-pub struct InitInit {
+pub struct Init {
     pub reply_code: InitReply,
     pub reply: Box<dyn Serializeable>,
 }
 
-impl InitInit {
+impl Init {
     pub fn new() -> Self {
         Self {
             reply_code: InitReply::default(),
@@ -24,7 +24,7 @@ impl InitInit {
     }
 }
 
-impl Serializeable for InitInit {
+impl Serializeable for Init {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         let reply_code_byte = reader.get_byte();
         self.reply_code = match InitReply::from_u8(reply_code_byte) {

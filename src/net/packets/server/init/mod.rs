@@ -1,5 +1,5 @@
 mod init;
-pub use init::InitInit;
+pub use init::Init;
 mod init_banned;
 pub use init_banned::InitBanned;
 mod init_file_class;
