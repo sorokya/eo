@@ -1,3 +1,5 @@
+use rand::prelude::*;
+
 use super::{Action, Family};
 use crate::data::{EOByte, EOInt};
 
@@ -70,16 +72,17 @@ pub fn packet_id_hash(family: Family, action: Action) -> EOInt {
 /// ```
 ///
 pub struct PacketProcessor {
-    decode_multiple: EOByte,
-    encode_multiple: EOByte,
+    pub decode_multiple: EOByte,
+    pub encode_multiple: EOByte,
 }
 
 impl PacketProcessor {
-    /// creates a new PacketProcessor with default (0) encode/decode multiples
+    /// creates a new PacketProcessor with random encode/decode multiples
     pub fn new() -> Self {
+        let mut rng = thread_rng();
         Self {
-            decode_multiple: 0,
-            encode_multiple: 0,
+            decode_multiple: rng.gen_range(6, 12),
+            encode_multiple: rng.gen_range(6, 12),
         }
     }
     /// creates a new PacketProcessor with the provided encode/decode multiples
@@ -255,12 +258,6 @@ mod tests {
             [255, 255, 21, 191, 11, 1, 1, 29, 113, 10, 50, 57, 55, 50, 54, 53, 48, 55, 56],
             bytes
         );
-    }
-    #[test]
-    fn default_multiples() {
-        let packet_processor = PacketProcessor::new();
-        assert_eq!(packet_processor.decode_multiple, 0);
-        assert_eq!(packet_processor.encode_multiple, 0);
     }
     #[test]
     fn set_multiples() {
