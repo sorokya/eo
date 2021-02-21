@@ -1,2 +1,2 @@
 mod init;
-pub use init::InitInit;
+pub use init::Init;

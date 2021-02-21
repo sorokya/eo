@@ -1,2 +1,2 @@
 mod accept;
-pub use accept::ConnectionAccept;
+pub use accept::Accept;

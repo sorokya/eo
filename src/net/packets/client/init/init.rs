@@ -3,19 +3,19 @@ use crate::data::{EOByte, EOChar, EOThree, Serializeable, StreamBuilder, StreamR
 const SIZE: usize = 6;
 
 #[derive(Debug, Default)]
-pub struct InitInit {
+pub struct Init {
     pub challenge: EOThree,
     pub version: [EOChar; 3],
     pub hdid: String,
 }
 
-impl InitInit {
+impl Init {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitInit {
+impl Serializeable for Init {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         self.challenge = reader.get_three();
         for i in 0..3 {
@@ -39,7 +39,7 @@ impl Serializeable for InitInit {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InitInit, Serializeable, StreamReader};
+    use super::{EOByte, Init, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
@@ -47,7 +47,7 @@ mod tests {
             222, 108, 4, 1, 1, 30, 113, 11, 52, 48, 55, 49, 54, 54, 54, 52, 48, 50,
         ];
 
-        let mut packet = InitInit::new();
+        let mut packet = Init::new();
         let mut reader = StreamReader::new(&data);
         packet.deserialize(&mut reader);
         assert_eq!(packet.challenge, 219319);
@@ -56,7 +56,7 @@ mod tests {
     }
     #[test]
     fn serialize() {
-        let mut packet = InitInit::new();
+        let mut packet = Init::new();
         packet.challenge = 219319;
         packet.version = [0, 0, 29];
         packet.hdid = "4071666402".to_string();

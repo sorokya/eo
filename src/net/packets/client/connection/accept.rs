@@ -3,18 +3,18 @@ use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader};
 pub const CONNECTION_ACCEPT_SIZE: usize = 7;
 
 #[derive(Debug, Default)]
-pub struct ConnectionAccept {
+pub struct Accept {
     pub encoding_multiples: [EOByte; 2],
     pub player_id: EOShort,
 }
 
-impl ConnectionAccept {
+impl Accept {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for ConnectionAccept {
+impl Serializeable for Accept {
     fn deserialize(&mut self, reader: &mut StreamReader) {
         for byte in self.encoding_multiples.iter_mut() {
             *byte = reader.get_short() as EOByte;
@@ -33,13 +33,13 @@ impl Serializeable for ConnectionAccept {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{Accept, EOByte, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
         let data: Vec<EOByte> = vec![11, 254, 6, 254, 2, 254];
 
-        let mut packet = ConnectionAccept::new();
+        let mut packet = Accept::new();
         let mut reader = StreamReader::new(&data);
         packet.deserialize(&mut reader);
         assert_eq!(packet.encoding_multiples, [10, 5]);
@@ -47,7 +47,7 @@ mod tests {
     }
     #[test]
     fn serialize() {
-        let mut packet = ConnectionAccept::new();
+        let mut packet = Accept::new();
         packet.encoding_multiples = [10, 5];
         packet.player_id = 1;
         assert_eq!(packet.serialize(), [11, 254, 6, 254, 2, 254]);
