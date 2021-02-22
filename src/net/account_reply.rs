@@ -6,6 +6,8 @@ pub enum AccountReply {
     Created = 3,
     ChangeFailed = 5,
     Changed = 6,
+    // TODO: Figure out real value
+    Continue = 1000,
 }
 
 impl Default for AccountReply {
