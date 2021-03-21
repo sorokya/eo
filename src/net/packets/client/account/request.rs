@@ -13,11 +13,11 @@ impl Request {
 
 impl Serializeable for Request {
     fn deserialize(&mut self, reader: &mut StreamReader) {
-        self.name = reader.get_end_string();
+        self.name = reader.get_end_string().to_lowercase();
     }
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(self.name.len());
-        builder.add_string(&self.name);
+        builder.add_string(&self.name.to_lowercase());
         builder.get()
     }
 }

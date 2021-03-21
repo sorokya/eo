@@ -1,7 +1,7 @@
 use num_traits::FromPrimitive;
 
 use crate::{
-    data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader},
+    data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader},
     net::AccountReply,
 };
 
@@ -9,6 +9,7 @@ use crate::{
 pub struct Reply {
     pub reply: AccountReply,
     pub message: String,
+    pub sequence: EOChar,
 }
 
 impl Reply {
@@ -27,8 +28,11 @@ impl Serializeable for Reply {
         self.message = reader.get_end_string();
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::with_capacity(2 + self.message.len());
+        let mut builder = StreamBuilder::with_capacity(3 + self.message.len());
         builder.add_short(self.reply as EOShort);
+        if self.reply == AccountReply::Continue {
+            builder.add_char(self.sequence);
+        }
         builder.add_string(&self.message);
         builder.get()
     }
