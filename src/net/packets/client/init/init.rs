@@ -16,7 +16,7 @@ impl Init {
 }
 
 impl Serializeable for Init {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.challenge = reader.get_three();
         for i in 0..3 {
             self.version[i] = reader.get_char();
@@ -48,8 +48,8 @@ mod tests {
         ];
 
         let mut packet = Init::new();
-        let mut reader = StreamReader::new(&data);
-        packet.deserialize(&mut reader);
+        let reader = StreamReader::new(&data);
+        packet.deserialize(&reader);
         assert_eq!(packet.challenge, 219319);
         assert_eq!(packet.version, [0, 0, 29]);
         assert_eq!(packet.hdid, "4071666402");

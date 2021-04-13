@@ -28,7 +28,7 @@ impl ShopTradeRecord {
 }
 
 impl Serializeable for ShopTradeRecord {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.item_id = reader.get_short();
         self.buy_price = reader.get_three();
         self.sell_price = reader.get_three();

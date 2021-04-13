@@ -28,7 +28,7 @@ impl DropRecord {
 }
 
 impl Serializeable for DropRecord {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.item_id = reader.get_short();
         self.min_amount = reader.get_three();
         self.max_amount = reader.get_three();

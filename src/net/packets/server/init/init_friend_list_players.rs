@@ -12,7 +12,7 @@ impl InitFriendListPlayers {
 }
 
 impl Serializeable for InitFriendListPlayers {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         let total_names = reader.get_short();
         self.names = Vec::with_capacity(total_names as usize);
 
@@ -43,8 +43,8 @@ mod tests {
     fn deserialize() {
         let buf: Vec<EOByte> = vec![0x02, 0xFE, 0xFF, 0x61, 0x64, 0x6D, 0x69, 0x6E, 0xFF];
         let mut init_friend_list_players = InitFriendListPlayers::new();
-        let mut reader = StreamReader::new(&buf);
-        init_friend_list_players.deserialize(&mut reader);
+        let reader = StreamReader::new(&buf);
+        init_friend_list_players.deserialize(&reader);
         assert_eq!(init_friend_list_players.names.len(), 1);
         assert_eq!(init_friend_list_players.names[0], "admin");
     }

@@ -53,17 +53,17 @@ impl TalkFile {
         let mut data_buf: Vec<EOByte> = Vec::new();
         buf.seek(SeekFrom::Start(0))?;
         buf.read_to_end(&mut data_buf)?;
-        let mut reader = StreamReader::new(&data_buf);
+        let reader = StreamReader::new(&data_buf);
         reader.seek(3);
         self.records = Vec::new();
         while !reader.eof() {
-            self.read_record(&mut reader)?;
+            self.read_record(&reader)?;
         }
 
         Ok(())
     }
 
-    fn read_record(&mut self, reader: &mut StreamReader) -> std::io::Result<()> {
+    fn read_record(&mut self, reader: &StreamReader) -> std::io::Result<()> {
         let mut record = TalkRecord::new();
         record.deserialize(reader);
         self.records.push(record);

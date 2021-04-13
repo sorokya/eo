@@ -22,7 +22,7 @@ impl Warp {
 }
 
 impl Serializeable for Warp {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.x = reader.get_char();
         self.warp_map = reader.get_short();
         self.warp_x = reader.get_char();

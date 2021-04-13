@@ -98,20 +98,20 @@ impl ClassFile {
         let mut data_buf: Vec<EOByte> = Vec::new();
         buf.seek(SeekFrom::Start(0))?;
         buf.read_to_end(&mut data_buf)?;
-        let mut reader = StreamReader::new(&data_buf);
+        let reader = StreamReader::new(&data_buf);
         reader.seek(3);
         self.hash = reader.get_int();
         self.length = reader.get_short() as usize;
         reader.get_char();
         self.records = Vec::with_capacity(self.length);
         for id in 1..self.length {
-            self.read_record(id, &mut reader)?;
+            self.read_record(id, &reader)?;
         }
 
         Ok(())
     }
 
-    fn read_record(&mut self, id: usize, reader: &mut StreamReader) -> std::io::Result<()> {
+    fn read_record(&mut self, id: usize, reader: &StreamReader) -> std::io::Result<()> {
         let mut record = ClassRecord::new(id as EOInt);
         record.deserialize(reader);
         if record.name != "eof" {

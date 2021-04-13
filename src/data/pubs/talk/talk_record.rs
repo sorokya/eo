@@ -27,7 +27,7 @@ impl TalkRecord {
 }
 
 impl Serializeable for TalkRecord {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.npc_id = reader.get_short();
         self.rate = reader.get_char();
         self.messages_length = reader.get_char();

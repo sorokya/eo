@@ -13,7 +13,7 @@ impl InitFileItem {
 }
 
 impl Serializeable for InitFileItem {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.id = reader.get_char();
         self.data = reader.get_vec(reader.remaining());
     }
@@ -45,8 +45,8 @@ mod tests {
         ];
 
         let mut init_file_item = InitFileItem::new();
-        let mut reader = StreamReader::new(&item_bytes);
-        init_file_item.deserialize(&mut reader);
+        let reader = StreamReader::new(&item_bytes);
+        init_file_item.deserialize(&reader);
         assert_eq!(init_file_item.id, 1);
         assert_eq!(init_file_item.data, item_bytes[1..]);
     }

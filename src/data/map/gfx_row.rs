@@ -18,7 +18,7 @@ impl GfxRow {
 }
 
 impl Serializeable for GfxRow {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.y = reader.get_char();
         let inner_length = reader.get_char();
         self.tiles = Vec::with_capacity(inner_length as usize);

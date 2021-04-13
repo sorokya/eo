@@ -13,7 +13,7 @@ impl InitFileNPC {
 }
 
 impl Serializeable for InitFileNPC {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.id = reader.get_char();
         self.data = reader.get_vec(reader.remaining());
     }
@@ -39,8 +39,8 @@ mod tests {
         ];
 
         let mut init_file_npc = InitFileNPC::new();
-        let mut reader = StreamReader::new(&npc_bytes);
-        init_file_npc.deserialize(&mut reader);
+        let reader = StreamReader::new(&npc_bytes);
+        init_file_npc.deserialize(&reader);
         assert_eq!(init_file_npc.id, 1);
         assert_eq!(init_file_npc.data, npc_bytes[1..]);
     }

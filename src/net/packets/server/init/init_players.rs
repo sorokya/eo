@@ -15,7 +15,7 @@ impl InitPlayers {
 }
 
 impl Serializeable for InitPlayers {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         let total_players = reader.get_short();
         self.players = Vec::with_capacity(total_players as usize);
 
@@ -53,8 +53,8 @@ mod tests {
             0x72, 0x65, 0x61, 0x74, 0xFF, 0x01, 0x06, 0x02, 0x47, 0x4d, 0x20, 0xFF,
         ];
         let mut init_players = InitPlayers::new();
-        let mut reader = StreamReader::new(&buf);
-        init_players.deserialize(&mut reader);
+        let reader = StreamReader::new(&buf);
+        init_players.deserialize(&reader);
         assert_eq!(init_players.players.len(), 1);
         assert_eq!(init_players.players[0].name, "admin");
         assert_eq!(init_players.players[0].title, "the great");

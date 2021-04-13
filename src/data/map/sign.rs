@@ -20,12 +20,12 @@ impl Sign {
 }
 
 impl Serializeable for Sign {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.x = reader.get_char();
         self.y = reader.get_char();
         let text_length = reader.get_short() - 1;
         if reader.remaining() >= text_length as usize {
-            let sign_text = decode_map_string(&mut reader.get_vec(text_length as usize));
+            let sign_text = decode_map_string(reader.get_vec(text_length as usize));
             let title_length = reader.get_char();
             self.title = sign_text.chars().take(title_length as usize).collect();
             self.message = sign_text.chars().skip(title_length as usize).collect();

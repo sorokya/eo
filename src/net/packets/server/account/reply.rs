@@ -19,7 +19,7 @@ impl Reply {
 }
 
 impl Serializeable for Reply {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         let reply_code = reader.get_short();
         self.reply = match AccountReply::from_u16(reply_code) {
             Some(reply) => reply,
@@ -46,8 +46,8 @@ mod tests {
     fn deserialize() {
         let data: Vec<EOByte> = vec![4, 254, 79, 75];
         let mut packet = Reply::new();
-        let mut reader = StreamReader::new(&data);
-        packet.deserialize(&mut reader);
+        let reader = StreamReader::new(&data);
+        packet.deserialize(&reader);
         assert_eq!(packet.reply, AccountReply::Created);
         assert_eq!(packet.message, "OK");
     }

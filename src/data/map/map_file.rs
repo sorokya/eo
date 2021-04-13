@@ -153,10 +153,10 @@ impl MapFile {
         let mut data_buf: Vec<EOByte> = Vec::new();
         buf.seek(SeekFrom::Start(0))?;
         buf.read_to_end(&mut data_buf)?;
-        let mut reader = StreamReader::new(&data_buf);
+        let reader = StreamReader::new(&data_buf);
         reader.seek(3);
         self.hash = reader.get_int();
-        self.name = decode_map_string(&mut reader.get_vec(MAP_NAME_LENGTH));
+        self.name = decode_map_string(reader.get_vec(MAP_NAME_LENGTH));
         let map_type_char = reader.get_char();
         self.map_type = match MapType::from_u8(map_type_char) {
             Some(map_type) => map_type,
@@ -178,23 +178,23 @@ impl MapFile {
         self.relog_x = reader.get_char();
         self.relog_y = reader.get_char();
         reader.get_char();
-        self.read_npc_spawns(&mut reader);
-        self.read_unknowns(&mut reader);
-        self.read_chest_spawns(&mut reader);
-        self.read_tiles(&mut reader);
-        self.read_warps(&mut reader);
+        self.read_npc_spawns(&reader);
+        self.read_unknowns(&reader);
+        self.read_chest_spawns(&reader);
+        self.read_tiles(&reader);
+        self.read_warps(&reader);
         for layer in 0..NUMBER_OF_GFX_LAYERS {
             if !reader.eof() {
-                self.read_gfx_layer(layer, &mut reader);
+                self.read_gfx_layer(layer, &reader);
             }
         }
         if !reader.eof() {
-            self.read_signs(&mut reader);
+            self.read_signs(&reader);
         }
         Ok(())
     }
 
-    fn read_npc_spawns(&mut self, reader: &mut StreamReader) {
+    fn read_npc_spawns(&mut self, reader: &StreamReader) {
         let npc_spawns_length = reader.get_char();
         self.npc_spawns = Vec::with_capacity(npc_spawns_length as usize);
         for _ in 0..npc_spawns_length {
@@ -204,7 +204,7 @@ impl MapFile {
         }
     }
 
-    fn read_unknowns(&mut self, reader: &mut StreamReader) {
+    fn read_unknowns(&mut self, reader: &StreamReader) {
         let unknowns_length = reader.get_char();
         self.unknowns = Vec::with_capacity(unknowns_length as usize);
         for _ in 0..unknowns_length {
@@ -214,7 +214,7 @@ impl MapFile {
         }
     }
 
-    fn read_chest_spawns(&mut self, reader: &mut StreamReader) {
+    fn read_chest_spawns(&mut self, reader: &StreamReader) {
         let chest_spawns_length = reader.get_char();
         self.chest_spawns = Vec::with_capacity(chest_spawns_length as usize);
         for _ in 0..chest_spawns_length {
@@ -224,7 +224,7 @@ impl MapFile {
         }
     }
 
-    fn read_tiles(&mut self, reader: &mut StreamReader) {
+    fn read_tiles(&mut self, reader: &StreamReader) {
         let outer_length = reader.get_char();
         self.tile_rows = Vec::with_capacity(outer_length as usize);
         for _ in 0..outer_length {
@@ -234,7 +234,7 @@ impl MapFile {
         }
     }
 
-    fn read_warps(&mut self, reader: &mut StreamReader) {
+    fn read_warps(&mut self, reader: &StreamReader) {
         let outer_length = reader.get_char();
         self.warp_rows = Vec::with_capacity(outer_length as usize);
         for _ in 0..outer_length {
@@ -244,7 +244,7 @@ impl MapFile {
         }
     }
 
-    fn read_gfx_layer(&mut self, layer: usize, reader: &mut StreamReader) {
+    fn read_gfx_layer(&mut self, layer: usize, reader: &StreamReader) {
         let outer_length = reader.get_char();
         self.gfx_rows[layer] = Vec::with_capacity(outer_length as usize);
         for _ in 0..outer_length {
@@ -254,7 +254,7 @@ impl MapFile {
         }
     }
 
-    fn read_signs(&mut self, reader: &mut StreamReader) {
+    fn read_signs(&mut self, reader: &StreamReader) {
         let signs_length = reader.get_char();
         self.signs = Vec::with_capacity(signs_length as usize);
         for _ in 0..signs_length {

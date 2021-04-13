@@ -21,7 +21,7 @@ impl Create {
 }
 
 impl Serializeable for Create {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.session_id = reader.get_short();
         reader.get_byte();
         self.name = reader.get_break_string();
@@ -70,8 +70,8 @@ mod tests {
             57, 54, 255,
         ];
         let mut packet = Create::new();
-        let mut reader = StreamReader::new(&data);
-        packet.deserialize(&mut reader);
+        let reader = StreamReader::new(&data);
+        packet.deserialize(&reader);
         assert_eq!(packet.name, "test");
         assert_eq!(packet.password, "password");
         assert_eq!(packet.fullname, "test");

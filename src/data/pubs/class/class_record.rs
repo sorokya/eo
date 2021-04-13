@@ -67,13 +67,13 @@ impl Serializeable for ClassRecord {
     ///     0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE,
     /// ];
     ///
-    /// let mut reader = StreamReader::new(&buf);
+    /// let reader = StreamReader::new(&buf);
     /// let mut record = ClassRecord::new(1);
-    /// record.deserialize(&mut reader);
+    /// record.deserialize(&reader);
     /// assert_eq!(record.name, "Warrior");
     /// assert_eq!(record.strength, 2);
     /// ```
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.name = reader.get_prefix_string();
         self.base = reader.get_char();
         self.class_type = reader.get_char();

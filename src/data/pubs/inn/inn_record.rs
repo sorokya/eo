@@ -59,7 +59,7 @@ impl InnRecord {
 }
 
 impl Serializeable for InnRecord {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.vendor_id = reader.get_short();
         self.name = reader.get_prefix_string();
         self.spawn_map = reader.get_short();

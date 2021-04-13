@@ -12,7 +12,7 @@ impl InitMapMutation {
 }
 
 impl Serializeable for InitMapMutation {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.data = reader.get_vec(reader.remaining());
     }
     fn serialize(&self) -> Vec<EOByte> {
@@ -37,8 +37,8 @@ mod tests {
         ];
 
         let mut init_map_mutation = InitMapMutation::new();
-        let mut reader = StreamReader::new(&map_bytes);
-        init_map_mutation.deserialize(&mut reader);
+        let reader = StreamReader::new(&map_bytes);
+        init_map_mutation.deserialize(&reader);
         assert_eq!(init_map_mutation.data, map_bytes);
     }
 

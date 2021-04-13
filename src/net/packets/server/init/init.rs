@@ -25,7 +25,7 @@ impl Init {
 }
 
 impl Serializeable for Init {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         let reply_code_byte = reader.get_byte();
         self.reply_code = match InitReply::from_u8(reply_code_byte) {
             Some(reply_code) => reply_code,

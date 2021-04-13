@@ -34,7 +34,7 @@ impl ShopRecord {
 }
 
 impl Serializeable for ShopRecord {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.vendor_id = reader.get_short();
         self.name = reader.get_prefix_string();
         reader.get_byte();

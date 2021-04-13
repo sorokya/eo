@@ -25,7 +25,7 @@ impl NPCSpawn {
 }
 
 impl Serializeable for NPCSpawn {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.x = reader.get_char();
         self.y = reader.get_char();
         self.npc_id = reader.get_short();

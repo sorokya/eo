@@ -38,7 +38,7 @@ impl ShopCraftRecord {
 }
 
 impl Serializeable for ShopCraftRecord {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.item_id = reader.get_short();
         self.ingredient1_id = reader.get_short();
         self.ingredient1_amount = reader.get_char();

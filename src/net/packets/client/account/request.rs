@@ -12,7 +12,7 @@ impl Request {
 }
 
 impl Serializeable for Request {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.name = reader.get_end_string().to_lowercase();
     }
     fn serialize(&self) -> Vec<EOByte> {
@@ -30,8 +30,8 @@ mod tests {
     fn deserialize() {
         let data: Vec<EOByte> = vec![97, 100, 109, 105, 110];
         let mut packet = Request::new();
-        let mut reader = StreamReader::new(&data);
-        packet.deserialize(&mut reader);
+        let reader = StreamReader::new(&data);
+        packet.deserialize(&reader);
         assert_eq!(packet.name, "admin");
     }
     #[test]

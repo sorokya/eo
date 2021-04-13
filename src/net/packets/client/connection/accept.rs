@@ -15,7 +15,7 @@ impl Accept {
 }
 
 impl Serializeable for Accept {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         for byte in self.encoding_multiples.iter_mut() {
             *byte = reader.get_short() as EOByte;
         }
@@ -40,8 +40,8 @@ mod tests {
         let data: Vec<EOByte> = vec![11, 254, 6, 254, 2, 254];
 
         let mut packet = Accept::new();
-        let mut reader = StreamReader::new(&data);
-        packet.deserialize(&mut reader);
+        let reader = StreamReader::new(&data);
+        packet.deserialize(&reader);
         assert_eq!(packet.encoding_multiples, [10, 5]);
         assert_eq!(packet.player_id, 1);
     }

@@ -35,7 +35,7 @@ fn encode_map_string(s: &str) -> Vec<EOByte> {
     buf
 }
 
-fn decode_map_string(buf: &mut [EOByte]) -> String {
+fn decode_map_string(mut buf: Vec<EOByte>) -> String {
     buf.reverse();
 
     let mut chars: Vec<EOByte> = vec![0xFF; buf.len()];
@@ -99,12 +99,12 @@ mod tests {
     use crate::data::EOByte;
     #[test]
     fn decode_map_string() {
-        let mut encoded_map_name: [EOByte; 16] = [
+        let encoded_map_name: Vec<EOByte> = vec![
             0x3D, 0x7C, 0x20, 0x31, 0x5E, 0x36, 0x5A, 0x31, 0x6C, 0x52, 0x20, 0x2B, 0x5A, 0x30,
             0x65, 0x58,
         ];
         assert_eq!(
-            super::decode_map_string(&mut encoded_map_name),
+            super::decode_map_string(encoded_map_name),
             "Ghost Mansion #4"
         );
     }

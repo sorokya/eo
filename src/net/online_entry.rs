@@ -23,7 +23,7 @@ impl OnlineEntry {
 }
 
 impl Serializeable for OnlineEntry {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.name = reader.get_break_string();
         self.title = reader.get_break_string();
         reader.get_char();
@@ -59,9 +59,9 @@ mod tests {
             0x61, 0x64, 0x6D, 0x69, 0x6E, 0xFF, 0x74, 0x68, 0x65, 0x20, 0x67, 0x72, 0x65, 0x61,
             0x74, 0xFF, 0x01, 0x06, 0x02, 0x47, 0x4d, 0x20, 0xFF,
         ];
-        let mut reader = StreamReader::new(&buf);
+        let reader = StreamReader::new(&buf);
         let mut online_entry = OnlineEntry::new();
-        online_entry.deserialize(&mut reader);
+        online_entry.deserialize(&reader);
         assert_eq!(online_entry.name, "admin");
         assert_eq!(online_entry.title, "the great");
         assert_eq!(online_entry.icon, PaperdollIcon::HighGameMaster);

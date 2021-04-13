@@ -13,7 +13,7 @@ impl InitFileClass {
 }
 
 impl Serializeable for InitFileClass {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.id = reader.get_char();
         self.data = reader.get_vec(reader.remaining());
     }
@@ -38,8 +38,8 @@ mod tests {
         ];
 
         let mut init_file_class = InitFileClass::new();
-        let mut reader = StreamReader::new(&class_bytes);
-        init_file_class.deserialize(&mut reader);
+        let reader = StreamReader::new(&class_bytes);
+        init_file_class.deserialize(&reader);
         assert_eq!(init_file_class.id, 1);
         assert_eq!(init_file_class.data, class_bytes[1..]);
     }

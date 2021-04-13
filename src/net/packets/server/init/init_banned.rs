@@ -26,7 +26,7 @@ impl InitBanned {
 }
 
 impl Serializeable for InitBanned {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         let ban_type_byte = reader.get_byte();
         self.ban_type = match InitBanType::from_u8(ban_type_byte) {
             Some(ban_type) => ban_type,
@@ -63,8 +63,8 @@ mod tests {
     fn deserialize_temporary() {
         let data: Vec<EOByte> = vec![0, 30];
         let mut init_ban = InitBanned::new();
-        let mut reader = StreamReader::new(&data);
-        init_ban.deserialize(&mut reader);
+        let reader = StreamReader::new(&data);
+        init_ban.deserialize(&reader);
         assert_eq!(init_ban.ban_type, InitBanType::Temporary);
         assert_eq!(init_ban.duration, 30);
     }
@@ -79,8 +79,8 @@ mod tests {
     fn deserialize_permanent() {
         let data: Vec<EOByte> = vec![2];
         let mut init_ban = InitBanned::new();
-        let mut reader = StreamReader::new(&data);
-        init_ban.deserialize(&mut reader);
+        let reader = StreamReader::new(&data);
+        init_ban.deserialize(&reader);
         assert_eq!(init_ban.ban_type, InitBanType::Permanent);
         assert_eq!(init_ban.duration, 0);
     }

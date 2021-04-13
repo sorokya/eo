@@ -12,7 +12,7 @@ impl InitFileMap {
 }
 
 impl Serializeable for InitFileMap {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.data = reader.get_vec(reader.remaining());
     }
     fn serialize(&self) -> Vec<EOByte> {
@@ -37,8 +37,8 @@ mod tests {
         ];
 
         let mut init_file_map = InitFileMap::new();
-        let mut reader = StreamReader::new(&map_bytes);
-        init_file_map.deserialize(&mut reader);
+        let reader = StreamReader::new(&map_bytes);
+        init_file_map.deserialize(&reader);
         assert_eq!(init_file_map.data, map_bytes);
     }
 

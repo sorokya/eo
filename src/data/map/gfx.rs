@@ -18,7 +18,7 @@ impl Gfx {
 }
 
 impl Serializeable for Gfx {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.x = reader.get_char();
         self.tile = reader.get_short();
     }

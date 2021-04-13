@@ -24,7 +24,7 @@ impl ChestSpawn {
 }
 
 impl Serializeable for ChestSpawn {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.x = reader.get_char();
         self.y = reader.get_char();
         self.key = reader.get_short();

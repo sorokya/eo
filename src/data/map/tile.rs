@@ -20,7 +20,7 @@ impl Tile {
 }
 
 impl Serializeable for Tile {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.x = reader.get_char();
         let spec_char = reader.get_char();
         self.spec = match TileSpec::from_u8(spec_char) {

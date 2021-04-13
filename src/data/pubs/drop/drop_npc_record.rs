@@ -26,7 +26,7 @@ impl DropNPCRecord {
 }
 
 impl Serializeable for DropNPCRecord {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.npc_id = reader.get_short();
         self.length = reader.get_short();
         self.drops = Vec::with_capacity(self.length as usize);

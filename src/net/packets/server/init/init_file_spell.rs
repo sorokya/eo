@@ -13,7 +13,7 @@ impl InitFileSpell {
 }
 
 impl Serializeable for InitFileSpell {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.id = reader.get_char();
         self.data = reader.get_vec(reader.remaining());
     }
@@ -40,8 +40,8 @@ mod tests {
         ];
 
         let mut init_file_spell = InitFileSpell::new();
-        let mut reader = StreamReader::new(&spell_bytes);
-        init_file_spell.deserialize(&mut reader);
+        let reader = StreamReader::new(&spell_bytes);
+        init_file_spell.deserialize(&reader);
         assert_eq!(init_file_spell.id, 1);
         assert_eq!(init_file_spell.data, spell_bytes[1..]);
     }

@@ -48,7 +48,7 @@ impl MasterSkillRecord {
 }
 
 impl Serializeable for MasterSkillRecord {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.skill_id = reader.get_short();
         self.level_req = reader.get_char();
         self.class_req = reader.get_char();

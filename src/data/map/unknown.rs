@@ -21,7 +21,7 @@ impl Unknown {
 }
 
 impl Serializeable for Unknown {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.unknown1 = reader.get_char();
         self.unknown2 = reader.get_char();
         self.unknown3 = reader.get_char();

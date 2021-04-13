@@ -17,7 +17,7 @@ impl InitOk {
 }
 
 impl Serializeable for InitOk {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         for byte in self.sequence_bytes.iter_mut() {
             *byte = reader.get_byte();
         }
@@ -54,8 +54,8 @@ mod tests {
     fn deserialize() {
         let buf: Vec<EOByte> = vec![7, 10, 5, 9, 2, 254, 2, 254, 254];
         let mut init_ok = InitOk::new();
-        let mut reader = StreamReader::new(&buf);
-        init_ok.deserialize(&mut reader);
+        let reader = StreamReader::new(&buf);
+        init_ok.deserialize(&reader);
 
         assert_eq!(init_ok.sequence_bytes, [7, 10]);
         assert_eq!(init_ok.encoding_multiples, [5, 9]);

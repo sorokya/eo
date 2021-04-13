@@ -133,7 +133,7 @@ impl ItemRecord {
 }
 
 impl Serializeable for ItemRecord {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         self.name = reader.get_prefix_string();
         self.graphic_id = reader.get_short();
         let item_type_char = reader.get_char();

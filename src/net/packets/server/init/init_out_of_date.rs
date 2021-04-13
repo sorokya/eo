@@ -14,7 +14,7 @@ impl InitOutOfDate {
 }
 
 impl Serializeable for InitOutOfDate {
-    fn deserialize(&mut self, reader: &mut StreamReader) {
+    fn deserialize(&mut self, reader: &StreamReader) {
         for char in self.version.iter_mut() {
             *char = reader.get_char();
         }
@@ -37,8 +37,8 @@ mod tests {
     fn deserialize() {
         let buf: Vec<EOByte> = vec![1, 1, 30];
         let mut init_out_of_date = InitOutOfDate::new();
-        let mut reader = StreamReader::new(&buf);
-        init_out_of_date.deserialize(&mut reader);
+        let reader = StreamReader::new(&buf);
+        init_out_of_date.deserialize(&reader);
         assert_eq!(init_out_of_date.version, [0, 0, 29]);
     }
 
