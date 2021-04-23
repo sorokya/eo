@@ -15,6 +15,10 @@ impl Sequencer {
         self.sequence_start = rng.gen_range(0, 1757);
     }
 
+    pub fn get_sequence_start(&self) -> EOInt {
+        self.sequence_start
+    }
+
     pub fn too_big_for_account_reply(&self) -> bool {
         self.sequence_start > 240
     }
