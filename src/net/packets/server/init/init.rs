@@ -2,7 +2,7 @@ use num_traits::FromPrimitive;
 
 use crate::{
     data::{EOByte, Serializeable, StreamBuilder, StreamReader},
-    net::InitReply,
+    net::replies::InitReply,
 };
 
 use super::{
