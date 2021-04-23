@@ -37,7 +37,10 @@ pub struct StreamReader<'a> {
 impl<'a> StreamReader<'a> {
     /// Creates a [StreamReader] for an existing `&[EOByte]`
     pub fn new(data: &'a [EOByte]) -> Self {
-        Self { data, position: Cell::new(0) }
+        Self {
+            data,
+            position: Cell::new(0),
+        }
     }
     /// returns the length of the data stream
     pub fn length(&self) -> usize {
