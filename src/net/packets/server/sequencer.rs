@@ -15,6 +15,10 @@ impl Sequencer {
         self.sequence_start = rng.gen_range(0, 1757);
     }
 
+    pub fn too_big_for_account_reply(&self) -> bool {
+        self.sequence_start > 240
+    }
+
     pub fn account_reply_new_sequence(&mut self) {
         let mut rng = rand::thread_rng();
         self.sequence_start = rng.gen_range(0, 240);
