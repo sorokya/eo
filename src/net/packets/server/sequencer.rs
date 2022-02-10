@@ -42,7 +42,7 @@ impl Sequencer {
         let s1_max = (self.sequence_start + 13) / 7;
         let s1_min = std::cmp::max(0, (self.sequence_start as i32 - 252 + 13 + 6) / 7) as u32;
         let s1 = rng.gen_range(s1_min, s1_max);
-        let s2 = self.sequence_start - s1 * 7 + 13;
+        let s2 = (self.sequence_start as i32 - s1 as i32 * 7 + 13) as u32;
         (s1 as EOShort, s2 as EOChar)
     }
 
