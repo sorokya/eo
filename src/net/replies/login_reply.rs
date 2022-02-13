@@ -8,3 +8,9 @@ pub enum LoginReply {
     LoggedIn = 5,
     Busy = 6,
 }
+
+impl Default for LoginReply {
+    fn default() -> Self {
+        LoginReply::Busy
+    }
+}

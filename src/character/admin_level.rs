@@ -17,3 +17,9 @@ pub enum AdminLevel {
     GameMaster = 3,
     HighGameMaster = 4,
 }
+
+impl Default for AdminLevel {
+    fn default() -> AdminLevel {
+        AdminLevel::Player
+    }
+}

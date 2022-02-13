@@ -12,6 +12,7 @@ readme = "README.md"
 use_serde = ["serde"]
 
 [dependencies]
+log = "0.4"
 enum-primitive-derive = "0.2"
 num-traits = "0.2"
 rand = "0.7"

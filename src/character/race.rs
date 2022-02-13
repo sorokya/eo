@@ -9,3 +9,9 @@ pub enum Race {
     Panda = 5,
     Fish = 6,
 }
+
+impl Default for Race {
+    fn default() -> Race {
+        Race::White
+    }
+}
