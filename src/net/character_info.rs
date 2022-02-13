@@ -1,18 +1,3 @@
-// "Character selection screen character info"
-// struct Character_Info
-// {
-// 	string name
-// 	int id
-// 	char level
-// 	Gender gender
-// 	char hairstyle
-// 	char haircolor
-// 	Skin skin
-// 	AdminLevel admin
-// 	struct Paperdoll_BAHSW paperdoll
-// 	break
-// }
-
 use num_traits::FromPrimitive;
 
 use crate::{

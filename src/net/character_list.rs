@@ -6,27 +6,6 @@ use super::{CharacterInfo, CHARACTER_INFO_SIZE};
 
 pub const CHARACTER_LIST_SIZE: usize = 4;
 
-// 3 // reply
-// 4 // login
-// 4 254 // OK 2
-// 4 // num of characters 1
-// 2 // sound effect..? 1
-// 255 // break char 1
-// 103 111 114 111 110 255 // name break string
-// 182 73 3 254 // id
-// 42 // level
-// 2 // gender
-// 25 // hair style
-// 4 // hair color
-// 1 // race
-// 1 // admin
-// 53 254 // boots
-// 49 254 // armor
-// 34 254 // hat
-// 17 254 // shield
-// 74 254 // weapon
-// 255 // break
-
 #[derive(Debug, Default)]
 pub struct CharacterList {
     pub length: EOChar,
@@ -60,10 +39,10 @@ impl Serializeable for CharacterList {
             StreamBuilder::with_capacity(length_of_names_with_break_char + CHARACTER_LIST_SIZE + self.characters.len() * CHARACTER_INFO_SIZE);
         builder.add_char(self.length);
         builder.add_char(self.unknown);
-        builder.add_char(EO_BREAK_CHAR);
+        builder.add_byte(EO_BREAK_CHAR);
         for character in &self.characters {
             builder.append(&mut character.serialize());
-            builder.add_char(EO_BREAK_CHAR);
+            builder.add_byte(EO_BREAK_CHAR);
         }
         builder.get()
     }
