@@ -43,6 +43,9 @@ mod tests {
         let mut packet = Request::new();
         packet.name = "admin".to_string();
         packet.password = "test".to_string();
-        assert_eq!(packet.serialize(), [97, 100, 109, 105, 110, 255, 116, 101, 115, 116, 255])
+        assert_eq!(
+            packet.serialize(),
+            [97, 100, 109, 105, 110, 255, 116, 101, 115, 116, 255]
+        )
     }
 }

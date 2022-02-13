@@ -28,9 +28,12 @@ pub use packet_processing::*;
 mod client_state;
 pub use client_state::ClientState;
 pub mod packets;
-pub mod replies;
 mod paperdoll;
-pub use paperdoll::{PaperdollBAHWS, PAPERDOLL_BAHWS_SIZE, PaperdollBAHSW, PAPERDOLL_BAHSW_SIZE, PaperdollB000A0HSW, PAPERDOLL_B000A0HSW_SIZE, PaperdollFull, PAPERDOLL_FULL_SIZE};
+pub mod replies;
+pub use paperdoll::{
+    PaperdollB000A0HSW, PaperdollBAHSW, PaperdollBAHWS, PaperdollFull, PAPERDOLL_B000A0HSW_SIZE,
+    PAPERDOLL_BAHSW_SIZE, PAPERDOLL_BAHWS_SIZE, PAPERDOLL_FULL_SIZE,
+};
 
 pub fn stupid_hash(mut value: crate::data::EOThree) -> crate::data::EOThree {
     value += 1;

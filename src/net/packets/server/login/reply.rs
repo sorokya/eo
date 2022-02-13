@@ -1,7 +1,7 @@
 use num_traits::FromPrimitive;
 
 use crate::{
-    data::{EOByte, Serializeable, StreamBuilder, StreamReader, EOShort},
+    data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader},
     net::{replies::LoginReply, CharacterList},
 };
 
@@ -43,16 +43,20 @@ impl Serializeable for Reply {
 
 #[cfg(test)]
 mod tests {
-    use crate::{data::{EOByte, StreamReader, Serializeable}, net::{replies::LoginReply, CharacterInfo}};
     use super::Reply;
+    use crate::{
+        data::{EOByte, Serializeable, StreamReader},
+        net::{replies::LoginReply, CharacterInfo},
+    };
 
     #[test]
     fn deserialize_ok() {
         let buf: Vec<EOByte> = vec![
-            4, 254, 4, 2, 255, 103, 111, 114, 111, 110, 255, 106, 74, 3, 254, 42, 2, 25,
-            4, 1, 1, 53, 254, 49, 254, 34, 254, 17, 254, 74, 254, 255, 100, 105, 103, 105, 116, 120, 255, 107, 74,
-            3, 254, 1, 1, 2, 1, 1, 1, 1, 254, 1, 254, 1, 254, 1, 254, 1, 254, 255, 107, 97, 109, 105, 110, 97, 255, 10,
-            8, 74, 3, 254, 1, 2, 2, 1, 1, 1, 1, 254, 1, 254, 1, 254, 1, 254, 1, 254, 255,
+            4, 254, 4, 2, 255, 103, 111, 114, 111, 110, 255, 106, 74, 3, 254, 42, 2, 25, 4, 1, 1,
+            53, 254, 49, 254, 34, 254, 17, 254, 74, 254, 255, 100, 105, 103, 105, 116, 120, 255,
+            107, 74, 3, 254, 1, 1, 2, 1, 1, 1, 1, 254, 1, 254, 1, 254, 1, 254, 1, 254, 255, 107,
+            97, 109, 105, 110, 97, 255, 10, 8, 74, 3, 254, 1, 2, 2, 1, 1, 1, 1, 254, 1, 254, 1,
+            254, 1, 254, 1, 254, 255,
         ];
         let reader = StreamReader::new(&buf);
         let mut reply = Reply::new();
@@ -91,9 +95,7 @@ mod tests {
     }
     #[test]
     fn deserialize_error() {
-        let buf: Vec<EOByte> = vec![
-            2, 254
-        ];
+        let buf: Vec<EOByte> = vec![2, 254];
         let reader = StreamReader::new(&buf);
         let mut reply = Reply::new();
         reply.deserialize(&reader);
@@ -105,9 +107,6 @@ mod tests {
         let mut reply = Reply::new();
         reply.reply = LoginReply::WrongUsername;
 
-        assert_eq!(
-            reply.serialize(),
-            [2, 254]
-        );
+        assert_eq!(reply.serialize(), [2, 254]);
     }
 }

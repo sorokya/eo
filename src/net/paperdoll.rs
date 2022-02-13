@@ -1,4 +1,4 @@
-use crate::data::{EOShort, Serializeable, StreamReader, EOByte, StreamBuilder};
+use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader};
 
 pub const PAPERDOLL_BAHWS_SIZE: usize = 10;
 #[derive(Debug, Default)]
@@ -177,14 +177,12 @@ impl Serializeable for PaperdollFull {
 
 #[cfg(test)]
 mod tests {
-    use super::{PaperdollBAHWS, PaperdollBAHSW, PaperdollB000A0HSW, Serializeable, StreamReader};
+    use super::{PaperdollB000A0HSW, PaperdollBAHSW, PaperdollBAHWS, Serializeable, StreamReader};
     use crate::data::EOByte;
 
     #[test]
     fn deserialize_paperdoll_bahws() {
-        let buf: Vec<EOByte> = vec![
-            53, 254, 49, 254, 34, 254, 17, 254, 74, 254
-        ];
+        let buf: Vec<EOByte> = vec![53, 254, 49, 254, 34, 254, 17, 254, 74, 254];
         let reader = StreamReader::new(&buf);
         let mut paperdoll_bahws = PaperdollBAHWS::new();
         paperdoll_bahws.deserialize(&reader);
@@ -205,17 +203,13 @@ mod tests {
 
         assert_eq!(
             paperdoll_bahws.serialize(),
-            [
-                53, 254, 49, 254, 34, 254, 17, 254, 74, 254
-            ]
+            [53, 254, 49, 254, 34, 254, 17, 254, 74, 254]
         );
     }
 
     #[test]
     fn deserialize_paperdoll_bahsw() {
-        let buf: Vec<EOByte> = vec![
-            53, 254, 49, 254, 34, 254, 74, 254, 17, 254
-        ];
+        let buf: Vec<EOByte> = vec![53, 254, 49, 254, 34, 254, 74, 254, 17, 254];
         let reader = StreamReader::new(&buf);
         let mut paperdoll_bahws = PaperdollBAHSW::new();
         paperdoll_bahws.deserialize(&reader);
@@ -236,16 +230,14 @@ mod tests {
 
         assert_eq!(
             paperdoll_bahws.serialize(),
-            [
-                53, 254, 49, 254, 34, 254, 74, 254, 17, 254
-            ]
+            [53, 254, 49, 254, 34, 254, 74, 254, 17, 254]
         );
     }
 
     #[test]
     fn deserialize_paperdoll_b000a0hsw() {
         let buf: Vec<EOByte> = vec![
-            53, 254, 1, 254, 1, 254, 1, 254, 49, 254, 1, 254, 34, 254, 74, 254, 17, 254
+            53, 254, 1, 254, 1, 254, 1, 254, 49, 254, 1, 254, 34, 254, 74, 254, 17, 254,
         ];
         let reader = StreamReader::new(&buf);
         let mut paperdoll_bahws = PaperdollB000A0HSW::new();
@@ -267,11 +259,7 @@ mod tests {
 
         assert_eq!(
             paperdoll_bahws.serialize(),
-            [
-                53, 254, 1, 254, 1, 254, 1, 254, 49, 254, 1, 254, 34, 254, 74, 254, 17, 254
-            ]
+            [53, 254, 1, 254, 1, 254, 1, 254, 49, 254, 1, 254, 34, 254, 74, 254, 17, 254]
         );
     }
 }
-
-

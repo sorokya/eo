@@ -129,7 +129,7 @@ impl PacketProcessor {
     ///
     /// Init_Init packets are ignored
     pub fn decode(&self, bytes: &mut [EOByte]) {
-        if self.valid_for_decode(&bytes) {
+        if self.valid_for_decode(bytes) {
             let length = bytes.len();
             let mut buf: Vec<EOByte> = vec![0; length];
             let big_half = ((length + 1) / 2) as usize;
@@ -156,7 +156,7 @@ impl PacketProcessor {
     /// Init_Init packets are ignored
     #[allow(clippy::needless_range_loop)]
     pub fn encode(&self, bytes: &mut [EOByte]) {
-        if self.valid_for_decode(&bytes) {
+        if self.valid_for_decode(bytes) {
             let length = bytes.len();
             let mut buf: Vec<EOByte> = vec![0; length];
             self.swap_multiples(bytes, self.encode_multiple);

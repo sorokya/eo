@@ -4,6 +4,12 @@ pub enum CharacterReply {
     Exists = 1,
     Full = 2,
     NotApproved = 3,
-    OK = 4,
+    Created = 4,
     Deleted = 5,
+}
+
+impl Default for CharacterReply {
+    fn default() -> Self {
+        Self::Exists
+    }
 }
