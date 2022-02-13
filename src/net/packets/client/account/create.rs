@@ -24,7 +24,7 @@ impl Serializeable for Create {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.session_id = reader.get_short();
         reader.get_byte();
-        self.name = reader.get_break_string();
+        self.name = reader.get_break_string().to_lowercase();
         self.password = reader.get_break_string();
         self.fullname = reader.get_break_string();
         self.location = reader.get_break_string();
@@ -45,7 +45,7 @@ impl Serializeable for Create {
 
         builder.add_short(self.session_id);
         builder.add_byte(255);
-        builder.add_break_string(&self.name);
+        builder.add_break_string(&self.name.to_lowercase());
         builder.add_break_string(&self.password);
         builder.add_break_string(&self.fullname);
         builder.add_break_string(&self.location);
