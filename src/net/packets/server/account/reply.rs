@@ -8,6 +8,7 @@ use crate::{
 #[derive(Debug, Default)]
 pub struct Reply {
     pub reply: AccountReply,
+    pub session_id: EOShort,
     pub message: String,
     pub sequence: EOChar,
 }
@@ -20,18 +21,24 @@ impl Reply {
 
 impl Serializeable for Reply {
     fn deserialize(&mut self, reader: &StreamReader) {
-        let reply_code = reader.get_short();
-        self.reply = match AccountReply::from_u16(reply_code) {
-            Some(reply) => reply,
-            None => panic!("Failed to convert short to AccountReply: {}", reply_code),
-        };
+        let reply_code_or_session_id = reader.get_short();
+        if reply_code_or_session_id > 6 {
+            self.session_id = reply_code_or_session_id;
+        } else {
+            self.reply = match AccountReply::from_u16(reply_code_or_session_id) {
+                Some(reply) => reply,
+                None => panic!("Failed to convert short to AccountReply: {}", reply_code_or_session_id),
+            };
+        }
         self.message = reader.get_end_string();
     }
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(3 + self.message.len());
-        builder.add_short(self.reply as EOShort);
-        if self.reply == AccountReply::Continue {
+        if self.session_id > 0 {
+            builder.add_short(self.session_id);
             builder.add_char(self.sequence);
+        } else {
+            builder.add_short(self.reply as EOShort);
         }
         builder.add_string(&self.message);
         builder.get()

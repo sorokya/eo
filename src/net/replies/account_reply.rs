@@ -4,10 +4,9 @@ pub enum AccountReply {
     Exists = 1,
     NotApproved = 2,
     Created = 3,
+    Unknown = 4,
     ChangeFailed = 5,
     Changed = 6,
-    // TODO: Figure out real value
-    Continue = 1000,
 }
 
 impl Default for AccountReply {
