@@ -56,7 +56,7 @@ mod tests {
 
     #[test]
     fn deserialize() {
-        let data: Vec<EOByte> = vec![5, 254, 79, 75];
+        let data: Vec<EOByte> = vec![6, 254, 79, 75];
         let mut packet = Reply::new();
         let reader = StreamReader::new(&data);
         packet.deserialize(&reader);
@@ -68,6 +68,6 @@ mod tests {
         let mut packet = Reply::new();
         packet.reply = CharacterReply::Created;
         packet.message = "OK".to_string();
-        assert_eq!(packet.serialize(), [5, 254, 79, 75]);
+        assert_eq!(packet.serialize(), [6, 254, 79, 75]);
     }
 }
