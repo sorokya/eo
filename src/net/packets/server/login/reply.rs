@@ -30,7 +30,8 @@ impl Serializeable for Reply {
         }
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::with_capacity(0);
+        // TODO: calculate capacity
+        let mut builder = StreamBuilder::new();
         builder.add_short(self.reply as EOShort);
 
         if self.reply == LoginReply::OK {

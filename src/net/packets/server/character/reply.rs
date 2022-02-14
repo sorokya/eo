@@ -2,16 +2,15 @@ use num_traits::FromPrimitive;
 
 use crate::{
     data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader},
-    net::replies::CharacterReply,
+    net::{replies::CharacterReply, CharacterList},
 };
-
-const REPLY_SIZE: usize = 2;
 
 #[derive(Debug, Default)]
 pub struct Reply {
     pub reply: CharacterReply,
     pub session_id: EOShort,
     pub message: String,
+    pub character_list: CharacterList,
 }
 
 impl Reply {
@@ -34,16 +33,25 @@ impl Serializeable for Reply {
                 ),
             };
         }
-        self.message = reader.get_end_string();
+
+        self.message = reader.get_fixed_string(2);
+
+        if self.reply == CharacterReply::Created || self.reply == CharacterReply::Deleted {
+            self.character_list.deserialize(reader)
+        }
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::with_capacity(REPLY_SIZE + self.message.len());
+        // TODO: calculate capacity
+        let mut builder = StreamBuilder::new();
         if self.session_id > 0 {
             builder.add_short(self.session_id);
         } else {
             builder.add_short(self.reply as EOShort);
         }
         builder.add_string(&self.message);
+        if self.reply == CharacterReply::Created || self.reply == CharacterReply::Deleted {
+            builder.append(&mut self.character_list.serialize());
+        }
         builder.get()
     }
 }
@@ -52,22 +60,22 @@ impl Serializeable for Reply {
 mod tests {
     use super::*;
 
-    // TODO: add tests for session id
+    // TODO: add better tests
 
     #[test]
     fn deserialize() {
-        let data: Vec<EOByte> = vec![6, 254, 79, 75];
+        let data: Vec<EOByte> = vec![2, 254, 78, 79];
         let mut packet = Reply::new();
         let reader = StreamReader::new(&data);
         packet.deserialize(&reader);
-        assert_eq!(packet.reply, CharacterReply::Created);
-        assert_eq!(packet.message, "OK");
+        assert_eq!(packet.reply, CharacterReply::Exists);
+        assert_eq!(packet.message, "NO");
     }
     #[test]
     fn serialize() {
         let mut packet = Reply::new();
-        packet.reply = CharacterReply::Created;
-        packet.message = "OK".to_string();
-        assert_eq!(packet.serialize(), [6, 254, 79, 75]);
+        packet.reply = CharacterReply::Exists;
+        packet.message = "NO".to_string();
+        assert_eq!(packet.serialize(), [2, 254, 78, 79]);
     }
 }
