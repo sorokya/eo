@@ -18,3 +18,6 @@ to create any kind of program for [Endless Online](https://game.eoserv.net/).
 * [x] EO StreamBuilder+StreamReader provides a tool for working with EO Byte arrays
 * [ ] Client pub file reading+writing (Reading works)
 * [ ] Server pub file reading+writing (Reading works)
+* [ ] Network protocol data structures & serialization (Building these out as I go with the [reoserv](https://github.com/sorokya/reoserv) project)
+  * [ ] Client request packets
+  * [ ] Server response packets
