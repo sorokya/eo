@@ -1,4 +1,6 @@
 ![Rust](https://github.com/sorokya/eo/workflows/Rust/badge.svg)
+![Crate](https://img.shields.io/crates/v/eo)
+![Docs](https://img.shields.io/docsrs/eo)
 
 # EO
 This crate will contain most of the data structures and methods needed
