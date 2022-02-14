@@ -1,6 +1,16 @@
-![Rust](https://github.com/sorokya/eo/workflows/Rust/badge.svg)
-![Crate](https://img.shields.io/crates/v/eo)
-![Docs](https://img.shields.io/docsrs/eo)
+[![Build Status][actions-badge]][actions-url]
+[![Crate][crate-badge]][crate-url]
+[![Docs][docs-badge]][docs-url]
+[![License][mit-badge]][mit-url]
+
+[crates-badge]: https://img.shields.io/crates/v/eo.svg
+[crates-url]: https://crates.io/crates/tokio
+[docs-badge]: https://img.shields.io/docsrs/eo.svg
+[docs-url]: https://docs.rs/eo
+[actions-badge]: https://github.com/sorokya/eo/workflows/Rust/badge.svg
+[actions-url]: https://github.com/sorokya/eo/actions?query=branch%3Amaster
+[mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[mit-url]: https://github.com/sorokya/eo/blob/master/LICENSE
 
 # EO
 This crate will contain most of the data structures and methods needed
