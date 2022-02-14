@@ -3,9 +3,10 @@
 pub enum CharacterReply {
     Exists = 1,
     Full = 2,
-    NotApproved = 3,
-    Created = 4,
-    Deleted = 5,
+    InvalidRequest = 3,
+    NotApproved = 4,
+    Created = 5,
+    Deleted = 6,
 }
 
 impl Default for CharacterReply {
