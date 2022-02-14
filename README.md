@@ -1,5 +1,5 @@
 [![Build Status][actions-badge]][actions-url]
-[![Crate][crate-badge]][crate-url]
+[![Crate][crates-badge]][crates-url]
 [![Docs][docs-badge]][docs-url]
 [![License][mit-badge]][mit-url]
 
