@@ -12,7 +12,7 @@ use super::{
     decode_map_string, ChestSpawn, GfxRow, MapEffect, MapType, NPCSpawn, Sign, TileRow, Unknown,
     WarpRow, MAP_NAME_LENGTH, NUMBER_OF_GFX_LAYERS,
 };
-use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamReader};
+use crate::data::{EOByte, EOChar, EOShort, Serializeable, StreamReader};
 
 /// represents emf (map) files
 ///
@@ -119,7 +119,7 @@ use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamReader};
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct MapFile {
-    pub hash: EOInt,
+    pub hash: [EOByte; 4],
     pub name: String,
     pub map_type: MapType,
     pub effect: MapEffect,
@@ -155,7 +155,12 @@ impl MapFile {
         buf.read_to_end(&mut data_buf)?;
         let reader = StreamReader::new(&data_buf);
         reader.seek(3);
-        self.hash = reader.get_int();
+        self.hash = [
+            reader.get_byte(),
+            reader.get_byte(),
+            reader.get_byte(),
+            reader.get_byte(),
+        ];
         self.name = decode_map_string(reader.get_vec(MAP_NAME_LENGTH));
         let map_type_char = reader.get_char();
         self.map_type = match MapType::from_u8(map_type_char) {

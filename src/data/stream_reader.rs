@@ -155,6 +155,13 @@ impl<'a> StreamReader<'a> {
         self.position.set(position + length);
         buf.to_vec()
     }
+
+    /// returns a single [EOByte] from the data stream
+    ///
+    /// without increasing the read position by 1
+    pub fn peek_byte(&self) -> EOByte {
+        self.data[self.position.get()]
+    }
 }
 
 #[cfg(test)]

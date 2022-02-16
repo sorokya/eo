@@ -38,7 +38,7 @@ use crate::data::{
 #[derive(Debug, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ClassFile {
-    pub hash: EOInt,
+    pub hash: [EOByte; 4],
     length: usize,
     pub records: Vec<ClassRecord>,
 }
@@ -53,7 +53,7 @@ impl ClassFile {
     /// ```
     pub fn new() -> Self {
         Self {
-            hash: 0,
+            hash: [0, 0, 0, 0],
             length: 0,
             records: Vec::default(),
         }
@@ -100,7 +100,12 @@ impl ClassFile {
         buf.read_to_end(&mut data_buf)?;
         let reader = StreamReader::new(&data_buf);
         reader.seek(3);
-        self.hash = reader.get_int();
+        self.hash = [
+            reader.get_byte(),
+            reader.get_byte(),
+            reader.get_byte(),
+            reader.get_byte(),
+        ];
         self.length = reader.get_short() as usize;
         reader.get_char();
         self.records = Vec::with_capacity(self.length);

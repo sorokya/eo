@@ -2,7 +2,7 @@ use crate::data::{EOByte, EOInt, Serializeable, StreamBuilder, StreamReader};
 
 #[derive(Debug, Default)]
 pub struct Request {
-    pub character_id: EOInt
+    pub character_id: EOInt,
 }
 
 impl Request {
@@ -38,9 +38,6 @@ mod tests {
     fn serialize() {
         let mut packet = Request::new();
         packet.character_id = 19;
-        assert_eq!(
-            packet.serialize(),
-            [20, 254, 254, 254]
-        )
+        assert_eq!(packet.serialize(), [20, 254, 254, 254])
     }
 }

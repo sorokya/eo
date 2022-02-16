@@ -1,3 +1,5 @@
+mod coords;
+pub use coords::{Coords, COORDS_SIZE};
 mod direction;
 pub use direction::Direction;
 mod map_effect;

@@ -1,4 +1,4 @@
-use crate::data::{EOByte, Serializeable, StreamBuilder, StreamReader, EOInt};
+use crate::data::{EOByte, EOInt, Serializeable, StreamBuilder, StreamReader};
 
 #[derive(Debug, Default)]
 pub struct Take {

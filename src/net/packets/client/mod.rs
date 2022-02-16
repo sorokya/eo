@@ -3,6 +3,6 @@ pub mod character;
 pub mod connection;
 pub mod init;
 pub mod login;
-pub mod welcome;
 mod sequencer;
+pub mod welcome;
 pub use sequencer::Sequencer;

@@ -1,6 +1,9 @@
 use num_traits::FromPrimitive;
 
-use crate::{data::{EOByte, Serializeable, StreamBuilder, StreamReader, EOShort, EO_BREAK_CHAR}, character::{Gender, Race}};
+use crate::{
+    character::{Gender, Race},
+    data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR},
+};
 
 const CREATE_SIZE: usize = 11;
 
@@ -65,12 +68,17 @@ mod tests {
         packet.hair_color = 3;
         packet.race = Race::White;
         packet.name = "goron".to_string();
-        assert_eq!(packet.serialize(), [242, 4, 2, 254, 9, 254, 4, 254, 1, 254, 255, 103, 111, 114, 111, 110, 255])
+        assert_eq!(
+            packet.serialize(),
+            [242, 4, 2, 254, 9, 254, 4, 254, 1, 254, 255, 103, 111, 114, 111, 110, 255]
+        )
     }
 
     #[test]
     fn deserialize() {
-        let data: Vec<EOByte> = vec![242, 4, 2, 254, 9, 254, 4, 254, 1, 254, 255, 103, 111, 114, 111, 110, 255];
+        let data: Vec<EOByte> = vec![
+            242, 4, 2, 254, 9, 254, 4, 254, 1, 254, 255, 103, 111, 114, 111, 110, 255,
+        ];
         let mut packet = Create::new();
         let reader = StreamReader::new(&data);
         packet.deserialize(&reader);

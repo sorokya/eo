@@ -5,3 +5,9 @@ pub enum SitState {
     Chair = 1,
     Floor = 2,
 }
+
+impl Default for SitState {
+    fn default() -> Self {
+        SitState::Standing
+    }
+}

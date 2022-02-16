@@ -14,3 +14,5 @@ mod account_reply;
 pub use account_reply::AccountReply;
 mod login_reply;
 pub use login_reply::LoginReply;
+mod welcome_reply;
+pub use welcome_reply::WelcomeReply;
