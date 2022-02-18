@@ -5,7 +5,7 @@ use num_traits::FromPrimitive;
 
 use crate::data::{
     pubs::npc::{NPCType, ENF_DATA_SIZE},
-    EOByte, EOInt, EOShort, EOThree, Serializeable, StreamBuilder, StreamReader,
+    EOByte, EOChar, EOInt, EOShort, EOThree, Serializeable, StreamBuilder, StreamReader,
 };
 
 /// data structure of a single enf record
@@ -46,6 +46,12 @@ pub struct NPCRecord {
     pub element_weak_power: EOShort,
     /// experience points granted when npc is killed
     pub experience: EOThree,
+    unknown1: EOChar,
+    unknown2: EOShort,
+    unknown3: EOChar,
+    unknown4: EOShort,
+    unknown5: EOShort,
+    unknown6: EOChar,
 }
 
 impl NPCRecord {
@@ -62,7 +68,7 @@ impl Serializeable for NPCRecord {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.name = reader.get_prefix_string();
         self.graphic_id = reader.get_short();
-        reader.get_char();
+        self.unknown1 = reader.get_char();
         self.boss = reader.get_short() == 1;
         self.child = reader.get_short() == 1;
         let type_short = reader.get_short();
@@ -72,42 +78,42 @@ impl Serializeable for NPCRecord {
         };
         self.vendor_id = reader.get_short();
         self.hp = reader.get_three();
-        reader.get_short();
+        self.unknown2 = reader.get_short();
         self.min_damage = reader.get_short();
         self.max_damage = reader.get_short();
         self.accuracy = reader.get_short();
         self.evade = reader.get_short();
         self.armor = reader.get_short();
-        reader.get_char();
-        reader.get_short();
-        reader.get_short();
+        self.unknown3 = reader.get_char();
+        self.unknown4 = reader.get_short();
+        self.unknown5 = reader.get_short();
         self.element_weak = reader.get_short();
         self.element_weak_power = reader.get_short();
-        reader.get_char();
+        self.unknown6 = reader.get_char();
         self.experience = reader.get_three();
     }
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(ENF_DATA_SIZE + self.name.len() + 1);
         builder.add_prefix_string(&self.name);
         builder.add_short(self.graphic_id);
-        builder.add_char(0);
+        builder.add_char(self.unknown1);
         builder.add_short(self.boss as EOShort);
         builder.add_short(self.child as EOShort);
         builder.add_short(self.npc_type as EOShort);
         builder.add_short(self.vendor_id);
         builder.add_three(self.hp);
-        builder.add_short(0);
+        builder.add_short(self.unknown2);
         builder.add_short(self.min_damage);
         builder.add_short(self.max_damage);
         builder.add_short(self.accuracy);
         builder.add_short(self.evade);
         builder.add_short(self.armor);
-        builder.add_char(0);
-        builder.add_short(0);
-        builder.add_short(0);
+        builder.add_char(self.unknown3);
+        builder.add_short(self.unknown4);
+        builder.add_short(self.unknown5);
         builder.add_short(self.element_weak);
         builder.add_short(self.element_weak_power);
-        builder.add_char(0);
+        builder.add_char(self.unknown6);
         builder.add_three(self.experience);
         builder.get()
     }

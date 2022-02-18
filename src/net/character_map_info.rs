@@ -85,7 +85,7 @@ impl Serializeable for CharacterMapInfo {
         builder.append(&mut self.coords.serialize());
         builder.add_char(self.direction as u8);
         builder.add_char(self.class_id);
-        builder.add_string(&self.guild_tag);
+        builder.add_fixed_string(&self.guild_tag, 3);
         builder.add_char(self.level);
         builder.add_char(self.gender as EOChar);
         builder.add_char(self.hair_style);

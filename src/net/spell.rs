@@ -1,7 +1,7 @@
 use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader};
 
 pub const SPELL_SIZE: usize = 4;
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct Spell {
     pub id: EOShort,
     pub level: EOShort,

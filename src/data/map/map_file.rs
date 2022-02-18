@@ -9,10 +9,10 @@ use std::io::{
 };
 
 use super::{
-    decode_map_string, ChestSpawn, GfxRow, MapEffect, MapType, NPCSpawn, Sign, TileRow, Unknown,
-    WarpRow, MAP_NAME_LENGTH, NUMBER_OF_GFX_LAYERS,
+    decode_map_string, encode_map_string, ChestSpawn, GfxRow, MapEffect, MapType, NPCSpawn, Sign,
+    TileRow, Unknown, WarpRow, MAP_NAME_LENGTH, NUMBER_OF_GFX_LAYERS,
 };
-use crate::data::{EOByte, EOChar, EOShort, Serializeable, StreamReader};
+use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamBuilder, StreamReader};
 
 /// represents emf (map) files
 ///
@@ -115,6 +115,11 @@ use crate::data::{EOByte, EOChar, EOShort, Serializeable, StreamReader};
 ///     text (fixed string with above length - 1)
 ///     title_length (1 byte)
 /// }
+/// unknown (1 byte) // always 0?
+/// unknown (1 byte) // always 0?
+/// unknown (1 byte) // always 0?
+/// unknown (1 byte) // always 0?
+/// unknown (1 byte) // always 0?
 ///```
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -133,6 +138,7 @@ pub struct MapFile {
     pub can_scroll: bool,
     pub relog_x: EOChar,
     pub relog_y: EOChar,
+    unknown: EOChar,
     pub npc_spawns: Vec<NPCSpawn>,
     pub unknowns: Vec<Unknown>,
     pub chest_spawns: Vec<ChestSpawn>,
@@ -140,6 +146,7 @@ pub struct MapFile {
     pub warp_rows: Vec<WarpRow>,
     pub gfx_rows: [Vec<GfxRow>; NUMBER_OF_GFX_LAYERS],
     pub signs: Vec<Sign>,
+    pub size: EOInt,
 }
 
 impl MapFile {
@@ -154,6 +161,14 @@ impl MapFile {
         buf.seek(SeekFrom::Start(0))?;
         buf.read_to_end(&mut data_buf)?;
         let reader = StreamReader::new(&data_buf);
+        self.deserialize(&reader);
+        Ok(())
+    }
+}
+
+impl Serializeable for MapFile {
+    fn deserialize(&mut self, reader: &StreamReader) {
+        self.size = reader.length() as EOInt;
         reader.seek(3);
         self.hash = [
             reader.get_byte(),
@@ -182,24 +197,7 @@ impl MapFile {
         self.can_scroll = reader.get_char() == 1;
         self.relog_x = reader.get_char();
         self.relog_y = reader.get_char();
-        reader.get_char();
-        self.read_npc_spawns(&reader);
-        self.read_unknowns(&reader);
-        self.read_chest_spawns(&reader);
-        self.read_tiles(&reader);
-        self.read_warps(&reader);
-        for layer in 0..NUMBER_OF_GFX_LAYERS {
-            if !reader.eof() {
-                self.read_gfx_layer(layer, &reader);
-            }
-        }
-        if !reader.eof() {
-            self.read_signs(&reader);
-        }
-        Ok(())
-    }
-
-    fn read_npc_spawns(&mut self, reader: &StreamReader) {
+        self.unknown = reader.get_char();
         let npc_spawns_length = reader.get_char();
         self.npc_spawns = Vec::with_capacity(npc_spawns_length as usize);
         for _ in 0..npc_spawns_length {
@@ -207,9 +205,6 @@ impl MapFile {
             npc.deserialize(reader);
             self.npc_spawns.push(npc);
         }
-    }
-
-    fn read_unknowns(&mut self, reader: &StreamReader) {
         let unknowns_length = reader.get_char();
         self.unknowns = Vec::with_capacity(unknowns_length as usize);
         for _ in 0..unknowns_length {
@@ -217,9 +212,6 @@ impl MapFile {
             unknown.deserialize(reader);
             self.unknowns.push(unknown);
         }
-    }
-
-    fn read_chest_spawns(&mut self, reader: &StreamReader) {
         let chest_spawns_length = reader.get_char();
         self.chest_spawns = Vec::with_capacity(chest_spawns_length as usize);
         for _ in 0..chest_spawns_length {
@@ -227,9 +219,6 @@ impl MapFile {
             chest_spawn.deserialize(reader);
             self.chest_spawns.push(chest_spawn);
         }
-    }
-
-    fn read_tiles(&mut self, reader: &StreamReader) {
         let outer_length = reader.get_char();
         self.tile_rows = Vec::with_capacity(outer_length as usize);
         for _ in 0..outer_length {
@@ -237,9 +226,6 @@ impl MapFile {
             tile_row.deserialize(reader);
             self.tile_rows.push(tile_row);
         }
-    }
-
-    fn read_warps(&mut self, reader: &StreamReader) {
         let outer_length = reader.get_char();
         self.warp_rows = Vec::with_capacity(outer_length as usize);
         for _ in 0..outer_length {
@@ -247,28 +233,88 @@ impl MapFile {
             warp_row.deserialize(reader);
             self.warp_rows.push(warp_row);
         }
-    }
-
-    fn read_gfx_layer(&mut self, layer: usize, reader: &StreamReader) {
-        let outer_length = reader.get_char();
-        self.gfx_rows[layer] = Vec::with_capacity(outer_length as usize);
-        for _ in 0..outer_length {
-            let mut gfx_row = GfxRow::new();
-            gfx_row.deserialize(reader);
-            self.gfx_rows[layer].push(gfx_row);
-        }
-    }
-
-    fn read_signs(&mut self, reader: &StreamReader) {
-        let signs_length = reader.get_char();
-        self.signs = Vec::with_capacity(signs_length as usize);
-        for _ in 0..signs_length {
-            if reader.remaining() <= 4 {
-                break;
+        for layer in 0..NUMBER_OF_GFX_LAYERS {
+            if !reader.eof() {
+                let outer_length = reader.get_char();
+                self.gfx_rows[layer] = Vec::with_capacity(outer_length as usize);
+                for _ in 0..outer_length {
+                    let mut gfx_row = GfxRow::new();
+                    gfx_row.deserialize(reader);
+                    self.gfx_rows[layer].push(gfx_row);
+                }
             }
-            let mut sign = Sign::new();
-            sign.deserialize(reader);
-            self.signs.push(sign);
         }
+        if !reader.eof() {
+            let signs_length = reader.get_char();
+            self.signs = Vec::with_capacity(signs_length as usize);
+            for _ in 0..signs_length {
+                if reader.remaining() <= 4 {
+                    break;
+                }
+                let mut sign = Sign::new();
+                sign.deserialize(reader);
+                self.signs.push(sign);
+            }
+        }
+    }
+
+    fn serialize(&self) -> Vec<EOByte> {
+        let mut builder = StreamBuilder::new(); // TOOD: calculate capacity
+        builder.add_string("EMF");
+        builder.append(&mut self.hash.to_vec());
+        builder.append(&mut encode_map_string(&self.name, MAP_NAME_LENGTH));
+        builder.add_char(self.map_type as EOChar);
+        builder.add_char(self.effect as EOChar);
+        builder.add_char(self.music_id);
+        builder.add_char(self.music_extra);
+        builder.add_short(self.ambient_sound_id);
+        builder.add_char(self.width);
+        builder.add_char(self.height);
+        builder.add_short(self.fill_tile);
+        builder.add_char(if self.map_available { 1 } else { 0 });
+        builder.add_char(if self.can_scroll { 1 } else { 0 });
+        builder.add_char(self.relog_x);
+        builder.add_char(self.relog_y);
+        builder.add_char(self.unknown);
+        builder.add_char(self.npc_spawns.len() as EOChar);
+        for npc in &self.npc_spawns {
+            builder.append(&mut npc.serialize());
+        }
+        builder.add_char(self.unknowns.len() as EOChar);
+        for unknown in &self.unknowns {
+            builder.append(&mut unknown.serialize());
+        }
+        builder.add_char(self.chest_spawns.len() as EOChar);
+        for chest_spawn in &self.chest_spawns {
+            builder.append(&mut chest_spawn.serialize());
+        }
+        builder.add_char(self.tile_rows.len() as EOChar);
+        for tile_row in &self.tile_rows {
+            builder.append(&mut tile_row.serialize());
+        }
+        builder.add_char(self.warp_rows.len() as EOChar);
+        for warp_row in &self.warp_rows {
+            builder.append(&mut warp_row.serialize());
+        }
+        for layer in 0..NUMBER_OF_GFX_LAYERS {
+            if !self.gfx_rows[layer].is_empty() {
+                builder.add_char(self.gfx_rows[layer].len() as EOChar);
+                for gfx_row in &self.gfx_rows[layer] {
+                    builder.append(&mut gfx_row.serialize());
+                }
+            }
+        }
+        if !self.signs.is_empty() {
+            builder.add_char(self.signs.len() as EOChar);
+            for sign in &self.signs {
+                builder.append(&mut sign.serialize());
+            }
+        }
+        builder.add_char(0);
+        builder.add_char(0);
+        builder.add_char(0);
+        builder.add_char(0);
+        builder.add_char(0);
+        builder.get()
     }
 }

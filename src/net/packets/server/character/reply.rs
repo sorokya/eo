@@ -48,7 +48,7 @@ impl Serializeable for Reply {
         } else {
             builder.add_short(self.reply as EOShort);
         }
-        builder.add_string(&self.message);
+        builder.add_fixed_string(&self.message, 2);
         if self.reply == CharacterReply::Created || self.reply == CharacterReply::Deleted {
             builder.append(&mut self.character_list.serialize());
         }

@@ -89,6 +89,18 @@ impl StreamBuilder {
         self.add_char(string.len() as EOChar);
         self.add_string(string);
     }
+    /// Adds a fixed length UTF-8 encoded version of `string` to the data stream
+    /// (padding with spaces if necessary)
+    pub fn add_fixed_string(&mut self, string: &str, length: usize) {
+        if string.len() > length {
+            panic!("string is too long");
+        }
+
+        self.add_string(string);
+        for _ in 0..length - string.len() {
+            self.add_string(" ");
+        }
+    }
     /// Appends data from other Vec to the end of this StreamBuilder
     pub fn append(&mut self, other: &mut Vec<EOByte>) {
         self.data.append(other);

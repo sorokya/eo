@@ -51,6 +51,22 @@ pub struct SpellRecord {
     pub accuracy: EOShort,
     /// amount of hp the spell restores
     pub hp: EOShort,
+    unknown1: EOChar,
+    unknown2: EOChar,
+    unknown3: EOChar,
+    unknown4: EOChar,
+    unknown5: EOShort,
+    unknown6: EOShort,
+    unknown7: EOShort,
+    unknown8: EOChar,
+    unknown9: EOShort,
+    unknown10: EOChar,
+    unknown11: EOShort,
+    unknown12: EOShort,
+    unknown13: EOShort,
+    unknown14: EOShort,
+    unknown15: EOShort,
+    unknown16: EOShort,
 }
 
 impl SpellRecord {
@@ -74,8 +90,8 @@ impl Serializeable for SpellRecord {
         self.tp_cost = reader.get_short();
         self.sp_cost = reader.get_short();
         self.cast_time = reader.get_char();
-        reader.get_char();
-        reader.get_char();
+        self.unknown1 = reader.get_char();
+        self.unknown2 = reader.get_char();
         let type_three = reader.get_three();
         self.spell_type = match SpellType::from_u32(type_three) {
             Some(spell_type) => spell_type,
@@ -99,24 +115,24 @@ impl Serializeable for SpellRecord {
                 target_type_char
             ),
         };
-        reader.get_char();
-        reader.get_char();
-        reader.get_short();
+        self.unknown3 = reader.get_char();
+        self.unknown4 = reader.get_char();
+        self.unknown5 = reader.get_short();
         self.min_damage = reader.get_short();
         self.max_damage = reader.get_short();
         self.accuracy = reader.get_short();
-        reader.get_short();
-        reader.get_short();
-        reader.get_char();
+        self.unknown6 = reader.get_short();
+        self.unknown7 = reader.get_short();
+        self.unknown8 = reader.get_char();
         self.hp = reader.get_short();
-        reader.get_short();
-        reader.get_char();
-        reader.get_short();
-        reader.get_short();
-        reader.get_short();
-        reader.get_short();
-        reader.get_short();
-        reader.get_short();
+        self.unknown9 = reader.get_short();
+        self.unknown10 = reader.get_char();
+        self.unknown11 = reader.get_short();
+        self.unknown12 = reader.get_short();
+        self.unknown13 = reader.get_short();
+        self.unknown14 = reader.get_short();
+        self.unknown15 = reader.get_short();
+        self.unknown16 = reader.get_short();
     }
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder =
@@ -130,31 +146,31 @@ impl Serializeable for SpellRecord {
         builder.add_short(self.tp_cost);
         builder.add_short(self.sp_cost);
         builder.add_char(self.cast_time);
-        builder.add_char(0);
-        builder.add_char(0);
+        builder.add_char(self.unknown1);
+        builder.add_char(self.unknown2);
         builder.add_three(self.spell_type as EOThree);
         builder.add_char(self.element);
         builder.add_short(self.element_power);
         builder.add_char(self.target_restrict as EOChar);
         builder.add_char(self.target_type as EOChar);
-        builder.add_char(0);
-        builder.add_char(0);
-        builder.add_short(0);
+        builder.add_char(self.unknown3);
+        builder.add_char(self.unknown4);
+        builder.add_short(self.unknown5);
         builder.add_short(self.min_damage);
         builder.add_short(self.max_damage);
         builder.add_short(self.accuracy);
-        builder.add_short(0);
-        builder.add_short(0);
-        builder.add_char(0);
+        builder.add_short(self.unknown6);
+        builder.add_short(self.unknown7);
+        builder.add_char(self.unknown8);
         builder.add_short(self.hp);
-        builder.add_short(0);
-        builder.add_char(0);
-        builder.add_short(0);
-        builder.add_short(0);
-        builder.add_short(0);
-        builder.add_short(0);
-        builder.add_short(0);
-        builder.add_short(0);
+        builder.add_short(self.unknown9);
+        builder.add_char(self.unknown10);
+        builder.add_short(self.unknown11);
+        builder.add_short(self.unknown12);
+        builder.add_short(self.unknown13);
+        builder.add_short(self.unknown14);
+        builder.add_short(self.unknown15);
+        builder.add_short(self.unknown16);
         builder.get()
     }
 }

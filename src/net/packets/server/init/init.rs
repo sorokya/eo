@@ -10,6 +10,7 @@ use super::{
     InitFriendListPlayers, InitMapMutation, InitOk, InitOutOfDate, InitPlayers,
 };
 
+// TODO: consider merging these into one?
 pub struct Init {
     pub reply_code: InitReply,
     pub reply: Box<dyn Serializeable>,

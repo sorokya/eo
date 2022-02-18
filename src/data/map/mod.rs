@@ -13,8 +13,12 @@ const SIGN_SIZE: usize = 2;
 
 use crate::data::EOByte;
 
-fn encode_map_string(s: &str) -> Vec<EOByte> {
-    let mut buf = s.as_bytes().to_vec();
+fn encode_map_string(s: &str, length: usize) -> Vec<EOByte> {
+    let mut buf = vec![0xFF; length];
+    for (i, c) in s.chars().enumerate() {
+        buf[i] = c as u8;
+    }
+
     let mut flippy = buf.len() % 2 == 1;
     for i in 0..buf.len() {
         let mut c = buf[i];
@@ -96,12 +100,12 @@ pub use map_file::MapFile;
 
 #[cfg(test)]
 mod tests {
-    use crate::data::EOByte;
+    use crate::data::{map::MAP_NAME_LENGTH, EOByte};
     #[test]
     fn decode_map_string() {
         let encoded_map_name: Vec<EOByte> = vec![
-            0x3D, 0x7C, 0x20, 0x31, 0x5E, 0x36, 0x5A, 0x31, 0x6C, 0x52, 0x20, 0x2B, 0x5A, 0x30,
-            0x65, 0x58,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x3D, 0x7C, 0x20, 0x31, 0x5E, 0x36,
+            0x5A, 0x31, 0x6C, 0x52, 0x20, 0x2B, 0x5A, 0x30, 0x65, 0x58,
         ];
         assert_eq!(
             super::decode_map_string(encoded_map_name),
@@ -112,10 +116,10 @@ mod tests {
     #[test]
     fn encode_map_string() {
         assert_eq!(
-            super::encode_map_string("Ghost Mansion #4"),
+            super::encode_map_string("Ghost Mansion #4", MAP_NAME_LENGTH),
             [
-                0x3D, 0x7C, 0x20, 0x31, 0x5E, 0x36, 0x5A, 0x31, 0x6C, 0x52, 0x20, 0x2B, 0x5A, 0x30,
-                0x65, 0x58,
+                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x3D, 0x7C, 0x20, 0x31, 0x5E, 0x36,
+                0x5A, 0x31, 0x6C, 0x52, 0x20, 0x2B, 0x5A, 0x30, 0x65, 0x58,
             ]
         );
     }

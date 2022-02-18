@@ -113,7 +113,13 @@ impl<'a> StreamReader<'a> {
     pub fn get_fixed_string(&self, length: usize) -> String {
         if self.remaining() >= length {
             let bytes_to_read = self.get_vec(length);
-            String::from_utf8(bytes_to_read).expect("Failed to convert byte array to string")
+            match String::from_utf8(bytes_to_read.clone()) {
+                Ok(s) => s,
+                Err(_) => panic!(
+                    "Failed to convert byte array ({:?}) to string",
+                    bytes_to_read
+                ),
+            }
         } else {
             String::from("")
         }
@@ -147,6 +153,9 @@ impl<'a> StreamReader<'a> {
     /// moves the read position forward by `length`
     pub fn seek(&self, length: usize) {
         self.position.set(self.position.get() + length);
+    }
+    pub fn reset(&self) {
+        self.position.set(0);
     }
     /// returns a Vec<EOByte> of the desired length
     pub fn get_vec(&self, length: usize) -> Vec<EOByte> {

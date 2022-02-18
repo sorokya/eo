@@ -1,7 +1,7 @@
 use crate::data::{EOShort, Serializeable, StreamBuilder};
 
 pub const CHARACTER_BASE_STATS_SIZE: usize = 12;
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct CharacterBaseStats {
     pub strength: EOShort,
     pub intelligence: EOShort,
@@ -34,7 +34,7 @@ impl Serializeable for CharacterBaseStats {
 }
 
 pub const CHARACTER_SECONDARY_STATS_SIZE: usize = 10;
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct CharacterSecondaryStats {
     pub min_damage: EOShort,
     pub max_damage: EOShort,
@@ -108,7 +108,7 @@ impl Serializeable for CharacterStats1 {
 
 pub const CHARACTER_STATS_2_SIZE: usize =
     CHARACTER_BASE_STATS_SIZE + CHARACTER_SECONDARY_STATS_SIZE + 16;
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct CharacterStats2 {
     pub hp: EOShort,
     pub max_hp: EOShort,

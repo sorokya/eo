@@ -39,7 +39,7 @@ impl Serializeable for Sign {
         builder.add_char(self.x);
         builder.add_char(self.y);
         builder.add_short(sign_text.len() as EOShort + 1);
-        builder.append(&mut encode_map_string(&sign_text));
+        builder.append(&mut encode_map_string(&sign_text, sign_text.len()));
         builder.add_char(self.title.len() as EOChar);
         builder.get()
     }

@@ -6,7 +6,10 @@ use std::io::{
     SeekFrom,
 };
 
-use crate::data::{pubs::spell::SpellRecord, EOByte, EOInt, EOShort, Serializeable, StreamReader};
+use crate::data::{
+    pubs::spell::SpellRecord, EOByte, EOChar, EOInt, EOShort, Serializeable, StreamBuilder,
+    StreamReader,
+};
 
 /// represents esf (spell) files
 ///
@@ -19,6 +22,7 @@ use crate::data::{pubs::spell::SpellRecord, EOByte, EOInt, EOShort, Serializeabl
 /// "ESF" (fixed string)
 /// hash (4 bytes)
 /// Length (2 bytes)
+/// Unknown (1 byte) (0)
 /// Record*Length
 /// {
 ///     name_length (1 byte)
@@ -62,6 +66,7 @@ use crate::data::{pubs::spell::SpellRecord, EOByte, EOInt, EOShort, Serializeabl
 pub struct SpellFile {
     pub hash: [EOByte; 4],
     length: usize,
+    unknown: EOChar,
     pub records: Vec<SpellRecord>,
 }
 
@@ -71,6 +76,7 @@ impl SpellFile {
         Self {
             hash: [0, 0, 0, 0],
             length: 0,
+            unknown: 0,
             records: Vec::default(),
         }
     }
@@ -88,6 +94,19 @@ impl SpellFile {
         buf.seek(SeekFrom::Start(0))?;
         buf.read_to_end(&mut data_buf)?;
         let reader = StreamReader::new(&data_buf);
+        self.deserialize(&reader);
+        Ok(())
+    }
+
+    fn read_record(&mut self, id: usize, reader: &StreamReader) {
+        let mut record = SpellRecord::new(id as EOInt);
+        record.deserialize(reader);
+        self.records.push(record);
+    }
+}
+
+impl Serializeable for SpellFile {
+    fn deserialize(&mut self, reader: &StreamReader) {
         reader.seek(3);
         self.hash = [
             reader.get_byte(),
@@ -96,23 +115,23 @@ impl SpellFile {
             reader.get_byte(),
         ];
         self.length = reader.get_short() as usize;
-        reader.get_char();
-        self.records = Vec::with_capacity(self.length);
-        for id in 1..self.length {
-            self.read_record(id, &reader)?;
+        self.unknown = reader.get_char();
+        self.records = Vec::with_capacity(self.length + 1);
+        for id in 1..self.length + 1 {
+            self.read_record(id, reader);
         }
-
-        Ok(())
     }
 
-    fn read_record(&mut self, id: usize, reader: &StreamReader) -> std::io::Result<()> {
-        let mut record = SpellRecord::new(id as EOInt);
-        record.deserialize(reader);
-        if record.name != "eof" {
-            self.records.push(record);
+    fn serialize(&self) -> Vec<EOByte> {
+        let mut builder = StreamBuilder::new();
+        builder.add_string("ESF");
+        builder.append(&mut self.hash.to_vec());
+        builder.add_short(self.length as EOShort);
+        builder.add_char(self.unknown);
+        for record in &self.records {
+            builder.append(&mut record.serialize());
         }
-
-        Ok(())
+        builder.get()
     }
 }
 
@@ -208,7 +227,7 @@ mod tests {
         assert_eq!(esf.records[1].icon_id, 2);
         assert_eq!(esf.records[1].graphic_id, 2);
 
-        assert_eq!(esf.records.len(), 2);
+        assert_eq!(esf.records.len(), 3);
         Ok(())
     }
 

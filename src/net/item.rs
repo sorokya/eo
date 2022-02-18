@@ -3,7 +3,7 @@ use crate::data::{
 };
 
 pub const ITEM_SIZE: usize = 6;
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct Item {
     pub id: EOShort,
     pub amount: EOInt,

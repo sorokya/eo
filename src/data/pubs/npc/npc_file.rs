@@ -6,7 +6,10 @@ use std::io::{
     SeekFrom,
 };
 
-use crate::data::{pubs::npc::NPCRecord, EOByte, EOInt, EOShort, Serializeable, StreamReader};
+use crate::data::{
+    pubs::npc::NPCRecord, EOByte, EOChar, EOInt, EOShort, Serializeable, StreamBuilder,
+    StreamReader,
+};
 
 /// represents enf files
 ///
@@ -19,6 +22,7 @@ use crate::data::{pubs::npc::NPCRecord, EOByte, EOInt, EOShort, Serializeable, S
 /// "ENF" (fixed string)
 /// hash (4 bytes)
 /// Length (2 bytes)
+/// Unknown (1 bytes) (always 0)
 /// Record*Length
 /// {
 ///     name (prefixed string)
@@ -49,6 +53,7 @@ use crate::data::{pubs::npc::NPCRecord, EOByte, EOInt, EOShort, Serializeable, S
 pub struct NPCFile {
     pub hash: [EOByte; 4],
     length: usize,
+    unknown: EOChar,
     pub records: Vec<NPCRecord>,
 }
 
@@ -58,6 +63,7 @@ impl NPCFile {
         Self {
             hash: [0, 0, 0, 0],
             length: 0,
+            unknown: 0,
             records: Vec::default(),
         }
     }
@@ -75,6 +81,19 @@ impl NPCFile {
         buf.seek(SeekFrom::Start(0))?;
         buf.read_to_end(&mut data_buf)?;
         let reader = StreamReader::new(&data_buf);
+        self.deserialize(&reader);
+        Ok(())
+    }
+
+    fn read_record(&mut self, id: usize, reader: &StreamReader) {
+        let mut record = NPCRecord::new(id as EOInt);
+        record.deserialize(reader);
+        self.records.push(record);
+    }
+}
+
+impl Serializeable for NPCFile {
+    fn deserialize(&mut self, reader: &StreamReader) {
         reader.seek(3);
         self.hash = [
             reader.get_byte(),
@@ -83,23 +102,23 @@ impl NPCFile {
             reader.get_byte(),
         ];
         self.length = reader.get_short() as usize;
-        reader.get_char();
-        self.records = Vec::with_capacity(self.length);
-        for id in 1..self.length {
-            self.read_record(id, &reader)?;
+        self.unknown = reader.get_char();
+        self.records = Vec::with_capacity(self.length + 1);
+        for id in 1..self.length + 1 {
+            self.read_record(id, reader);
         }
-
-        Ok(())
     }
 
-    fn read_record(&mut self, id: usize, reader: &StreamReader) -> std::io::Result<()> {
-        let mut record = NPCRecord::new(id as EOInt);
-        record.deserialize(reader);
-        if record.name != "eof" {
-            self.records.push(record);
+    fn serialize(&self) -> Vec<EOByte> {
+        let mut builder = StreamBuilder::new();
+        builder.add_string("ENF");
+        builder.append(&mut self.hash.to_vec());
+        builder.add_short(self.length as EOShort);
+        builder.add_char(self.unknown);
+        for record in &self.records {
+            builder.append(&mut record.serialize());
         }
-
-        Ok(())
+        builder.get()
     }
 }
 
@@ -143,7 +162,7 @@ mod tests {
         let mut buf = build_fake_enf(19283, records).unwrap();
         enf.read(&mut buf)?;
 
-        assert_eq!(enf.records.len(), 1);
+        assert_eq!(enf.records.len(), 2);
         assert_eq!(enf.records[0].name, "Goat");
         assert_eq!(enf.records[0].experience, 8);
         assert_eq!(enf.records[0].hp, 6);

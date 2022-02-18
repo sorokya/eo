@@ -82,6 +82,14 @@ pub struct ItemRecord {
     /// see [ItemSize] for details. This is how much space the item
     /// takes up in a player's inventory.
     pub size: ItemSize,
+    unknown1: EOChar,
+    unknown2: EOChar,
+    unknown3: EOChar,
+    unknown4: EOChar,
+    unknown5: EOChar,
+    unknown6: EOChar,
+    unknown7: EOChar,
+    unknown8: EOChar,
 }
 
 impl ItemRecord {
@@ -158,19 +166,19 @@ impl Serializeable for ItemRecord {
         self.accuracy = reader.get_short();
         self.evade = reader.get_short();
         self.armor = reader.get_short();
-        reader.get_char();
+        self.unknown1 = reader.get_char();
         self.strength = reader.get_char();
         self.intelligence = reader.get_char();
         self.wisdom = reader.get_char();
         self.agility = reader.get_char();
         self.constitution = reader.get_char();
         self.charisma = reader.get_char();
-        reader.get_char();
-        reader.get_char();
-        reader.get_char();
-        reader.get_char();
-        reader.get_char();
-        reader.get_char();
+        self.unknown2 = reader.get_char();
+        self.unknown3 = reader.get_char();
+        self.unknown4 = reader.get_char();
+        self.unknown5 = reader.get_char();
+        self.unknown6 = reader.get_char();
+        self.unknown7 = reader.get_char();
         self.item_specific_param_1 = reader.get_three();
         self.item_specific_param_2 = reader.get_char();
         self.item_specific_param_3 = reader.get_char();
@@ -185,7 +193,7 @@ impl Serializeable for ItemRecord {
         self.element = reader.get_char();
         self.element_power = reader.get_char();
         self.weight = reader.get_char();
-        reader.get_char();
+        self.unknown8 = reader.get_char();
         let item_size_char = reader.get_char();
         self.size = match ItemSize::from_u8(item_size_char) {
             Some(b) => b,
@@ -196,9 +204,9 @@ impl Serializeable for ItemRecord {
         let mut builder = StreamBuilder::with_capacity(EIF_DATA_SIZE + self.name.len() + 1);
         builder.add_prefix_string(&self.name);
         builder.add_short(self.graphic_id);
-        builder.add_byte(self.item_type as EOByte);
-        builder.add_byte(self.sub_type as EOByte);
-        builder.add_byte(self.special as EOByte);
+        builder.add_char(self.item_type as EOChar);
+        builder.add_char(self.sub_type as EOChar);
+        builder.add_char(self.special as EOChar);
         builder.add_short(self.hp);
         builder.add_short(self.tp);
         builder.add_short(self.min_damage);
@@ -206,19 +214,19 @@ impl Serializeable for ItemRecord {
         builder.add_short(self.accuracy);
         builder.add_short(self.evade);
         builder.add_short(self.armor);
-        builder.add_char(0);
+        builder.add_char(self.unknown1);
         builder.add_char(self.strength);
         builder.add_char(self.intelligence);
         builder.add_char(self.wisdom);
         builder.add_char(self.agility);
         builder.add_char(self.constitution);
         builder.add_char(self.charisma);
-        builder.add_char(0);
-        builder.add_char(0);
-        builder.add_char(0);
-        builder.add_char(0);
-        builder.add_char(0);
-        builder.add_char(0);
+        builder.add_char(self.unknown2);
+        builder.add_char(self.unknown3);
+        builder.add_char(self.unknown4);
+        builder.add_char(self.unknown5);
+        builder.add_char(self.unknown6);
+        builder.add_char(self.unknown7);
         builder.add_three(self.item_specific_param_1);
         builder.add_char(self.item_specific_param_2);
         builder.add_char(self.item_specific_param_3);
@@ -233,7 +241,7 @@ impl Serializeable for ItemRecord {
         builder.add_char(self.element);
         builder.add_char(self.element_power);
         builder.add_char(self.weight);
-        builder.add_char(0);
+        builder.add_char(self.unknown8);
         builder.add_char(self.size as EOChar);
         builder.get()
     }

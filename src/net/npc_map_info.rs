@@ -2,15 +2,15 @@ use num_traits::FromPrimitive;
 
 use crate::{
     data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader},
-    world::{Coords, Direction, COORDS_SIZE},
+    world::{Direction, TinyCoords, TINY_COORDS_SIZE},
 };
 
-pub const NPC_MAP_INFO_SIZE: usize = COORDS_SIZE + 4;
+pub const NPC_MAP_INFO_SIZE: usize = TINY_COORDS_SIZE + 4;
 #[derive(Debug, Default)]
 pub struct NpcMapInfo {
     pub index: EOChar,
     pub id: EOShort,
-    pub coords: Coords,
+    pub coords: TinyCoords,
     pub direction: Direction,
 }
 

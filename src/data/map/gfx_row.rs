@@ -31,6 +31,7 @@ impl Serializeable for GfxRow {
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(GFX_ROW_SIZE + self.tiles.len() * GFX_SIZE);
         builder.add_char(self.y);
+        builder.add_char(self.tiles.len() as EOChar);
         for tile in &self.tiles {
             builder.append(&mut Serializeable::serialize(tile));
         }
