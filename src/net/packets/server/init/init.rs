@@ -13,7 +13,7 @@ use super::{
 // TODO: consider merging these into one?
 pub struct Init {
     pub reply_code: InitReply,
-    pub reply: Box<dyn Serializeable>,
+    pub reply: Box<dyn Serializeable + Send + Sync>,
 }
 
 impl Init {
