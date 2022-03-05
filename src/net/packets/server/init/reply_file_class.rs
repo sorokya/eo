@@ -4,18 +4,18 @@ use crate::{
 };
 
 #[derive(Debug, Default)]
-pub struct InitFileClass {
+pub struct ReplyFileClass {
     pub id: EOChar,
     pub data: Vec<EOByte>,
 }
 
-impl InitFileClass {
+impl ReplyFileClass {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitFileClass {
+impl Serializeable for ReplyFileClass {
     fn deserialize(&mut self, reader: &StreamReader) {
         reader.get_char(); // reply code
         self.id = reader.get_char();
@@ -32,7 +32,7 @@ impl Serializeable for InitFileClass {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InitFileClass, Serializeable, StreamReader};
+    use super::{EOByte, ReplyFileClass, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
@@ -42,7 +42,7 @@ mod tests {
             0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE,
         ];
 
-        let mut init_file_class = InitFileClass::new();
+        let mut init_file_class = ReplyFileClass::new();
         let reader = StreamReader::new(&class_bytes);
         init_file_class.deserialize(&reader);
         assert_eq!(init_file_class.id, 1);
@@ -56,7 +56,7 @@ mod tests {
             0x65, 0x61, 0x73, 0x61, 0x6E, 0x74, 0x01, 0x01, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE,
             0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE,
         ];
-        let mut init_file_class = InitFileClass::new();
+        let mut init_file_class = ReplyFileClass::new();
         init_file_class.id = 1;
         init_file_class.data = class_bytes[2..].to_vec();
 

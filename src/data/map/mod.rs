@@ -20,22 +20,20 @@ fn encode_map_string(s: &str, length: usize) -> Vec<EOByte> {
     }
 
     let mut flippy = buf.len() % 2 == 1;
-    for i in 0..buf.len() {
-        let mut c = buf[i];
+    for c in &mut buf {
         if flippy {
-            if (0x22..=0x4F).contains(&c) {
-                c = 0x71 - c;
-            } else if (0x50..=0x7E).contains(&c) {
-                c = 0xCD - c;
+            if (0x22..=0x4F).contains(c) {
+                *c = 0x71 - *c;
+            } else if (0x50..=0x7E).contains(c) {
+                *c = 0xCD - *c;
             }
-        } else if (0x22..=0x7E).contains(&c) {
-            c = 0x9F - c;
+        } else if (0x22..=0x7E).contains(c) {
+            *c = 0x9F - *c;
         }
-        buf[i] = c;
         flippy = !flippy;
     }
-    buf.reverse();
 
+    buf.reverse();
     buf
 }
 
@@ -44,23 +42,23 @@ fn decode_map_string(mut buf: Vec<EOByte>) -> String {
 
     let mut chars: Vec<EOByte> = vec![0xFF; buf.len()];
     let mut flippy = buf.len() % 2 == 1;
-    for i in 0..buf.len() {
-        let mut c = buf[i];
-        if c == 0xFF {
+
+    for (i, c) in buf.iter_mut().enumerate() {
+        if *c == 0xFF {
             chars.truncate(i);
             break;
         }
 
         if flippy {
-            if (0x22..=0x4F).contains(&c) {
-                c = 0x71 - c;
-            } else if (0x50..=0x7E).contains(&c) {
-                c = 0xCD - c;
+            if (0x22..=0x4F).contains(c) {
+                *c = 0x71 - *c;
+            } else if (0x50..=0x7E).contains(c) {
+                *c = 0xCD - *c;
             }
-        } else if (0x22..=0x7E).contains(&c) {
-            c = 0x9F - c;
+        } else if (0x22..=0x7E).contains(c) {
+            *c = 0x9F - *c;
         }
-        chars[i] = c;
+        chars[i] = *c;
         flippy = !flippy;
     }
 

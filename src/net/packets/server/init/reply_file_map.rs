@@ -4,17 +4,17 @@ use crate::{
 };
 
 #[derive(Debug, Default)]
-pub struct InitFileMap {
+pub struct ReplyFileMap {
     pub data: Vec<EOByte>,
 }
 
-impl InitFileMap {
+impl ReplyFileMap {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitFileMap {
+impl Serializeable for ReplyFileMap {
     fn deserialize(&mut self, reader: &StreamReader) {
         reader.get_char(); // reply code
         self.data = reader.get_vec(reader.remaining());
@@ -29,7 +29,7 @@ impl Serializeable for InitFileMap {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InitFileMap, Serializeable, StreamReader};
+    use super::{EOByte, ReplyFileMap, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
@@ -43,7 +43,7 @@ mod tests {
             0x96, 0xFE, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
         ];
 
-        let mut init_file_map = InitFileMap::new();
+        let mut init_file_map = ReplyFileMap::new();
         let reader = StreamReader::new(&map_bytes);
         init_file_map.deserialize(&reader);
         assert_eq!(init_file_map.data, map_bytes[1..].to_vec());
@@ -61,7 +61,7 @@ mod tests {
             0xFE, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
         ];
 
-        let mut init_file_map = InitFileMap::new();
+        let mut init_file_map = ReplyFileMap::new();
         init_file_map.data = map_bytes;
         assert_eq!(
             init_file_map.serialize(),

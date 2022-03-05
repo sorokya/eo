@@ -3,19 +3,19 @@ use crate::data::{EOByte, EOChar, EOThree, Serializeable, StreamBuilder, StreamR
 const SIZE: usize = 6;
 
 #[derive(Debug, Default)]
-pub struct Init {
+pub struct Request {
     pub challenge: EOThree,
     pub version: [EOChar; 3],
     pub hdid: String,
 }
 
-impl Init {
+impl Request {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for Init {
+impl Serializeable for Request {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.challenge = reader.get_three();
         for i in 0..3 {
@@ -39,7 +39,7 @@ impl Serializeable for Init {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, Init, Serializeable, StreamReader};
+    use super::{EOByte, Request, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
@@ -47,21 +47,21 @@ mod tests {
             222, 108, 4, 1, 1, 30, 113, 11, 52, 48, 55, 49, 54, 54, 54, 52, 48, 50,
         ];
 
-        let mut packet = Init::new();
+        let mut request = Request::new();
         let reader = StreamReader::new(&data);
-        packet.deserialize(&reader);
-        assert_eq!(packet.challenge, 219319);
-        assert_eq!(packet.version, [0, 0, 29]);
-        assert_eq!(packet.hdid, "4071666402");
+        request.deserialize(&reader);
+        assert_eq!(request.challenge, 219319);
+        assert_eq!(request.version, [0, 0, 29]);
+        assert_eq!(request.hdid, "4071666402");
     }
     #[test]
     fn serialize() {
-        let mut packet = Init::new();
-        packet.challenge = 219319;
-        packet.version = [0, 0, 29];
-        packet.hdid = "4071666402".to_string();
+        let mut request = Request::new();
+        request.challenge = 219319;
+        request.version = [0, 0, 29];
+        request.hdid = "4071666402".to_string();
         assert_eq!(
-            packet.serialize(),
+            request.serialize(),
             [222, 108, 4, 1, 1, 30, 113, 11, 52, 48, 55, 49, 54, 54, 54, 52, 48, 50,]
         );
     }

@@ -297,9 +297,9 @@ mod tests {
     #[test]
     fn eof() {
         let reader = StreamReader::new(&[1]);
-        assert_eq!(reader.eof(), false);
+        assert!(!reader.eof());
         reader.get_byte();
-        assert_eq!(reader.eof(), true);
+        assert!(reader.eof());
     }
     #[test]
     fn get_vec() {

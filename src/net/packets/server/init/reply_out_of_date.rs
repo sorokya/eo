@@ -3,17 +3,17 @@ use crate::data::{EOByte, EOChar, Serializeable, StreamBuilder, StreamReader};
 pub const INIT_VERSION_SIZE: usize = 3;
 
 #[derive(Debug, Default)]
-pub struct InitOutOfDate {
+pub struct ReplyOutOfDate {
     pub version: [EOChar; 3],
 }
 
-impl InitOutOfDate {
+impl ReplyOutOfDate {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitOutOfDate {
+impl Serializeable for ReplyOutOfDate {
     fn deserialize(&mut self, reader: &StreamReader) {
         for char in self.version.iter_mut() {
             *char = reader.get_char();
@@ -31,12 +31,12 @@ impl Serializeable for InitOutOfDate {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InitOutOfDate, Serializeable, StreamReader};
+    use super::{EOByte, ReplyOutOfDate, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
         let buf: Vec<EOByte> = vec![1, 1, 30];
-        let mut init_out_of_date = InitOutOfDate::new();
+        let mut init_out_of_date = ReplyOutOfDate::new();
         let reader = StreamReader::new(&buf);
         init_out_of_date.deserialize(&reader);
         assert_eq!(init_out_of_date.version, [0, 0, 29]);
@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn serialize() {
-        let mut init_out_of_date = InitOutOfDate::new();
+        let mut init_out_of_date = ReplyOutOfDate::new();
         init_out_of_date.version = [0, 0, 29];
         assert_eq!(init_out_of_date.serialize(), [1, 1, 30]);
     }

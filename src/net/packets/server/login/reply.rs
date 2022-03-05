@@ -37,7 +37,13 @@ impl Serializeable for Reply {
         builder.add_short(self.reply as EOShort);
 
         if self.reply == LoginReply::OK {
-            builder.append(&mut self.character_list.as_ref().expect("Reply is OK but character_list is not set").serialize());
+            builder.append(
+                &mut self
+                    .character_list
+                    .as_ref()
+                    .expect("Reply is OK but character_list is not set")
+                    .serialize(),
+            );
         }
 
         builder.get()

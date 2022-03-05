@@ -1,17 +1,17 @@
 use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR};
 
 #[derive(Debug, Default)]
-pub struct InitFriendListPlayers {
+pub struct ReplyFriendListPlayers {
     pub names: Vec<String>,
 }
 
-impl InitFriendListPlayers {
+impl ReplyFriendListPlayers {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitFriendListPlayers {
+impl Serializeable for ReplyFriendListPlayers {
     fn deserialize(&mut self, reader: &StreamReader) {
         let total_names = reader.get_short();
         self.names = Vec::with_capacity(total_names as usize);
@@ -37,12 +37,12 @@ impl Serializeable for InitFriendListPlayers {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InitFriendListPlayers, Serializeable, StreamReader};
+    use super::{EOByte, ReplyFriendListPlayers, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
         let buf: Vec<EOByte> = vec![0x02, 0xFE, 0xFF, 0x61, 0x64, 0x6D, 0x69, 0x6E, 0xFF];
-        let mut init_friend_list_players = InitFriendListPlayers::new();
+        let mut init_friend_list_players = ReplyFriendListPlayers::new();
         let reader = StreamReader::new(&buf);
         init_friend_list_players.deserialize(&reader);
         assert_eq!(init_friend_list_players.names.len(), 1);
@@ -51,7 +51,7 @@ mod tests {
 
     #[test]
     fn serialize() {
-        let mut init_friend_list_players = InitFriendListPlayers::new();
+        let mut init_friend_list_players = ReplyFriendListPlayers::new();
         init_friend_list_players.names = Vec::with_capacity(1);
         init_friend_list_players.names.push("admin".to_string());
         assert_eq!(

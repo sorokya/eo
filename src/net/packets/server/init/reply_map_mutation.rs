@@ -1,17 +1,17 @@
 use crate::data::{EOByte, Serializeable, StreamReader};
 
 #[derive(Debug, Default)]
-pub struct InitMapMutation {
+pub struct ReplyMapMutation {
     pub data: Vec<EOByte>,
 }
 
-impl InitMapMutation {
+impl ReplyMapMutation {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitMapMutation {
+impl Serializeable for ReplyMapMutation {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.data = reader.get_vec(reader.remaining());
     }
@@ -22,7 +22,7 @@ impl Serializeable for InitMapMutation {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InitMapMutation, Serializeable, StreamReader};
+    use super::{EOByte, ReplyMapMutation, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
@@ -36,7 +36,7 @@ mod tests {
             0xFE, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
         ];
 
-        let mut init_map_mutation = InitMapMutation::new();
+        let mut init_map_mutation = ReplyMapMutation::new();
         let reader = StreamReader::new(&map_bytes);
         init_map_mutation.deserialize(&reader);
         assert_eq!(init_map_mutation.data, map_bytes);
@@ -54,7 +54,7 @@ mod tests {
             0xFE, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
         ];
 
-        let mut init_map_mutation = InitMapMutation::new();
+        let mut init_map_mutation = ReplyMapMutation::new();
         init_map_mutation.data = map_bytes.clone();
         assert_eq!(init_map_mutation.serialize(), map_bytes);
     }

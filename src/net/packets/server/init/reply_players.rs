@@ -4,17 +4,17 @@ use crate::{
 };
 
 #[derive(Debug, Default)]
-pub struct InitPlayers {
+pub struct ReplyPlayers {
     pub players: Vec<OnlineEntry>,
 }
 
-impl InitPlayers {
+impl ReplyPlayers {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitPlayers {
+impl Serializeable for ReplyPlayers {
     fn deserialize(&mut self, reader: &StreamReader) {
         let total_players = reader.get_short();
         self.players = Vec::with_capacity(total_players as usize);
@@ -44,7 +44,7 @@ impl Serializeable for InitPlayers {
 mod tests {
     use crate::{character::PaperdollIcon, net::OnlineEntry};
 
-    use super::{EOByte, InitPlayers, Serializeable, StreamReader};
+    use super::{EOByte, ReplyPlayers, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
@@ -52,7 +52,7 @@ mod tests {
             0x02, 0xFE, 0xFF, 0x61, 0x64, 0x6D, 0x69, 0x6E, 0xFF, 0x74, 0x68, 0x65, 0x20, 0x67,
             0x72, 0x65, 0x61, 0x74, 0xFF, 0x01, 0x06, 0x02, 0x47, 0x4d, 0x20, 0xFF,
         ];
-        let mut init_players = InitPlayers::new();
+        let mut init_players = ReplyPlayers::new();
         let reader = StreamReader::new(&buf);
         init_players.deserialize(&reader);
         assert_eq!(init_players.players.len(), 1);
@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn serialize() {
-        let mut init_players = InitPlayers::new();
+        let mut init_players = ReplyPlayers::new();
         init_players.players = Vec::with_capacity(1);
 
         let mut player = OnlineEntry::new();

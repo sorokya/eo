@@ -3,20 +3,20 @@ use crate::data::{EOByte, EOShort, EOThree, Serializeable, StreamBuilder, Stream
 pub const INIT_OK_SIZE: usize = 9;
 
 #[derive(Debug, Default)]
-pub struct InitOk {
+pub struct ReplyOk {
     pub sequence_bytes: [EOByte; 2],
     pub encoding_multiples: [EOByte; 2],
     pub player_id: EOShort,
     pub challenge_response: EOThree,
 }
 
-impl InitOk {
+impl ReplyOk {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitOk {
+impl Serializeable for ReplyOk {
     fn deserialize(&mut self, reader: &StreamReader) {
         for byte in self.sequence_bytes.iter_mut() {
             *byte = reader.get_byte();
@@ -48,12 +48,12 @@ impl Serializeable for InitOk {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InitOk, Serializeable, StreamReader};
+    use super::{EOByte, ReplyOk, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
         let buf: Vec<EOByte> = vec![7, 10, 5, 9, 2, 254, 2, 254, 254];
-        let mut init_ok = InitOk::new();
+        let mut init_ok = ReplyOk::new();
         let reader = StreamReader::new(&buf);
         init_ok.deserialize(&reader);
 
@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn serialize() {
-        let mut init_ok = InitOk::new();
+        let mut init_ok = ReplyOk::new();
         init_ok.sequence_bytes = [7, 10];
         init_ok.encoding_multiples = [5, 9];
         init_ok.player_id = 1;

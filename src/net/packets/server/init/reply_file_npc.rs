@@ -4,18 +4,18 @@ use crate::{
 };
 
 #[derive(Debug, Default)]
-pub struct InitFileNPC {
+pub struct ReplyFileNPC {
     pub id: EOChar,
     pub data: Vec<EOByte>,
 }
 
-impl InitFileNPC {
+impl ReplyFileNPC {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitFileNPC {
+impl Serializeable for ReplyFileNPC {
     fn deserialize(&mut self, reader: &StreamReader) {
         reader.get_char(); // reply code
         self.id = reader.get_char();
@@ -32,7 +32,7 @@ impl Serializeable for InitFileNPC {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InitFileNPC, Serializeable, StreamReader};
+    use super::{EOByte, ReplyFileNPC, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
@@ -43,7 +43,7 @@ mod tests {
             0x01, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0x01, 0xFE, 0xFE,
         ];
 
-        let mut init_file_npc = InitFileNPC::new();
+        let mut init_file_npc = ReplyFileNPC::new();
         let reader = StreamReader::new(&npc_bytes);
         init_file_npc.deserialize(&reader);
         assert_eq!(init_file_npc.id, 1);
@@ -58,7 +58,7 @@ mod tests {
             0xFE, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE,
             0x01, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0x01, 0xFE, 0xFE,
         ];
-        let mut init_file_npc = InitFileNPC::new();
+        let mut init_file_npc = ReplyFileNPC::new();
         init_file_npc.id = 1;
         init_file_npc.data = npc_bytes[2..].to_vec();
 

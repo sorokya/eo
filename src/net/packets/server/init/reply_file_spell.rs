@@ -4,18 +4,18 @@ use crate::{
 };
 
 #[derive(Debug, Default)]
-pub struct InitFileSpell {
+pub struct ReplyFileSpell {
     pub id: EOChar,
     pub data: Vec<EOByte>,
 }
 
-impl InitFileSpell {
+impl ReplyFileSpell {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Serializeable for InitFileSpell {
+impl Serializeable for ReplyFileSpell {
     fn deserialize(&mut self, reader: &StreamReader) {
         reader.get_char(); // reply code
         self.id = reader.get_char();
@@ -32,7 +32,7 @@ impl Serializeable for InitFileSpell {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, InitFileSpell, Serializeable, StreamReader};
+    use super::{EOByte, ReplyFileSpell, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
@@ -44,7 +44,7 @@ mod tests {
             0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE,
         ];
 
-        let mut init_file_spell = InitFileSpell::new();
+        let mut init_file_spell = ReplyFileSpell::new();
         let reader = StreamReader::new(&spell_bytes);
         init_file_spell.deserialize(&reader);
         assert_eq!(init_file_spell.id, 1);
@@ -60,7 +60,7 @@ mod tests {
             0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0x01, 0xFE, 0x01, 0xFE, 0x01,
             0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0xFE,
         ];
-        let mut init_file_spell = InitFileSpell::new();
+        let mut init_file_spell = ReplyFileSpell::new();
         init_file_spell.id = 1;
         init_file_spell.data = spell_bytes[2..].to_vec();
 
