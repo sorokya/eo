@@ -9,7 +9,7 @@ const REPLY_SIZE: usize = 2;
 
 #[derive(Debug, Default)]
 pub struct Reply {
-    pub reply: AccountReply,
+    pub reply: Option<AccountReply>,
     pub session_id: EOShort,
     pub message: String,
     pub sequence: EOChar,
@@ -18,6 +18,33 @@ pub struct Reply {
 impl Reply {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn no(reply: AccountReply) -> Self {
+        Self {
+            reply: Some(reply),
+            session_id: 0,
+            message: "NO".to_string(),
+            sequence: 0,
+        }
+    }
+
+    pub fn ok(reply: AccountReply) -> Self {
+        Self {
+            reply: Some(reply),
+            session_id: 0,
+            message: "OK".to_string(),
+            sequence: 0,
+        }
+    }
+
+    pub fn r#continue(session_id: EOShort, sequence: EOChar) -> Self {
+        Self {
+            reply: None,
+            session_id,
+            message: "OK".to_string(),
+            sequence,
+        }
     }
 }
 
@@ -28,7 +55,7 @@ impl Serializeable for Reply {
             self.session_id = reply_code_or_session_id;
         } else {
             self.reply = match AccountReply::from_u16(reply_code_or_session_id) {
-                Some(reply) => reply,
+                Some(reply) => Some(reply),
                 None => panic!(
                     "Failed to convert short to AccountReply: {}",
                     reply_code_or_session_id
@@ -45,7 +72,7 @@ impl Serializeable for Reply {
             builder.add_short(self.session_id);
             builder.add_char(self.sequence);
         } else {
-            builder.add_short(self.reply as EOShort);
+            builder.add_short(self.reply.expect("No session id or reply code") as EOShort);
         }
         builder.add_string(&self.message);
         builder.get()
@@ -61,17 +88,17 @@ mod tests {
     #[test]
     fn deserialize() {
         let data: Vec<EOByte> = vec![4, 254, 79, 75];
-        let mut packet = Reply::new();
+        let mut reply = Reply::new();
         let reader = StreamReader::new(&data);
-        packet.deserialize(&reader);
-        assert_eq!(packet.reply, AccountReply::Created);
-        assert_eq!(packet.message, "OK");
+        reply.deserialize(&reader);
+        assert_eq!(reply.reply.unwrap(), AccountReply::Created);
+        assert_eq!(reply.message, "OK");
     }
     #[test]
     fn serialize() {
-        let mut packet = Reply::new();
-        packet.reply = AccountReply::Created;
-        packet.message = "OK".to_string();
-        assert_eq!(packet.serialize(), [4, 254, 79, 75]);
+        let mut reply = Reply::new();
+        reply.reply = Some(AccountReply::Created);
+        reply.message = "OK".to_string();
+        assert_eq!(reply.serialize(), [4, 254, 79, 75]);
     }
 }

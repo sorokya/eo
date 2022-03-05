@@ -2,7 +2,7 @@ use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader};
 
 const SIZE: usize = 10;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Create {
     pub session_id: EOShort,
     pub name: String,
