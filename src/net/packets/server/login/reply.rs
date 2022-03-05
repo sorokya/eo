@@ -49,7 +49,7 @@ mod tests {
     use super::Reply;
     use crate::{
         data::{EOByte, Serializeable, StreamReader},
-        net::{replies::LoginReply, CharacterInfo},
+        net::{replies::LoginReply, CharacterInfo, CharacterList},
     };
 
     #[test]
@@ -65,12 +65,13 @@ mod tests {
         let mut reply = Reply::new();
         reply.deserialize(&reader);
         assert_eq!(reply.reply, LoginReply::OK);
-        assert_eq!(reply.character_list.length, 3);
-        assert_eq!(reply.character_list.unknown, 1);
-        assert_eq!(reply.character_list.characters.len(), 3);
-        assert_eq!(reply.character_list.characters[0].name, "goron");
-        assert_eq!(reply.character_list.characters[1].name, "digitx");
-        assert_eq!(reply.character_list.characters[2].name, "kamina");
+        let character_list = reply.character_list.unwrap();
+        assert_eq!(character_list.length, 3);
+        assert_eq!(character_list.unknown, 1);
+        assert_eq!(character_list.characters.len(), 3);
+        assert_eq!(character_list.characters[0].name, "goron");
+        assert_eq!(character_list.characters[1].name, "digitx");
+        assert_eq!(character_list.characters[2].name, "kamina");
     }
     #[test]
     fn serialize_ok() {
@@ -106,7 +107,7 @@ mod tests {
         let mut reply = Reply::new();
         reply.deserialize(&reader);
         assert_eq!(reply.reply, LoginReply::WrongUsername);
-        assert_eq!(reply.character_list, None);
+        assert!(reply.character_list.is_none());
     }
     #[test]
     fn serialize_error() {
