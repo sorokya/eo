@@ -8,7 +8,7 @@ use crate::{
 #[derive(Debug, Default)]
 pub struct Reply {
     pub reply: LoginReply,
-    pub character_list: CharacterList,
+    pub character_list: Option<CharacterList>,
 }
 
 impl Reply {
@@ -26,7 +26,9 @@ impl Serializeable for Reply {
         };
 
         if self.reply == LoginReply::OK {
-            self.character_list.deserialize(reader);
+            let mut character_list = CharacterList::new();
+            character_list.deserialize(reader);
+            self.character_list = Some(character_list);
         }
     }
     fn serialize(&self) -> Vec<EOByte> {
@@ -35,7 +37,7 @@ impl Serializeable for Reply {
         builder.add_short(self.reply as EOShort);
 
         if self.reply == LoginReply::OK {
-            builder.append(&mut self.character_list.serialize());
+            builder.append(&mut self.character_list.as_ref().expect("Reply is OK but character_list is not set").serialize());
         }
 
         builder.get()
@@ -74,25 +76,28 @@ mod tests {
     fn serialize_ok() {
         let mut reply = Reply::new();
         reply.reply = LoginReply::OK;
-        reply.character_list.length = 3;
-        reply.character_list.unknown = 1;
-        reply.character_list.characters.push(CharacterInfo::new());
-        reply.character_list.characters[0].name = "goron".to_string();
-        reply.character_list.characters.push(CharacterInfo::new());
-        reply.character_list.characters[1].name = "digitx".to_string();
-        reply.character_list.characters.push(CharacterInfo::new());
-        reply.character_list.characters[2].name = "kamina".to_string();
+        let mut character_list = CharacterList::new();
+        character_list.length = 3;
+        character_list.unknown = 1;
+        character_list.characters.push(CharacterInfo::new());
+        character_list.characters[0].name = "goron".to_string();
+        character_list.characters.push(CharacterInfo::new());
+        character_list.characters[1].name = "digitx".to_string();
+        character_list.characters.push(CharacterInfo::new());
+        character_list.characters[2].name = "kamina".to_string();
+        reply.character_list = Some(character_list);
         let buf = reply.serialize();
         let reader = StreamReader::new(&buf);
         let mut reply = Reply::new();
         reply.deserialize(&reader);
         assert_eq!(reply.reply, LoginReply::OK);
-        assert_eq!(reply.character_list.length, 3);
-        assert_eq!(reply.character_list.unknown, 1);
-        assert_eq!(reply.character_list.characters.len(), 3);
-        assert_eq!(reply.character_list.characters[0].name, "goron");
-        assert_eq!(reply.character_list.characters[1].name, "digitx");
-        assert_eq!(reply.character_list.characters[2].name, "kamina");
+        let character_list = reply.character_list.unwrap();
+        assert_eq!(character_list.length, 3);
+        assert_eq!(character_list.unknown, 1);
+        assert_eq!(character_list.characters.len(), 3);
+        assert_eq!(character_list.characters[0].name, "goron");
+        assert_eq!(character_list.characters[1].name, "digitx");
+        assert_eq!(character_list.characters[2].name, "kamina");
     }
     #[test]
     fn deserialize_error() {
@@ -101,7 +106,7 @@ mod tests {
         let mut reply = Reply::new();
         reply.deserialize(&reader);
         assert_eq!(reply.reply, LoginReply::WrongUsername);
-        assert_eq!(reply.character_list.length, 0);
+        assert_eq!(reply.character_list, None);
     }
     #[test]
     fn serialize_error() {
