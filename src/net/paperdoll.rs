@@ -114,7 +114,7 @@ impl Serializeable for PaperdollB000A0HSW {
 }
 
 pub const PAPERDOLL_FULL_SIZE: usize = 30;
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct PaperdollFull {
     pub boots: EOShort,
     pub accessory: EOShort,
