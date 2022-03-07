@@ -43,7 +43,7 @@ mod tests {
         let mut init_file_map = ReplyFileMap::new();
         let reader = StreamReader::new(&map_bytes);
         init_file_map.deserialize(&reader);
-        assert_eq!(init_file_map.data, map_bytes[1..].to_vec());
+        assert_eq!(init_file_map.data, map_bytes.to_vec());
     }
 
     #[test]
