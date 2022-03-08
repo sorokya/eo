@@ -134,6 +134,16 @@ impl PaperdollFull {
     pub fn new() -> Self {
         Self::default()
     }
+
+    pub fn to_paperdoll_b000a0hsw(&self) -> PaperdollB000A0HSW {
+        PaperdollB000A0HSW {
+            boots: self.boots,
+            armor: self.armor,
+            hat: self.hat,
+            shield: self.shield,
+            weapon: self.weapon,
+        }
+    }
 }
 
 impl Serializeable for PaperdollFull {
@@ -172,6 +182,48 @@ impl Serializeable for PaperdollFull {
         builder.add_short(self.bracers[0]);
         builder.add_short(self.bracers[1]);
         builder.get()
+    }
+}
+
+impl IntoIterator for PaperdollFull {
+    type Item = EOShort;
+    type IntoIter = PaperdollFullIterator;
+
+    fn into_iter(self) -> Self::IntoIter {
+        PaperdollFullIterator {
+            paperdoll: self,
+            index: 0,
+        }
+    }
+}
+
+pub struct PaperdollFullIterator {
+    paperdoll: PaperdollFull,
+    index: usize,
+}
+
+impl Iterator for PaperdollFullIterator {
+    type Item = EOShort;
+    fn next(&mut self) -> Option<EOShort> {
+        let result = match self.index {
+            0 => self.paperdoll.boots,
+            1 => self.paperdoll.accessory,
+            2 => self.paperdoll.gloves,
+            3 => self.paperdoll.belt,
+            4 => self.paperdoll.armor,
+            5 => self.paperdoll.necklace,
+            6 => self.paperdoll.hat,
+            7 => self.paperdoll.shield,
+            8 => self.paperdoll.weapon,
+            9 => self.paperdoll.rings[0],
+            10 => self.paperdoll.rings[1],
+            11 => self.paperdoll.armlets[0],
+            12 => self.paperdoll.armlets[1],
+            13 => self.paperdoll.bracers[0],
+            14 => self.paperdoll.bracers[1],
+            _ => return None,
+        };
+        Some(result)
     }
 }
 
