@@ -3,7 +3,7 @@ use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader};
 pub const COORDS_SIZE: usize = 4;
 
 /// x/y coordinates of entity in the game
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct Coords {
     pub x: EOShort,
     pub y: EOShort,
