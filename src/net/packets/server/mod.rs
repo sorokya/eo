@@ -4,6 +4,7 @@ pub mod init;
 pub mod face;
 pub mod login;
 pub mod map_info;
+pub mod players;
 mod sequencer;
 pub mod welcome;
 pub use sequencer::Sequencer;
