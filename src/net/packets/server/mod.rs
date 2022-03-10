@@ -1,4 +1,5 @@
 pub mod account;
+pub mod avatar;
 pub mod character;
 pub mod init;
 pub mod face;
