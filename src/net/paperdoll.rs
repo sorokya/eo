@@ -223,6 +223,7 @@ impl Iterator for PaperdollFullIterator {
             14 => self.paperdoll.bracers[1],
             _ => return None,
         };
+        self.index += 1;
         Some(result)
     }
 }

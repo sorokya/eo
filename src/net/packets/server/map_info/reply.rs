@@ -21,6 +21,20 @@ impl Reply {
     pub fn new() -> Self {
         Self::default()
     }
+    pub fn character(character: CharacterMapInfo) -> Self {
+        Self {
+            reply: MapInfoReply::Character,
+            character: Some(character),
+            npc: None,
+        }
+    }
+    pub fn npc(npc: NpcMapInfo) -> Self {
+        Self {
+            reply: MapInfoReply::NPC,
+            character: None,
+            npc: Some(npc),
+        }
+    }
 }
 
 impl Serializeable for Reply {
