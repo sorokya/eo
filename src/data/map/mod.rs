@@ -62,7 +62,7 @@ fn decode_map_string(mut buf: Vec<EOByte>) -> String {
         flippy = !flippy;
     }
 
-    String::from_utf8(chars).expect("Failed to convert byte array to string")
+    String::from_utf8_lossy(&chars).to_string()
 }
 
 mod chest_spawn;
