@@ -60,18 +60,14 @@ mod test {
 
     #[test]
     fn deserialize() {
-        let buf: Vec<EOByte> = vec![
-            2, 254,
-        ];
+        let buf: Vec<EOByte> = vec![2, 254];
         let reader = StreamReader::new(&buf);
         let mut remove = Remove::default();
         remove.deserialize(&reader);
         assert_eq!(remove.player_id, 1);
         assert!(remove.warp_animation.is_none());
 
-        let buf: Vec<EOByte> = vec![
-            2, 254, 2
-        ];
+        let buf: Vec<EOByte> = vec![2, 254, 2];
         let reader = StreamReader::new(&buf);
         remove.deserialize(&reader);
         assert_eq!(remove.player_id, 1);

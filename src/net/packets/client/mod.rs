@@ -8,5 +8,6 @@ pub mod login;
 pub mod map_info;
 pub mod npc_map_info;
 mod sequencer;
+pub mod walk;
 pub mod welcome;
 pub use sequencer::Sequencer;

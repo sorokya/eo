@@ -1,40 +1,41 @@
 use crate::data::{EOByte, EOChar, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR};
 
-pub const REQUEST_SIZE: usize = 3;
+pub const REQUEST_SIZE: usize = 2;
 
 #[derive(Debug, Default)]
 pub struct Request {
-    pub unknown: EOChar,
-    pub npc_index: EOChar,
+    pub npc_indexes: Vec<EOChar>,
 }
 
 impl Request {
-    pub fn new(npc_index: EOChar) -> Self {
-        Self {
-            npc_index,
-            unknown: 1,
-        }
+    pub fn new() -> Self {
+        Self::default()
     }
 }
 
 impl Serializeable for Request {
     fn deserialize(&mut self, reader: &StreamReader) {
-        self.unknown = reader.get_char();
+        let num_npcs = reader.get_char();
         reader.seek(1);
-        self.npc_index = reader.get_char();
+        self.npc_indexes = Vec::with_capacity(num_npcs as usize);
+        while !reader.eof() {
+            self.npc_indexes.push(reader.get_char());
+        }
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::with_capacity(REQUEST_SIZE);
-        builder.add_char(self.unknown);
+        let mut builder = StreamBuilder::with_capacity(REQUEST_SIZE + self.npc_indexes.len());
+        builder.add_char(self.npc_indexes.len() as EOChar);
         builder.add_byte(EO_BREAK_CHAR);
-        builder.add_char(self.npc_index);
+        for npc_index in &self.npc_indexes {
+            builder.add_char(*npc_index);
+        }
         builder.get()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{Request, EOByte, Serializeable, StreamReader};
+    use super::{EOByte, Request, Serializeable, StreamReader};
 
     #[test]
     fn deserialize() {
@@ -43,12 +44,13 @@ mod tests {
         let mut packet = Request::default();
         let reader = StreamReader::new(&data);
         packet.deserialize(&reader);
-        assert_eq!(packet.unknown, 1);
-        assert_eq!(packet.npc_index, 1);
+        assert_eq!(packet.npc_indexes.len(), 1);
+        assert_eq!(packet.npc_indexes[0], 1);
     }
     #[test]
     fn serialize() {
-        let packet = Request::new(1);
+        let mut packet = Request::new();
+        packet.npc_indexes.push(1);
         assert_eq!(packet.serialize(), [2, 255, 2]);
     }
 }

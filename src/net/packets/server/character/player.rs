@@ -1,6 +1,4 @@
-use crate::{
-    data::{EOByte, EOShort, EOInt, Serializeable, StreamBuilder, StreamReader},
-};
+use crate::data::{EOByte, EOInt, EOShort, Serializeable, StreamBuilder, StreamReader};
 
 const PLAYER_SIZE: usize = 6;
 

@@ -40,57 +40,57 @@ impl std::fmt::Debug for Reply {
                 let mut reply = ReplyOutOfDate::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyOutOfDate: {:?}", reply)
-            },
+            }
             InitReply::OK => {
                 let mut reply = ReplyOk::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyOk: {:?}", reply)
-            },
+            }
             InitReply::Banned => {
                 let mut reply = ReplyBanned::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyBanned: {:?}", reply)
-            },
+            }
             InitReply::FileMap => {
                 let mut reply = ReplyFileMap::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyFileMap: {:?}", reply)
-            },
+            }
             InitReply::FileItem => {
                 let mut reply = ReplyFileItem::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyFileItem: {:?}", reply)
-            },
+            }
             InitReply::FileNPC => {
                 let mut reply = ReplyFileNPC::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyFileNPC: {:?}", reply)
-            },
+            }
             InitReply::FileSpell => {
                 let mut reply = ReplyFileSpell::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyFileSpell: {:?}", reply)
-            },
+            }
             InitReply::Players => {
                 let mut reply = ReplyPlayers::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyPlayers: {:?}", reply)
-            },
+            }
             InitReply::MapMutation => {
                 let mut reply = ReplyMapMutation::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyMapMutation: {:?}", reply)
-            },
+            }
             InitReply::FriendListPlayers => {
                 let mut reply = ReplyFriendListPlayers::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyFriendListPlayers: {:?}", reply)
-            },
+            }
             InitReply::FileClass => {
                 let mut reply = ReplyFileClass::default();
                 reply.deserialize(&reader);
                 write!(f, "ReplyFileClass: {:?}", reply)
-            },
+            }
         }
     }
 }

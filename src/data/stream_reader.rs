@@ -42,6 +42,9 @@ impl<'a> StreamReader<'a> {
             position: Cell::new(0),
         }
     }
+    pub fn has_break(&self) -> bool {
+        self.data.iter().any(|b| *b == EO_BREAK_CHAR)
+    }
     /// returns the length of the data stream
     pub fn length(&self) -> usize {
         self.data.len()

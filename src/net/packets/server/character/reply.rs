@@ -72,7 +72,9 @@ impl Serializeable for Reply {
 
         self.message = reader.get_fixed_string(2);
 
-        if self.reply == Some(CharacterReply::Created) || self.reply == Some(CharacterReply::Deleted) {
+        if self.reply == Some(CharacterReply::Created)
+            || self.reply == Some(CharacterReply::Deleted)
+        {
             let mut character_list = CharacterList::new();
             character_list.deserialize(reader);
             self.character_list = Some(character_list);

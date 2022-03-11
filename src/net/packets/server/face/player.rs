@@ -1,7 +1,7 @@
 use num_traits::FromPrimitive;
 
 use crate::{
-    data::{EOChar, Serializeable, StreamBuilder, StreamReader, EOShort},
+    data::{EOChar, EOShort, Serializeable, StreamBuilder, StreamReader},
     world::Direction,
 };
 

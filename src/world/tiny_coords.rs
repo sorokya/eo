@@ -1,4 +1,4 @@
-use crate::data::{EOByte, EOChar, Serializeable, StreamBuilder, StreamReader, EOShort};
+use crate::data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader};
 
 use super::Coords;
 
