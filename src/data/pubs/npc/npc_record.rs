@@ -26,8 +26,7 @@ pub struct NPCRecord {
     pub child: bool,
     /// the npc's type
     pub npc_type: NPCType,
-    /// an identifier used for shops and inns
-    pub vendor_id: EOShort,
+    npc_specific_param: EOShort,
     /// the npc's start hp
     pub hp: EOThree,
     /// base min_damage stat an npc can do
@@ -55,6 +54,14 @@ pub struct NPCRecord {
 }
 
 impl NPCRecord {
+    /// an identifier used for shops, quests, skill masters, etc.
+    pub fn vendor_id(&self) -> EOShort {
+        self.npc_specific_param
+    }
+    /// if the monster should be protected from kill stealing
+    pub fn is_ks_protected(&self) -> bool {
+        self.npc_specific_param == 0
+    }
     /// creates a new NPCRecord with the given id
     pub fn new(id: EOInt) -> Self {
         Self {
@@ -76,7 +83,7 @@ impl Serializeable for NPCRecord {
             Some(npc_type) => npc_type,
             _ => panic!("Failed to convert short to NPCType: {}", type_short),
         };
-        self.vendor_id = reader.get_short();
+        self.npc_specific_param = reader.get_short();
         self.hp = reader.get_three();
         self.unknown2 = reader.get_short();
         self.min_damage = reader.get_short();
@@ -100,7 +107,7 @@ impl Serializeable for NPCRecord {
         builder.add_short(self.boss as EOShort);
         builder.add_short(self.child as EOShort);
         builder.add_short(self.npc_type as EOShort);
-        builder.add_short(self.vendor_id);
+        builder.add_short(self.npc_specific_param);
         builder.add_three(self.hp);
         builder.add_short(self.unknown2);
         builder.add_short(self.min_damage);
