@@ -297,24 +297,15 @@ impl Serializeable for MapFile {
             builder.append(&mut warp_row.serialize());
         }
         for layer in 0..NUMBER_OF_GFX_LAYERS {
-            if !self.gfx_rows[layer].is_empty() {
-                builder.add_char(self.gfx_rows[layer].len() as EOChar);
-                for gfx_row in &self.gfx_rows[layer] {
-                    builder.append(&mut gfx_row.serialize());
-                }
+            builder.add_char(self.gfx_rows[layer].len() as EOChar);
+            for gfx_row in &self.gfx_rows[layer] {
+                builder.append(&mut gfx_row.serialize());
             }
         }
-        if !self.signs.is_empty() {
-            builder.add_char(self.signs.len() as EOChar);
-            for sign in &self.signs {
-                builder.append(&mut sign.serialize());
-            }
+        builder.add_char(self.signs.len() as EOChar);
+        for sign in &self.signs {
+            builder.append(&mut sign.serialize());
         }
-        builder.add_char(0);
-        builder.add_char(0);
-        builder.add_char(0);
-        builder.add_char(0);
-        builder.add_char(0);
         builder.get()
     }
 }

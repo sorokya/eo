@@ -146,7 +146,7 @@ mod tests {
             record.element_weak = 4;
             record.element_weak_power = 5;
             record.graphic_id = 6;
-            record.vendor_id = 7;
+            record.npc_specific_param = 7;
             record.boss = true;
             record.child = false;
             record.npc_type = NPCType::Passive;
@@ -174,7 +174,7 @@ mod tests {
         assert_eq!(enf.records[0].element_weak, 4);
         assert_eq!(enf.records[0].element_weak_power, 5);
         assert_eq!(enf.records[0].graphic_id, 6);
-        assert_eq!(enf.records[0].vendor_id, 7);
+        assert_eq!(enf.records[0].npc_specific_param, 7);
         assert_eq!(enf.records[0].boss, true);
         assert_eq!(enf.records[0].child, false);
         assert_eq!(enf.records[0].npc_type, NPCType::Passive);

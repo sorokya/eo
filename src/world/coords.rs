@@ -1,4 +1,6 @@
-use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader};
+use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader, EOChar};
+
+use super::TinyCoords;
 
 pub const COORDS_SIZE: usize = 4;
 
@@ -7,6 +9,18 @@ pub const COORDS_SIZE: usize = 4;
 pub struct Coords {
     pub x: EOShort,
     pub y: EOShort,
+}
+
+impl Coords {
+    pub fn new(x: EOShort, y: EOShort) -> Self {
+        Self { x, y }
+    }
+    pub fn to_tiny_coords(&self) -> TinyCoords {
+        TinyCoords {
+            x: self.x as EOChar,
+            y: self.y as EOChar,
+        }
+    }
 }
 
 impl Serializeable for Coords {

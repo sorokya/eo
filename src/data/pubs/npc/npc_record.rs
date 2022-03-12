@@ -26,7 +26,7 @@ pub struct NPCRecord {
     pub child: bool,
     /// the npc's type
     pub npc_type: NPCType,
-    npc_specific_param: EOShort,
+    pub npc_specific_param: EOShort,
     /// the npc's start hp
     pub hp: EOThree,
     /// base min_damage stat an npc can do
