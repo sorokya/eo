@@ -4,6 +4,7 @@ pub enum InitReply {
     OutOfDate = 1,
     OK = 2,
     Banned = 3,
+    WarpMap = 4,
     FileMap = 5,
     FileItem = 6,
     FileNPC = 7,

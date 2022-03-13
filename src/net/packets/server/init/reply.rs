@@ -51,6 +51,11 @@ impl std::fmt::Debug for Reply {
                 reply.deserialize(&reader);
                 write!(f, "ReplyBanned: {:?}", reply)
             }
+            InitReply::WarpMap => {
+                let mut reply = ReplyFileMap::default();
+                reply.deserialize(&reader);
+                write!(f, "WarpMap: {:?}", reply)
+            }
             InitReply::FileMap => {
                 let mut reply = ReplyFileMap::default();
                 reply.deserialize(&reader);
@@ -106,6 +111,7 @@ impl Serializeable for Reply {
             InitReply::OutOfDate => Box::new(ReplyOutOfDate::new()),
             InitReply::OK => Box::new(ReplyOk::new()),
             InitReply::Banned => Box::new(ReplyBanned::new()),
+            InitReply::WarpMap => Box::new(ReplyFileMap::new()),
             InitReply::FileMap => Box::new(ReplyFileMap::new()),
             InitReply::FileItem => Box::new(ReplyFileItem::new()),
             InitReply::FileNPC => Box::new(ReplyFileNPC::new()),
