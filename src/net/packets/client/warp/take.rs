@@ -9,7 +9,7 @@ pub struct Take {
 }
 
 impl Take {
-    pub fn new(warp_id: EOShort, map_id: EOShort) -> Self {
+    pub fn new(map_id: EOShort, warp_id: EOShort) -> Self {
         Self { map_id, warp_id }
     }
 }
