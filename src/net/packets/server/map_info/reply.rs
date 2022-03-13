@@ -1,6 +1,6 @@
 use crate::{
     data::{EOByte, EOChar, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR},
-    net::{CharacterMapInfo, NpcMapInfo, CHARACTER_MAP_INFO_SIZE, NPC_MAP_INFO_SIZE},
+    net::{CharacterMapInfo, NpcMapInfo, NPC_MAP_INFO_SIZE},
 };
 
 #[derive(Debug, Default)]
@@ -71,7 +71,7 @@ impl Serializeable for Reply {
         let mut builder = StreamBuilder::with_capacity({
             let mut size = 1;
             if let Some(characters) = &self.characters {
-                size += 1 + characters.len() * CHARACTER_MAP_INFO_SIZE;
+                size += 1 + characters.iter().map(|c| c.get_size()).sum::<usize>();
             }
             if let Some(npcs) = &self.npcs {
                 size += npcs.len() * NPC_MAP_INFO_SIZE;

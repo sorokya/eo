@@ -8,3 +8,5 @@ mod map_effect;
 pub use map_effect::MapEffect;
 mod warp_animation;
 pub use warp_animation::WarpAnimation;
+mod warp_type;
+pub use warp_type::{WarpAgreeType, WarpRequestType};

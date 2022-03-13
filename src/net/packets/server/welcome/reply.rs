@@ -8,7 +8,7 @@ use crate::{
     },
     net::{
         replies::WelcomeReply, CharacterStats2, Item, NearbyInfo, PaperdollFull, ServerSettings,
-        Spell, Weight, CHARACTER_STATS_2_SIZE, ITEM_SIZE, NEARBY_INFO_SIZE, PAPERDOLL_FULL_SIZE,
+        Spell, Weight, CHARACTER_STATS_2_SIZE, ITEM_SIZE, PAPERDOLL_FULL_SIZE,
         SERVER_SETTINGS_SIZE, SPELL_SIZE, WEIGHT_SIZE,
     },
 };
@@ -84,15 +84,15 @@ pub struct SelectCharacter {
     pub player_id: EOShort,
     pub character_id: EOInt,
     pub map_id: EOShort,
-    pub map_hash: [EOByte; 4],
+    pub map_rid: [EOShort; 2],
     pub map_filesize: EOThree,
-    pub eif_hash: [EOByte; 4],
+    pub eif_rid: [EOShort; 2],
     pub eif_length: EOShort,
-    pub enf_hash: [EOByte; 4],
+    pub enf_rid: [EOShort; 2],
     pub enf_length: EOShort,
-    pub esf_hash: [EOByte; 4],
+    pub esf_rid: [EOShort; 2],
     pub esf_length: EOShort,
-    pub ecf_hash: [EOByte; 4],
+    pub ecf_rid: [EOShort; 2],
     pub ecf_length: EOShort,
     pub name: String,
     pub title: String,
@@ -122,39 +122,29 @@ impl Serializeable for SelectCharacter {
         self.player_id = reader.get_short();
         self.character_id = reader.get_int();
         self.map_id = reader.get_short();
-        self.map_hash = [
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
+        self.map_rid = [
+            reader.get_short(),
+            reader.get_short(),
         ];
         self.map_filesize = reader.get_three();
-        self.eif_hash = [
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
+        self.eif_rid = [
+            reader.get_short(),
+            reader.get_short(),
         ];
         self.eif_length = reader.get_short();
-        self.enf_hash = [
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
+        self.enf_rid = [
+            reader.get_short(),
+            reader.get_short(),
         ];
         self.enf_length = reader.get_short();
-        self.esf_hash = [
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
+        self.esf_rid = [
+            reader.get_short(),
+            reader.get_short(),
         ];
         self.esf_length = reader.get_short();
-        self.ecf_hash = [
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
+        self.ecf_rid = [
+            reader.get_short(),
+            reader.get_short(),
         ];
         self.ecf_length = reader.get_short();
         self.name = reader.get_break_string();
@@ -184,15 +174,25 @@ impl Serializeable for SelectCharacter {
         builder.add_short(self.player_id);
         builder.add_int(self.character_id);
         builder.add_short(self.map_id);
-        builder.append(&mut self.map_hash.to_vec());
+        for rid in self.map_rid {
+            builder.add_short(rid);
+        }
         builder.add_three(self.map_filesize);
-        builder.append(&mut self.eif_hash.to_vec());
+        for rid in self.eif_rid {
+            builder.add_short(rid);
+        }
         builder.add_short(self.eif_length);
-        builder.append(&mut self.enf_hash.to_vec());
+        for rid in self.enf_rid {
+            builder.add_short(rid);
+        }
         builder.add_short(self.enf_length);
-        builder.append(&mut self.esf_hash.to_vec());
+        for rid in self.esf_rid {
+            builder.add_short(rid);
+        }
         builder.add_short(self.esf_length);
-        builder.append(&mut self.ecf_hash.to_vec());
+        for rid in self.ecf_rid {
+            builder.add_short(rid);
+        }
         builder.add_short(self.ecf_length);
         builder.add_break_string(&self.name);
         builder.add_break_string(&self.title);
@@ -214,7 +214,7 @@ impl Serializeable for SelectCharacter {
     }
 }
 
-const ENTER_GAME_SIZE: usize = WEIGHT_SIZE + NEARBY_INFO_SIZE + 3;
+const ENTER_GAME_SIZE: usize = WEIGHT_SIZE + 3;
 #[derive(Debug, Default)]
 pub struct EnterGame {
     pub news: [String; 9],
@@ -260,6 +260,7 @@ impl Serializeable for EnterGame {
                 + 9
                 + self.items.len() * ITEM_SIZE
                 + self.spells.len() * SPELL_SIZE
+                + self.nearby_info.get_size()
         });
 
         builder.add_byte(EO_BREAK_CHAR);

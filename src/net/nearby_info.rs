@@ -1,12 +1,10 @@
 use crate::data::{EOByte, EOChar, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR};
 
 use super::{
-    CharacterMapInfo, ItemMapInfo, NpcMapInfo, CHARACTER_MAP_INFO_SIZE, ITEM_MAP_INFO_SIZE,
+    CharacterMapInfo, ItemMapInfo, NpcMapInfo, ITEM_MAP_INFO_SIZE,
     NPC_MAP_INFO_SIZE,
 };
 
-pub const NEARBY_INFO_SIZE: usize =
-    CHARACTER_MAP_INFO_SIZE + NPC_MAP_INFO_SIZE + ITEM_MAP_INFO_SIZE + 3;
 #[derive(Debug, Default)]
 pub struct NearbyInfo {
     pub characters: Vec<CharacterMapInfo>,
@@ -17,6 +15,12 @@ pub struct NearbyInfo {
 impl NearbyInfo {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn get_size(&self) -> usize {
+        self.characters.iter().map(|c| c.get_size()).sum::<usize>()
+            + self.npcs.len() * NPC_MAP_INFO_SIZE
+            + self.items.len() * ITEM_MAP_INFO_SIZE
     }
 }
 
@@ -42,7 +46,7 @@ impl Serializeable for NearbyInfo {
         }
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::with_capacity(NEARBY_INFO_SIZE);
+        let mut builder = StreamBuilder::with_capacity(self.get_size());
         builder.add_char(self.characters.len() as EOChar);
         builder.add_byte(EO_BREAK_CHAR);
         for character in &self.characters {

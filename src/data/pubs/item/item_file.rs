@@ -20,7 +20,8 @@ use crate::data::{
 /// The file layout is:
 ///```text
 /// "EIF" (fixed string)
-/// hash (4 bytes)
+/// rid1 (2 bytes)
+/// rid2 (2 bytes)
 /// Length (2 bytes)
 /// Unknown (1 byte) (always 0)
 /// Record*Length
@@ -70,7 +71,7 @@ use crate::data::{
 #[derive(Debug, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ItemFile {
-    pub hash: [EOByte; 4],
+    pub rid: [EOShort; 2],
     length: usize,
     unknown: EOChar,
     pub records: Vec<ItemRecord>,
@@ -80,7 +81,7 @@ impl ItemFile {
     /// creates a new ItemFile with no records
     pub fn new() -> Self {
         Self {
-            hash: [0, 0, 0, 0],
+            rid: [0, 0],
             length: 0,
             unknown: 0,
             records: Vec::default(),
@@ -114,11 +115,9 @@ impl ItemFile {
 impl Serializeable for ItemFile {
     fn deserialize(&mut self, reader: &StreamReader) {
         reader.seek(3);
-        self.hash = [
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
+        self.rid = [
+            reader.get_short(),
+            reader.get_short(),
         ];
         self.length = reader.get_short() as usize;
         self.unknown = reader.get_char();
@@ -131,7 +130,9 @@ impl Serializeable for ItemFile {
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::new(); // TOOD: calculate capacity
         builder.add_string("EIF");
-        builder.append(&mut self.hash.to_vec());
+        for rid in self.rid {
+            builder.add_short(rid);
+        }
         builder.add_short(self.length as EOShort);
         builder.add_char(self.unknown);
         for record in &self.records {

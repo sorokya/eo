@@ -22,7 +22,8 @@ use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamBuilder, 
 /// The file layout is:
 ///```text
 /// "EMF" (fixed string)
-/// hash (4 bytes)
+/// rid1 (2 bytes)
+/// rid2 (2 bytes)
 /// name (fixed string 24 bytes long)
 /// type (1 byte)
 /// effect (1 byte)
@@ -124,7 +125,7 @@ use crate::data::{EOByte, EOChar, EOInt, EOShort, Serializeable, StreamBuilder, 
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct MapFile {
-    pub hash: [EOByte; 4],
+    pub rid: [EOShort; 2],
     pub name: String,
     pub map_type: MapType,
     pub effect: MapEffect,
@@ -170,11 +171,9 @@ impl Serializeable for MapFile {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.size = reader.length() as EOInt;
         reader.seek(3);
-        self.hash = [
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
-            reader.get_byte(),
+        self.rid = [
+            reader.get_short(),
+            reader.get_short(),
         ];
         self.name = decode_map_string(reader.get_vec(MAP_NAME_LENGTH));
         let map_type_char = reader.get_char();
@@ -261,7 +260,9 @@ impl Serializeable for MapFile {
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::new(); // TOOD: calculate capacity
         builder.add_string("EMF");
-        builder.append(&mut self.hash.to_vec());
+        for rid in self.rid {
+            builder.add_short(rid);
+        }
         builder.append(&mut encode_map_string(&self.name, MAP_NAME_LENGTH));
         builder.add_char(self.map_type as EOChar);
         builder.add_char(self.effect as EOChar);

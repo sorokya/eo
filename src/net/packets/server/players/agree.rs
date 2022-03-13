@@ -1,6 +1,6 @@
 use crate::{
     data::{EOByte, EOChar, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR},
-    net::{CharacterMapInfo, CHARACTER_MAP_INFO_SIZE},
+    net::{CharacterMapInfo},
 };
 
 const REPLY_SIZE: usize = 2;
@@ -27,7 +27,7 @@ impl Serializeable for Agree {
         self.unknown = reader.get_char();
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::with_capacity(REPLY_SIZE + CHARACTER_MAP_INFO_SIZE);
+        let mut builder = StreamBuilder::with_capacity(REPLY_SIZE + self.character.get_size());
         builder.add_byte(EO_BREAK_CHAR);
         builder.append(&mut self.character.serialize());
         builder.add_char(self.unknown);

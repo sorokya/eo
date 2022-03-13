@@ -10,4 +10,5 @@ pub mod players;
 mod sequencer;
 pub use sequencer::Sequencer;
 pub mod walk;
+pub mod warp;
 pub mod welcome;

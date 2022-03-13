@@ -8,7 +8,7 @@ use crate::{
 
 use super::{PaperdollB000A0HSW, PAPERDOLL_B000A0HSW_SIZE};
 
-pub const CHARACTER_MAP_INFO_SIZE: usize = COORDS_SIZE + PAPERDOLL_B000A0HSW_SIZE + 26;
+const CHARACTER_MAP_INFO_SIZE: usize = COORDS_SIZE + PAPERDOLL_B000A0HSW_SIZE + 26;
 #[derive(Debug, Default)]
 pub struct CharacterMapInfo {
     pub name: String,
@@ -35,6 +35,10 @@ pub struct CharacterMapInfo {
 impl CharacterMapInfo {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn get_size(&self) -> usize {
+        CHARACTER_MAP_INFO_SIZE + self.name.len()
     }
 }
 

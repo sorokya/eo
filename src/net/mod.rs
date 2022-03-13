@@ -52,9 +52,9 @@ pub use item::{
 mod spell;
 pub use spell::{Spell, SPELL_SIZE};
 mod nearby_info;
-pub use nearby_info::{NearbyInfo, NEARBY_INFO_SIZE};
+pub use nearby_info::NearbyInfo;
 mod character_map_info;
-pub use character_map_info::{CharacterMapInfo, CHARACTER_MAP_INFO_SIZE};
+pub use character_map_info::CharacterMapInfo;
 mod item_map_info;
 pub use item_map_info::{ItemMapInfo, ITEM_MAP_INFO_SIZE};
 mod npc_map_info;
