@@ -2,7 +2,7 @@ use num_traits::FromPrimitive;
 
 use crate::{
     data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader},
-    world::{Direction, Coords, TINY_COORDS_SIZE, TinyCoords},
+    world::{Direction, TINY_COORDS_SIZE, TinyCoords},
 };
 
 const PLAYER_SIZE: usize = 3 + TINY_COORDS_SIZE;
