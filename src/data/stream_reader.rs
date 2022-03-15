@@ -112,6 +112,12 @@ impl<'a> StreamReader<'a> {
         self.position.set(position + 4);
         number as EOInt
     }
+    /// returns an int from the remaining bytes in the data stream
+    /// only first first 4 bytes are used
+    pub fn get_end_int(&self) -> EOInt {
+        let number = decode_number(&self.data[self.position.get()..]);
+        number as EOInt
+    }
     /// returns a UTF-8 encoded string of length `length` from the data stream
     pub fn get_fixed_string(&self, length: usize) -> String {
         if self.remaining() >= length {

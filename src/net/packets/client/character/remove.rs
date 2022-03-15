@@ -1,11 +1,11 @@
-use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader};
+use crate::data::{EOByte, EOInt, EOShort, Serializeable, StreamBuilder, StreamReader};
 
-const REMOVE_SIZE: usize = 4;
+const REMOVE_SIZE: usize = 6;
 
 #[derive(Debug, Default)]
 pub struct Remove {
     pub session_id: EOShort,
-    pub character_id: EOShort,
+    pub character_id: EOInt,
 }
 
 impl Remove {
@@ -17,12 +17,12 @@ impl Remove {
 impl Serializeable for Remove {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.session_id = reader.get_short();
-        self.character_id = reader.get_short();
+        self.character_id = reader.get_end_int();
     }
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(REMOVE_SIZE);
         builder.add_short(self.session_id);
-        builder.add_short(self.character_id);
+        builder.add_end_int(self.character_id);
         builder.get()
     }
 }

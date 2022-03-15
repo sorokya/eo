@@ -171,10 +171,7 @@ impl Serializeable for MapFile {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.size = reader.length() as EOInt;
         reader.seek(3);
-        self.rid = [
-            reader.get_short(),
-            reader.get_short(),
-        ];
+        self.rid = [reader.get_short(), reader.get_short()];
         self.name = decode_map_string(reader.get_vec(MAP_NAME_LENGTH));
         let map_type_char = reader.get_char();
         self.map_type = match MapType::from_u8(map_type_char) {

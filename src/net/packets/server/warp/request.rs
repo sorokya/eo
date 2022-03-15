@@ -9,21 +9,21 @@ const REQUEST_SIZE: usize = 5;
 pub struct Request {
     pub warp_type: WarpRequestType,
     pub map_id: EOShort,
-    pub warp_id: EOShort,
+    pub session_id: EOShort,
 }
 
 impl Request {
-    pub fn local(map_id: EOShort, warp_id: EOShort) -> Self {
+    pub fn local(map_id: EOShort, session_id: EOShort) -> Self {
         Self {
             warp_type: WarpRequestType::Local,
             map_id,
-            warp_id,
+            session_id,
         }
     }
 
     pub fn remote(
         map_id: EOShort,
-        warp_id: EOShort,
+        session_id: EOShort,
         map_rid: [EOShort; 2],
         map_filesize: EOThree,
     ) -> Self {
@@ -33,7 +33,7 @@ impl Request {
                 map_filesize,
             },
             map_id,
-            warp_id,
+            session_id,
         }
     }
 }
@@ -56,7 +56,7 @@ impl Serializeable for Request {
             _ => panic!("Invalid warp type: {}", warp_type_char),
         }
 
-        self.warp_id = reader.get_short();
+        self.session_id = reader.get_short();
     }
 
     fn serialize(&self) -> Vec<EOByte> {
@@ -83,7 +83,7 @@ impl Serializeable for Request {
             builder.add_short(map_rid[1]);
             builder.add_three(map_filesize);
         }
-        builder.add_short(self.warp_id);
+        builder.add_short(self.session_id);
         builder.get()
     }
 }
@@ -100,7 +100,7 @@ mod test {
         request.deserialize(&reader);
         assert_eq!(request.warp_type, WarpRequestType::Local);
         assert_eq!(request.map_id, 14);
-        assert_eq!(request.warp_id, 22431);
+        assert_eq!(request.session_id, 22431);
     }
 
     #[test]
@@ -123,7 +123,7 @@ mod test {
             }
         );
         assert_eq!(request.map_id, 14);
-        assert_eq!(request.warp_id, 22431);
+        assert_eq!(request.session_id, 22431);
     }
 
     #[test]

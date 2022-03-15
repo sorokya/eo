@@ -1,6 +1,6 @@
 use crate::{
     data::{EOByte, EOChar, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR},
-    net::{CharacterMapInfo},
+    net::CharacterMapInfo,
 };
 
 const REPLY_SIZE: usize = 2;

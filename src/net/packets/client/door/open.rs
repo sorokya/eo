@@ -1,5 +1,5 @@
 use crate::{
-    data::{EOByte, Serializeable, StreamReader, EOChar},
+    data::{EOByte, EOChar, Serializeable, StreamReader},
     world::TinyCoords,
 };
 

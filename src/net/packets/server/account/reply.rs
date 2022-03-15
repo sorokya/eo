@@ -5,14 +5,12 @@ use crate::{
     net::replies::AccountReply,
 };
 
-const REPLY_SIZE: usize = 2;
-
 #[derive(Debug, Default)]
 pub struct Reply {
     pub reply: Option<AccountReply>,
-    pub session_id: EOShort,
+    pub session_id: Option<EOShort>,
     pub message: String,
-    pub sequence: EOChar,
+    pub sequence: Option<EOChar>,
 }
 
 impl Reply {
@@ -23,27 +21,27 @@ impl Reply {
     pub fn no(reply: AccountReply) -> Self {
         Self {
             reply: Some(reply),
-            session_id: 0,
+            session_id: None,
             message: "NO".to_string(),
-            sequence: 0,
+            sequence: None,
         }
     }
 
     pub fn ok(reply: AccountReply) -> Self {
         Self {
             reply: Some(reply),
-            session_id: 0,
-            message: "OK".to_string(),
-            sequence: 0,
+            session_id: None,
+            message: "GO".to_string(),
+            sequence: None,
         }
     }
 
     pub fn r#continue(session_id: EOShort, sequence: EOChar) -> Self {
         Self {
             reply: None,
-            session_id,
+            session_id: Some(session_id),
             message: "OK".to_string(),
-            sequence,
+            sequence: Some(sequence),
         }
     }
 }
@@ -51,8 +49,10 @@ impl Reply {
 impl Serializeable for Reply {
     fn deserialize(&mut self, reader: &StreamReader) {
         let reply_code_or_session_id = reader.get_short();
-        if reply_code_or_session_id > 6 {
-            self.session_id = reply_code_or_session_id;
+        const ACCOUNT_REPLY_OK_MIN_VALUE: EOShort = 10;
+        if reply_code_or_session_id > ACCOUNT_REPLY_OK_MIN_VALUE {
+            self.session_id = Some(reply_code_or_session_id);
+            self.sequence = Some(reader.get_char());
         } else {
             self.reply = match AccountReply::from_u16(reply_code_or_session_id) {
                 Some(reply) => Some(reply),
@@ -66,13 +66,17 @@ impl Serializeable for Reply {
     }
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(
-            REPLY_SIZE + if self.session_id > 0 { 1 } else { 0 } + self.message.len(),
+            if self.session_id.is_some() { 3 } else { 2 } + self.message.len(),
         );
-        if self.session_id > 0 {
-            builder.add_short(self.session_id);
-            builder.add_char(self.sequence);
-        } else {
-            builder.add_short(self.reply.expect("No session id or reply code") as EOShort);
+
+        if let Some(session_id) = self.session_id {
+            builder.add_short(session_id);
+        }
+        if let Some(sequence) = self.sequence {
+            builder.add_char(sequence);
+        }
+        if let Some(reply) = self.reply {
+            builder.add_short(reply as EOShort);
         }
         builder.add_string(&self.message);
         builder.get()

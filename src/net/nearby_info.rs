@@ -1,9 +1,6 @@
 use crate::data::{EOByte, EOChar, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR};
 
-use super::{
-    CharacterMapInfo, ItemMapInfo, NpcMapInfo, ITEM_MAP_INFO_SIZE,
-    NPC_MAP_INFO_SIZE,
-};
+use super::{CharacterMapInfo, ItemMapInfo, NpcMapInfo, ITEM_MAP_INFO_SIZE, NPC_MAP_INFO_SIZE};
 
 #[derive(Debug, Default)]
 pub struct NearbyInfo {

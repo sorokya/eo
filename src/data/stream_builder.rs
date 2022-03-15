@@ -1,4 +1,4 @@
-use super::{encode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR};
+use super::{encode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR, MAX2, MAX3};
 
 /// used for building byte streams in EO format
 ///
@@ -72,6 +72,23 @@ impl StreamBuilder {
         self.data.push(bytes[1]);
         self.data.push(bytes[2]);
         self.data.push(bytes[3]);
+    }
+    /// Adds an [EOInt] encoded as four, three, or two bytes to the data stream
+    pub fn add_end_int(&mut self, number: EOInt) {
+        let bytes = encode_number(number);
+        if number < MAX2 {
+            self.data.push(bytes[0]);
+            self.data.push(bytes[1]);
+        } else if number < MAX3 {
+            self.data.push(bytes[0]);
+            self.data.push(bytes[1]);
+            self.data.push(bytes[2]);
+        } else {
+            self.data.push(bytes[0]);
+            self.data.push(bytes[1]);
+            self.data.push(bytes[2]);
+            self.data.push(bytes[3]);
+        }
     }
     /// Adds the UTF-8 encoded version of `string` to the data stream
     pub fn add_string(&mut self, string: &str) {

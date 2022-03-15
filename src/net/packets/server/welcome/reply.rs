@@ -81,7 +81,7 @@ const SELECT_CHARACTER_SIZE: usize =
     CHARACTER_STATS_2_SIZE + PAPERDOLL_FULL_SIZE + SERVER_SETTINGS_SIZE + 42;
 #[derive(Debug, Default)]
 pub struct SelectCharacter {
-    pub player_id: EOShort,
+    pub session_id: EOShort,
     pub character_id: EOInt,
     pub map_id: EOShort,
     pub map_rid: [EOShort; 2],
@@ -119,33 +119,18 @@ impl SelectCharacter {
 
 impl Serializeable for SelectCharacter {
     fn deserialize(&mut self, reader: &StreamReader) {
-        self.player_id = reader.get_short();
+        self.session_id = reader.get_short();
         self.character_id = reader.get_int();
         self.map_id = reader.get_short();
-        self.map_rid = [
-            reader.get_short(),
-            reader.get_short(),
-        ];
+        self.map_rid = [reader.get_short(), reader.get_short()];
         self.map_filesize = reader.get_three();
-        self.eif_rid = [
-            reader.get_short(),
-            reader.get_short(),
-        ];
+        self.eif_rid = [reader.get_short(), reader.get_short()];
         self.eif_length = reader.get_short();
-        self.enf_rid = [
-            reader.get_short(),
-            reader.get_short(),
-        ];
+        self.enf_rid = [reader.get_short(), reader.get_short()];
         self.enf_length = reader.get_short();
-        self.esf_rid = [
-            reader.get_short(),
-            reader.get_short(),
-        ];
+        self.esf_rid = [reader.get_short(), reader.get_short()];
         self.esf_length = reader.get_short();
-        self.ecf_rid = [
-            reader.get_short(),
-            reader.get_short(),
-        ];
+        self.ecf_rid = [reader.get_short(), reader.get_short()];
         self.ecf_length = reader.get_short();
         self.name = reader.get_break_string();
         self.title = reader.get_break_string();
@@ -171,7 +156,7 @@ impl Serializeable for SelectCharacter {
 
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(SELECT_CHARACTER_SIZE);
-        builder.add_short(self.player_id);
+        builder.add_short(self.session_id);
         builder.add_int(self.character_id);
         builder.add_short(self.map_id);
         for rid in self.map_rid {

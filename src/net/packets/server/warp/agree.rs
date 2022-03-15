@@ -22,7 +22,11 @@ impl Agree {
         }
     }
 
-    pub fn remote(map_id: EOShort, warp_animation: Option<WarpAnimation>, nearby_info: NearbyInfo) -> Self {
+    pub fn remote(
+        map_id: EOShort,
+        warp_animation: Option<WarpAnimation>,
+        nearby_info: NearbyInfo,
+    ) -> Self {
         Self {
             warp_type: WarpAgreeType::Remote {
                 map_id,

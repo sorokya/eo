@@ -96,10 +96,7 @@ impl NPCFile {
 impl Serializeable for NPCFile {
     fn deserialize(&mut self, reader: &StreamReader) {
         reader.seek(3);
-        self.rid = [
-            reader.get_short(),
-            reader.get_short(),
-        ];
+        self.rid = [reader.get_short(), reader.get_short()];
         self.length = reader.get_short() as usize;
         self.unknown = reader.get_char();
         self.records = Vec::with_capacity(self.length + 1);

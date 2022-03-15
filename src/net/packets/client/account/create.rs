@@ -1,4 +1,4 @@
-use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader};
+use crate::data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR};
 
 const SIZE: usize = 10;
 
@@ -44,7 +44,7 @@ impl Serializeable for Create {
         );
 
         builder.add_short(self.session_id);
-        builder.add_byte(255);
+        builder.add_byte(EO_BREAK_CHAR);
         builder.add_break_string(&self.name.to_lowercase());
         builder.add_break_string(&self.password);
         builder.add_break_string(&self.fullname);
@@ -72,6 +72,7 @@ mod tests {
         let mut packet = Create::new();
         let reader = StreamReader::new(&data);
         packet.deserialize(&reader);
+        assert_eq!(packet.session_id, 1000);
         assert_eq!(packet.name, "test");
         assert_eq!(packet.password, "password");
         assert_eq!(packet.fullname, "test");
