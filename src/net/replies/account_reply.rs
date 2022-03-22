@@ -1,5 +1,3 @@
-use crate::data::EOShort;
-
 /// reply when creating an account
 #[derive(Debug, Clone, Copy, PartialEq, Primitive)]
 pub enum AccountReply {

@@ -28,7 +28,7 @@ impl Serializeable for Admin {
             None => panic!("Invalid direction: {}", direction_char),
         };
         self.timestamp = reader.get_three();
-        self.coords.deserialize(&reader);
+        self.coords.deserialize(reader);
     }
 
     fn serialize(&self) -> Vec<crate::data::EOByte> {
@@ -49,9 +49,9 @@ mod test {
     #[test]
     fn deserialize() {
         let buf: Vec<EOByte> = vec![1, 244, 159, 75, 7, 12];
-        let mut reader = StreamReader::new(&buf);
+        let reader = StreamReader::new(&buf);
         let mut admin = Admin::new();
-        admin.deserialize(&mut reader);
+        admin.deserialize(&reader);
         assert_eq!(admin.direction, Direction::Down);
         assert_eq!(admin.timestamp, 4776883);
         assert_eq!(admin.coords.x, 6);

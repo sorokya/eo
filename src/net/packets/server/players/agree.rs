@@ -23,7 +23,7 @@ impl Agree {
 impl Serializeable for Agree {
     fn deserialize(&mut self, reader: &StreamReader) {
         reader.seek(1);
-        self.character.deserialize(&reader);
+        self.character.deserialize(reader);
         self.unknown = reader.get_char();
     }
     fn serialize(&self) -> Vec<EOByte> {

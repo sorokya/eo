@@ -46,7 +46,7 @@ impl Serializeable for Reply {
                 character.deserialize(reader);
                 characters.push(character);
             }
-            if characters.len() > 0 {
+            if !characters.is_empty() {
                 self.characters = Some(characters);
             }
         }
@@ -63,7 +63,7 @@ impl Serializeable for Reply {
             npcs.push(npc);
         }
 
-        if npcs.len() > 0 {
+        if !npcs.is_empty() {
             self.npcs = Some(npcs);
         }
     }

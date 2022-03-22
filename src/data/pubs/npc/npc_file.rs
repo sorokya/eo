@@ -173,8 +173,8 @@ mod tests {
         assert_eq!(enf.records[0].element_weak_power, 5);
         assert_eq!(enf.records[0].graphic_id, 6);
         assert_eq!(enf.records[0].npc_specific_param, 7);
-        assert_eq!(enf.records[0].boss, true);
-        assert_eq!(enf.records[0].child, false);
+        assert!(enf.records[0].boss);
+        assert!(!enf.records[0].child);
         assert_eq!(enf.records[0].npc_type, NPCType::Passive);
         Ok(())
     }

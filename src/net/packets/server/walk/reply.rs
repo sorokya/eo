@@ -30,7 +30,7 @@ impl Serializeable for Reply {
         reader.seek(1);
         while !reader.eof() {
             let mut item = ItemMapInfo::new();
-            item.deserialize(&reader);
+            item.deserialize(reader);
             self.items.push(item);
         }
     }

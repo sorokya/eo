@@ -46,7 +46,7 @@ impl Serializeable for Request {
             while reader.peek_byte() != EO_BREAK_CHAR {
                 player_ids.push(reader.get_short());
             }
-            if player_ids.len() > 0 {
+            if !player_ids.is_empty() {
                 self.player_ids = Some(player_ids);
             } else {
                 self.player_ids = None;
@@ -56,7 +56,7 @@ impl Serializeable for Request {
             while !reader.eof() {
                 npc_indexes.push(reader.get_char());
             }
-            if npc_indexes.len() > 0 {
+            if !npc_indexes.is_empty() {
                 self.npc_indexes = Some(npc_indexes);
             }
         }

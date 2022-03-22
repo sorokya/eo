@@ -28,7 +28,7 @@ impl Serializeable for Player {
             Some(direction) => direction,
             None => panic!("Invalid direction: {}", direction_char),
         };
-        self.coords.deserialize(&reader);
+        self.coords.deserialize(reader);
     }
 
     fn serialize(&self) -> Vec<EOByte> {

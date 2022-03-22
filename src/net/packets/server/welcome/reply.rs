@@ -366,7 +366,7 @@ mod tests {
             enter_game.nearby_info.characters[0].sit_state,
             SitState::Standing
         );
-        assert_eq!(enter_game.nearby_info.characters[0].invisible, false);
+        assert!(!enter_game.nearby_info.characters[0].invisible);
         assert_eq!(enter_game.nearby_info.npcs.len(), 1);
         assert_eq!(enter_game.nearby_info.npcs[0].index, 1);
         assert_eq!(enter_game.nearby_info.npcs[0].id, 268);
