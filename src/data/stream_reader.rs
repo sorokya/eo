@@ -122,13 +122,7 @@ impl<'a> StreamReader<'a> {
     pub fn get_fixed_string(&self, length: usize) -> String {
         if self.remaining() >= length {
             let bytes_to_read = self.get_vec(length);
-            match String::from_utf8(bytes_to_read.clone()) {
-                Ok(s) => s,
-                Err(_) => panic!(
-                    "Failed to convert byte array ({:?}) to string",
-                    bytes_to_read
-                ),
-            }
+            String::from_utf8_lossy(&bytes_to_read).to_string()
         } else {
             String::from("")
         }
