@@ -49,8 +49,7 @@ impl Reply {
 impl Serializeable for Reply {
     fn deserialize(&mut self, reader: &StreamReader) {
         let reply_code_or_session_id = reader.get_short();
-        const ACCOUNT_REPLY_OK_MIN_VALUE: EOShort = 10;
-        if reply_code_or_session_id > ACCOUNT_REPLY_OK_MIN_VALUE {
+        if reply_code_or_session_id >= 10 {
             self.session_id = Some(reply_code_or_session_id);
             self.sequence = Some(reader.get_char());
         } else {

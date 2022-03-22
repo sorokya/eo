@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     character::PaperdollIcon,
     data::{EOChar, Serializeable, StreamBuilder, StreamReader},
@@ -11,6 +9,7 @@ pub const ONLINE_ENTRY_SIZE: usize = 6;
 pub struct OnlineEntry {
     pub name: String,
     pub title: String,
+    unk: EOChar,
     pub icon: PaperdollIcon,
     pub class_id: EOChar,
     pub guild_tag: String,
@@ -26,12 +25,8 @@ impl Serializeable for OnlineEntry {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.name = reader.get_break_string();
         self.title = reader.get_break_string();
-        reader.get_char();
-        let icon_char = reader.get_char();
-        self.icon = match PaperdollIcon::from_u8(icon_char) {
-            Some(icon) => icon,
-            None => panic!("Failed to convert char to PaperdollIcon: {}", icon_char),
-        };
+        self.unk = reader.get_char();
+        self.icon = PaperdollIcon::from_char(reader.get_char());
         self.class_id = reader.get_char();
         self.guild_tag = reader.get_break_string();
     }
@@ -40,7 +35,7 @@ impl Serializeable for OnlineEntry {
             StreamBuilder::with_capacity(ONLINE_ENTRY_SIZE + self.name.len() + self.title.len());
         builder.add_break_string(&self.name);
         builder.add_break_string(&self.title);
-        builder.add_char(0);
+        builder.add_char(self.unk);
         builder.add_char(self.icon as EOChar);
         builder.add_char(self.class_id);
         builder.add_break_string(&self.guild_tag);

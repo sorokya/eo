@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader},
     world::{Direction, TinyCoords, TINY_COORDS_SIZE},
@@ -25,11 +23,7 @@ impl Serializeable for NpcMapInfo {
         self.index = reader.get_char();
         self.id = reader.get_short();
         self.coords.deserialize(reader);
-        let direction_char = reader.get_char();
-        self.direction = match Direction::from_u8(direction_char) {
-            Some(direction) => direction,
-            None => panic!("Failed to convert char to Direction: {}", direction_char),
-        };
+        self.direction = Direction::from_char(reader.get_char());
     }
     fn serialize(&self) -> Vec<EOByte> {
         let mut builder = StreamBuilder::with_capacity(NPC_MAP_INFO_SIZE);

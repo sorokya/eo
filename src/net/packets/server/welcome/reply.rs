@@ -138,11 +138,7 @@ impl Serializeable for SelectCharacter {
         self.guild_rank_name = reader.get_break_string();
         self.class_id = reader.get_char();
         self.guild_tag = reader.get_fixed_string(3);
-        let admin_level_char = reader.get_char();
-        self.admin_level = match AdminLevel::from_u8(admin_level_char) {
-            Some(admin_level) => admin_level,
-            None => panic!("Failed to convert char to AdminLevel: {}", admin_level_char),
-        };
+        self.admin_level = AdminLevel::from_char(reader.get_char());
         self.level = reader.get_char();
         self.experience = reader.get_int();
         self.usage = reader.get_int();

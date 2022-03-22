@@ -1,3 +1,8 @@
+use log::warn;
+use num_traits::FromPrimitive;
+
+use crate::data::EOChar;
+
 /// describes a characters admin level
 ///
 /// new characters default as Player
@@ -16,6 +21,18 @@ pub enum AdminLevel {
     Guardian = 2,
     GameMaster = 3,
     HighGameMaster = 4,
+}
+
+impl AdminLevel {
+    pub fn from_char(admin_level_char: EOChar) -> Self {
+        match AdminLevel::from_u8(admin_level_char) {
+            Some(admin_level) => admin_level,
+            None => {
+                warn!("Invalid admin level: {}", admin_level_char);
+                AdminLevel::default()
+            }
+        }
+    }
 }
 
 impl Default for AdminLevel {

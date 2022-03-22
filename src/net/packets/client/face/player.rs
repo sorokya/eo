@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     data::{EOChar, Serializeable, StreamBuilder, StreamReader},
     world::Direction,
@@ -20,11 +18,7 @@ impl Player {
 
 impl Serializeable for Player {
     fn deserialize(&mut self, reader: &StreamReader) {
-        let direction_char = reader.get_char();
-        self.direction = match Direction::from_u8(direction_char) {
-            Some(direction) => direction,
-            None => panic!("Invalid direction: {}", direction_char),
-        };
+        self.direction = Direction::from_char(reader.get_char());
     }
 
     fn serialize(&self) -> Vec<crate::data::EOByte> {

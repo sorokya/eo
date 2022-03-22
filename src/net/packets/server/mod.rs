@@ -2,6 +2,7 @@ pub mod account;
 pub mod avatar;
 pub mod character;
 pub mod door;
+pub mod emote;
 pub mod face;
 pub mod init;
 pub mod login;

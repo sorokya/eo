@@ -58,7 +58,7 @@ impl Reply {
 impl Serializeable for Reply {
     fn deserialize(&mut self, reader: &StreamReader) {
         let reply_code_or_session_id = reader.get_short();
-        if reply_code_or_session_id > 6 {
+        if reply_code_or_session_id >= 10 {
             self.session_id = Some(reply_code_or_session_id);
         } else {
             self.reply = match CharacterReply::from_u16(reply_code_or_session_id) {

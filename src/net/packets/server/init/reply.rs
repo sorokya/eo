@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     data::{EOByte, Serializeable, StreamBuilder, StreamReader},
     net::replies::InitReply,
@@ -102,11 +100,7 @@ impl std::fmt::Debug for Reply {
 
 impl Serializeable for Reply {
     fn deserialize(&mut self, reader: &StreamReader) {
-        let reply_code_byte = reader.get_byte();
-        self.reply_code = match InitReply::from_u8(reply_code_byte) {
-            Some(reply_code) => reply_code,
-            None => panic!("Failed to convert byte to InitReply: {}", reply_code_byte),
-        };
+        self.reply_code = InitReply::from_byte(reader.get_byte());
         self.reply = match self.reply_code {
             InitReply::OutOfDate => Box::new(ReplyOutOfDate::new()),
             InitReply::OK => Box::new(ReplyOk::new()),

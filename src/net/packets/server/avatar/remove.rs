@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader},
     world::WarpAnimation,
@@ -32,11 +30,7 @@ impl Serializeable for Remove {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.player_id = reader.get_short();
         if reader.remaining() > 0 {
-            let warp_animation_char = reader.get_char();
-            self.warp_animation = match WarpAnimation::from_u8(warp_animation_char) {
-                Some(warp_animation) => Some(warp_animation),
-                None => panic!("Invalid warp animation: {}", warp_animation_char),
-            };
+            self.warp_animation = WarpAnimation::from_char(reader.get_char());
         } else {
             self.warp_animation = None;
         }

@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader},
     net::NearbyInfo,
@@ -50,7 +48,7 @@ impl Serializeable for Agree {
                     let warp_animation_char = reader.get_char();
                     WarpAgreeType::Remote {
                         map_id,
-                        warp_animation: WarpAnimation::from_u8(warp_animation_char),
+                        warp_animation: WarpAnimation::from_char(warp_animation_char),
                     }
                 };
             }

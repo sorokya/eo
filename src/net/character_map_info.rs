@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     character::{Gender, Race, SitState},
     data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR},
@@ -48,36 +46,20 @@ impl Serializeable for CharacterMapInfo {
         self.id = reader.get_short();
         self.map_id = reader.get_short();
         self.coords.deserialize(reader);
-        let direction_char = reader.get_char();
-        self.direction = match Direction::from_u8(direction_char) {
-            Some(direction) => direction,
-            None => panic!("Failed to convert char to Direction: {}", direction_char),
-        };
+        self.direction = Direction::from_char(reader.get_char());
         self.class_id = reader.get_char();
         self.guild_tag = reader.get_fixed_string(3);
         self.level = reader.get_char();
-        let gender_char = reader.get_char();
-        self.gender = match Gender::from_u8(gender_char) {
-            Some(gender) => gender,
-            None => panic!("Failed to conver chat to Gender: {}", gender_char),
-        };
+        self.gender = Gender::from_char(reader.get_char());
         self.hair_style = reader.get_char();
         self.hair_color = reader.get_char();
-        let race_char = reader.get_char();
-        self.race = match Race::from_u8(race_char) {
-            Some(race) => race,
-            None => panic!("Failed to convert char to Race: {}", race_char),
-        };
+        self.race = Race::from_char(reader.get_char());
         self.max_hp = reader.get_short();
         self.hp = reader.get_short();
         self.max_tp = reader.get_short();
         self.tp = reader.get_short();
         self.paperdoll.deserialize(reader);
-        let sit_state_char = reader.get_char();
-        self.sit_state = match SitState::from_u8(sit_state_char) {
-            Some(sit_state) => sit_state,
-            None => panic!("Failed to convert char to SitState: {}", sit_state_char),
-        };
+        self.sit_state = SitState::from_char(reader.get_char());
         self.invisible = reader.get_char() == 1;
         reader.get_byte();
     }

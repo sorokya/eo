@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader},
     net::FileType,
@@ -21,11 +19,7 @@ impl Agree {
 
 impl Serializeable for Agree {
     fn deserialize(&mut self, reader: &StreamReader) {
-        let file_type_char = reader.get_char();
-        self.file_type = match FileType::from_u8(file_type_char) {
-            Some(file_type) => file_type,
-            _ => panic!("Failed to convert char to FileType: {}", file_type_char),
-        };
+        self.file_type = FileType::from_char(reader.get_char());
         self.session_id = reader.get_short();
         match self.file_type {
             FileType::Map => {

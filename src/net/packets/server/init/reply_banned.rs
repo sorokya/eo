@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::data::{EOByte, Serializeable, StreamBuilder, StreamReader};
 use crate::net::BanType;
 
@@ -27,11 +25,7 @@ impl ReplyBanned {
 
 impl Serializeable for ReplyBanned {
     fn deserialize(&mut self, reader: &StreamReader) {
-        let ban_type_byte = reader.get_byte();
-        self.ban_type = match BanType::from_u8(ban_type_byte) {
-            Some(ban_type) => ban_type,
-            _ => panic!("Failed to convert byte: {} to BanType", ban_type_byte),
-        };
+        self.ban_type = BanType::from_byte(reader.get_byte());
         self.duration = match self.ban_type {
             BanType::Temporary => reader.get_byte(),
             _ => 0,

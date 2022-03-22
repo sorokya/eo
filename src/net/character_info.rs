@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     character::{AdminLevel, Gender, Race},
     data::{EOChar, EOInt, Serializeable, StreamBuilder, StreamReader},
@@ -33,23 +31,11 @@ impl Serializeable for CharacterInfo {
         self.name = reader.get_break_string();
         self.id = reader.get_int();
         self.level = reader.get_char();
-        let gender_char = reader.get_char();
-        self.gender = match Gender::from_u8(gender_char) {
-            Some(gender) => gender,
-            None => panic!("Failed to convert char to Gender: {}", gender_char),
-        };
+        self.gender = Gender::from_char(reader.get_char());
         self.hair_style = reader.get_char();
         self.hair_color = reader.get_char();
-        let race_char = reader.get_char();
-        self.race = match Race::from_u8(race_char) {
-            Some(race) => race,
-            None => panic!("Failed to convert char to Race: {}", race_char),
-        };
-        let admin_level_char = reader.get_char();
-        self.admin_level = match AdminLevel::from_u8(admin_level_char) {
-            Some(admin_level) => admin_level,
-            None => panic!("Failed to convert char to AdminLevel: {}", admin_level_char),
-        };
+        self.race = Race::from_char(reader.get_char());
+        self.admin_level = AdminLevel::from_char(reader.get_char());
         self.paperdoll.deserialize(reader);
     }
     fn serialize(&self) -> Vec<crate::data::EOByte> {

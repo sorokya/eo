@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     character::{Gender, Race},
     data::{EOByte, EOShort, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR},
@@ -26,18 +24,10 @@ impl Create {
 impl Serializeable for Create {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.session_id = reader.get_short();
-        let gender_short = reader.get_short();
-        self.gender = match Gender::from_u16(gender_short) {
-            Some(gender) => gender,
-            None => panic!("Failed to convert short to Gender: {}", gender_short),
-        };
+        self.gender = Gender::from_short(reader.get_short());
         self.hair_style = reader.get_short();
         self.hair_color = reader.get_short();
-        let race_short = reader.get_short();
-        self.race = match Race::from_u16(race_short) {
-            Some(race) => race,
-            None => panic!("Failed to convert short to Race: {}", race_short),
-        };
+        self.race = Race::from_short(reader.get_short());
         reader.get_byte();
         self.name = reader.get_break_string().to_lowercase();
     }

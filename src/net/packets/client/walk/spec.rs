@@ -1,5 +1,3 @@
-use num_traits::FromPrimitive;
-
 use crate::{
     data::{EOChar, EOThree, Serializeable, StreamBuilder, StreamReader},
     world::{Direction, TinyCoords, TINY_COORDS_SIZE},
@@ -22,11 +20,7 @@ impl Spec {
 
 impl Serializeable for Spec {
     fn deserialize(&mut self, reader: &StreamReader) {
-        let direction_char = reader.get_char();
-        self.direction = match Direction::from_u8(direction_char) {
-            Some(direction) => direction,
-            None => panic!("Invalid direction: {}", direction_char),
-        };
+        self.direction = Direction::from_char(reader.get_char());
         self.timestamp = reader.get_three();
         self.coords.deserialize(reader);
     }
