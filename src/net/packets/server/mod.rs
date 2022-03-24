@@ -1,3 +1,4 @@
+pub mod talk;
 pub mod account;
 pub mod avatar;
 pub mod character;
