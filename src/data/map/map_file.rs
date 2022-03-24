@@ -276,33 +276,33 @@ impl Serializeable for MapFile {
         builder.add_char(self.unknown);
         builder.add_char(self.npc_spawns.len() as EOChar);
         for npc in &self.npc_spawns {
-            builder.append(&mut npc.serialize());
+            builder.append(&mut Serializeable::serialize(npc));
         }
         builder.add_char(self.unknowns.len() as EOChar);
         for unknown in &self.unknowns {
-            builder.append(&mut unknown.serialize());
+            builder.append(&mut Serializeable::serialize(unknown));
         }
         builder.add_char(self.chest_spawns.len() as EOChar);
         for chest_spawn in &self.chest_spawns {
-            builder.append(&mut chest_spawn.serialize());
+            builder.append(&mut Serializeable::serialize(chest_spawn));
         }
         builder.add_char(self.tile_rows.len() as EOChar);
         for tile_row in &self.tile_rows {
-            builder.append(&mut tile_row.serialize());
+            builder.append(&mut Serializeable::serialize(tile_row));
         }
         builder.add_char(self.warp_rows.len() as EOChar);
         for warp_row in &self.warp_rows {
-            builder.append(&mut warp_row.serialize());
+            builder.append(&mut Serializeable::serialize(warp_row));
         }
         for layer in 0..NUMBER_OF_GFX_LAYERS {
             builder.add_char(self.gfx_rows[layer].len() as EOChar);
             for gfx_row in &self.gfx_rows[layer] {
-                builder.append(&mut gfx_row.serialize());
+                builder.append(&mut Serializeable::serialize(gfx_row));
             }
         }
         builder.add_char(self.signs.len() as EOChar);
         for sign in &self.signs {
-            builder.append(&mut sign.serialize());
+            builder.append(&mut Serializeable::serialize(sign));
         }
         builder.get()
     }

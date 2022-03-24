@@ -114,7 +114,7 @@ impl Serializeable for NPCFile {
         builder.add_short(self.length as EOShort);
         builder.add_char(self.unknown);
         for record in &self.records {
-            builder.append(&mut record.serialize());
+            builder.append(&mut Serializeable::serialize(record));
         }
         builder.get()
     }
