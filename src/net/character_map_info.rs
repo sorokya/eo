@@ -1,7 +1,7 @@
 use crate::{
     character::{Gender, Race, SitState},
     data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR},
-    world::{Coords, Direction, COORDS_SIZE},
+    world::{Coords, Direction, WarpAnimation, COORDS_SIZE},
 };
 
 use super::{PaperdollB000A0HSW, PAPERDOLL_B000A0HSW_SIZE};
@@ -28,6 +28,7 @@ pub struct CharacterMapInfo {
     pub paperdoll: PaperdollB000A0HSW,
     pub sit_state: SitState,
     pub invisible: bool,
+    pub warp_animation: Option<WarpAnimation>,
 }
 
 impl CharacterMapInfo {
@@ -61,10 +62,15 @@ impl Serializeable for CharacterMapInfo {
         self.paperdoll.deserialize(reader);
         self.sit_state = SitState::from_char(reader.get_char());
         self.invisible = reader.get_char() == 1;
+        if reader.peek_byte() != EO_BREAK_CHAR {
+            self.warp_animation = WarpAnimation::from_char(reader.get_char());
+        }
         reader.get_byte();
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::with_capacity(CHARACTER_MAP_INFO_SIZE);
+        let mut builder = StreamBuilder::with_capacity(
+            CHARACTER_MAP_INFO_SIZE + if self.warp_animation.is_some() { 1 } else { 0 },
+        );
         builder.add_break_string(&self.name);
         builder.add_short(self.id);
         builder.add_short(self.map_id);
@@ -84,6 +90,9 @@ impl Serializeable for CharacterMapInfo {
         builder.append(&mut self.paperdoll.serialize());
         builder.add_char(self.sit_state as EOChar);
         builder.add_char(if self.invisible { 1 } else { 0 });
+        if let Some(warp_animation) = &self.warp_animation {
+            builder.add_char(*warp_animation as EOChar);
+        }
         builder.add_byte(EO_BREAK_CHAR);
         builder.get()
     }
