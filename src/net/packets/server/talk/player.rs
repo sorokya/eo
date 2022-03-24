@@ -15,12 +15,12 @@ impl Player {
 impl Serializeable for Player {
     fn deserialize(&mut self, reader: &StreamReader) {
         self.player_id = reader.get_short();
-        self.message = reader.get_break_string();
+        self.message = reader.get_end_string();
     }
     fn serialize(&self) -> Vec<EOByte> {
-        let mut builder = StreamBuilder::with_capacity(self.message.len() + 3);
+        let mut builder = StreamBuilder::with_capacity(self.message.len() + 2);
         builder.add_short(self.player_id);
-        builder.add_break_string(&self.message);
+        builder.add_string(&self.message);
         builder.get()
     }
 }
