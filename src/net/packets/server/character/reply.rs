@@ -9,7 +9,7 @@ use crate::{
 pub struct Reply {
     pub reply: Option<CharacterReply>,
     pub session_id: Option<EOShort>,
-    pub message: String,
+    pub message: Option<String>,
     pub character_list: Option<CharacterList>,
 }
 
@@ -22,7 +22,7 @@ impl Reply {
         Self {
             reply: Some(reply),
             session_id: None,
-            message: "NO".to_string(),
+            message: Some("NO".to_string()),
             character_list: None,
         }
     }
@@ -31,7 +31,7 @@ impl Reply {
         Self {
             reply: None,
             session_id: Some(session_id),
-            message: "OK".to_string(),
+            message: Some("OK".to_string()),
             character_list: None,
         }
     }
@@ -40,7 +40,7 @@ impl Reply {
         Self {
             reply: Some(CharacterReply::Created),
             session_id: None,
-            message: "OK".to_string(),
+            message: None,
             character_list: Some(character_list),
         }
     }
@@ -49,7 +49,7 @@ impl Reply {
         Self {
             reply: Some(CharacterReply::Deleted),
             session_id: None,
-            message: "OK".to_string(),
+            message: None,
             character_list: Some(character_list),
         }
     }
@@ -69,8 +69,14 @@ impl Serializeable for Reply {
                 ),
             };
         }
-
-        self.message = reader.get_fixed_string(2);
+        if self.session_id.is_some()
+            || !matches!(
+                self.reply.as_ref().unwrap(),
+                CharacterReply::Created | CharacterReply::Deleted
+            )
+        {
+            self.message = Some(reader.get_break_string());
+        }
 
         if self.reply == Some(CharacterReply::Created)
             || self.reply == Some(CharacterReply::Deleted)
@@ -88,7 +94,21 @@ impl Serializeable for Reply {
         } else {
             builder.add_short(self.reply.unwrap() as EOShort);
         }
-        builder.add_fixed_string(&self.message, 2);
+
+        if self.session_id.is_some()
+            || !matches!(
+                self.reply.as_ref().unwrap(),
+                CharacterReply::Created | CharacterReply::Deleted
+            )
+        {
+            builder.add_fixed_string(
+                self.message
+                    .as_ref()
+                    .expect("Message should be something here"),
+                2,
+            );
+        }
+
         if self.character_list.is_some() {
             builder.append(&mut self.character_list.as_ref().unwrap().serialize());
         }
@@ -109,13 +129,13 @@ mod tests {
         let reader = StreamReader::new(&data);
         reply.deserialize(&reader);
         assert_eq!(reply.reply, Some(CharacterReply::Exists));
-        assert_eq!(reply.message, "NO");
+        assert_eq!(reply.message, Some("NO".to_string()));
     }
     #[test]
     fn serialize() {
         let mut reply = Reply::new();
         reply.reply = Some(CharacterReply::Exists);
-        reply.message = "NO".to_string();
+        reply.message = Some("NO".to_string());
         assert_eq!(reply.serialize(), [2, 254, 78, 79]);
     }
 }

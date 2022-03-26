@@ -1,5 +1,5 @@
 use crate::{
-    data::{EOByte, EOChar, Serializeable, StreamReader},
+    data::{EOByte, EOChar, EOShort, Serializeable, StreamBuilder, StreamReader},
     world::TinyCoords,
 };
 
@@ -18,10 +18,13 @@ impl Open {
 
 impl Serializeable for Open {
     fn deserialize(&mut self, reader: &StreamReader) {
-        self.coords.deserialize(reader);
+        self.coords = TinyCoords::new(reader.get_char(), reader.get_short() as EOChar)
     }
     fn serialize(&self) -> Vec<EOByte> {
-        self.coords.serialize()
+        let mut builder = StreamBuilder::with_capacity(3);
+        builder.add_char(self.coords.x);
+        builder.add_short(self.coords.y as EOShort);
+        builder.get()
     }
 }
 
@@ -31,7 +34,7 @@ mod test {
 
     #[test]
     fn deserialize() {
-        let buf = vec![37, 36];
+        let buf = vec![37, 36, 254];
         let mut open = Open::default();
         let reader = StreamReader::new(&buf);
         open.deserialize(&reader);
@@ -40,6 +43,6 @@ mod test {
     #[test]
     fn serialize() {
         let open = Open::new(36, 35);
-        assert_eq!(open.serialize(), [37, 36]);
+        assert_eq!(open.serialize(), [37, 36, 254]);
     }
 }
