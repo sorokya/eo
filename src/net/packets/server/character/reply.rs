@@ -75,7 +75,7 @@ impl Serializeable for Reply {
                 CharacterReply::Created | CharacterReply::Deleted
             )
         {
-            self.message = Some(reader.get_break_string());
+            self.message = Some(reader.get_fixed_string(2));
         }
 
         if self.reply == Some(CharacterReply::Created)

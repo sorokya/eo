@@ -7,7 +7,7 @@ use crate::{
 pub struct Agree {
     pub file_type: FileType,
     pub session_id: EOShort,
-    pub character_id: Option<EOShort>,
+    pub map_id: Option<EOShort>,
     pub file_id: Option<EOChar>,
 }
 
@@ -23,7 +23,7 @@ impl Serializeable for Agree {
         self.session_id = reader.get_short();
         match self.file_type {
             FileType::Map => {
-                self.character_id = Some(reader.get_short());
+                self.map_id = Some(reader.get_short());
             }
             _ => {
                 self.file_id = Some(reader.get_char());
@@ -39,8 +39,8 @@ impl Serializeable for Agree {
         );
         builder.add_char(self.file_type as EOChar);
         builder.add_short(self.session_id);
-        if let Some(character_id) = self.character_id {
-            builder.add_short(character_id);
+        if let Some(map_id) = self.map_id {
+            builder.add_short(map_id);
         }
         if let Some(file_id) = self.file_id {
             builder.add_char(file_id);

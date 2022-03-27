@@ -1,4 +1,3 @@
-pub mod talk;
 pub mod account;
 pub mod avatar;
 pub mod character;
@@ -10,6 +9,7 @@ pub mod login;
 pub mod map_info;
 pub mod players;
 mod sequencer;
+pub mod talk;
 pub use sequencer::Sequencer;
 pub mod walk;
 pub mod warp;
