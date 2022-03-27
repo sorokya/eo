@@ -20,10 +20,11 @@ use crate::data::EOChar;
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum AdminLevel {
     Player = 0,
-    Guide = 1,
-    Guardian = 2,
-    GameMaster = 3,
-    HighGameMaster = 4,
+    LightGuide = 1,
+    Guide = 2,
+    Guardian = 3,
+    GameMaster = 4,
+    HighGameMaster = 5,
 }
 
 impl AdminLevel {
