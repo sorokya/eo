@@ -20,10 +20,10 @@ use crate::data::{
 /// The file layout is:
 ///```text
 /// "ENF" (fixed string)
-/// rid1 (2 bytes)
-/// rid2 (2 bytes)
+/// RID1 (2 bytes)
+/// RID2 (2 bytes)
 /// Length (2 bytes)
-/// Unknown (1 bytes) (always 0)
+/// Version (1 byte)
 /// Record*Length
 /// {
 ///     name (prefixed string)
@@ -40,9 +40,9 @@ use crate::data::{
 ///     accuracy (2 bytes)
 ///     evade (2 bytes)
 ///     armor (2 bytes)
+///     unknown (1 byte)
 ///     unknown (2 bytes)
-///     unknown (1 byte)
-///     unknown (1 byte)
+///     unknown (2 bytes)
 ///     element_weak (2 bytes)
 ///     element_weak_power (2 bytes)
 ///     unknown (1 byte)

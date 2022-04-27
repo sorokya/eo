@@ -20,10 +20,10 @@ use crate::data::{
 /// The file layout is:
 ///```text
 /// "ECF" (fixed string)
-/// rid1 (2 bytes)
-/// rid2 (2 bytes)
+/// RID1 (2 bytes)
+/// RID2 (2 bytes)
 /// Length (2 bytes)
-/// Unknown (1 byte) (always 0)
+/// Version (1 byte)
 /// Record*Length
 /// {
 ///     name (prefixed string)
