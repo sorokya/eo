@@ -81,14 +81,12 @@ impl Serializeable for Reply {
         builder.add_char({
             if let Some(characters) = &self.characters {
                 characters.len() as EOChar
-            } else if let Some(npcs) = &self.npcs {
-                npcs.len() as EOChar
             } else {
                 0
             }
         });
+        builder.add_byte(EO_BREAK_CHAR);
         if let Some(characters) = &self.characters {
-            builder.add_byte(EO_BREAK_CHAR);
             for character in characters {
                 builder.append(&mut character.serialize());
             }

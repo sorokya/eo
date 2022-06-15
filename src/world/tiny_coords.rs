@@ -5,7 +5,7 @@ use super::Coords;
 pub const TINY_COORDS_SIZE: usize = 2;
 
 /// x/y coordinates of entity in the game (represented with chars)
-#[derive(Debug, Clone, Copy, Default, PartialEq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
 pub struct TinyCoords {
     pub x: EOChar,
     pub y: EOChar,
