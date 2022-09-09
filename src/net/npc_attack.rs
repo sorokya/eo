@@ -6,11 +6,11 @@ use crate::{
     world::Direction,
 };
 
-pub const NPC_ATTACK_SIZE: usize = 10;
+pub const NPC_ATTACK_SIZE: usize = 9;
 
 #[derive(Debug, Default)]
 pub struct NPCAttack {
-    pub index: EOShort,
+    pub index: EOChar,
     pub target_dead: bool,
     pub direction: Direction,
     pub target_player_id: EOShort,
@@ -20,7 +20,7 @@ pub struct NPCAttack {
 
 impl Serializeable for NPCAttack {
     fn deserialize(&mut self, reader: &crate::data::StreamReader) {
-        self.index = reader.get_short();
+        self.index = reader.get_char();
         self.target_dead = reader.get_char() == 2;
 
         let direction_char = reader.get_char();
@@ -39,7 +39,7 @@ impl Serializeable for NPCAttack {
 
     fn serialize(&self) -> Vec<crate::data::EOByte> {
         let mut builder = StreamBuilder::with_capacity(NPC_ATTACK_SIZE);
-        builder.add_short(self.index);
+        builder.add_char(self.index);
         builder.add_char(if self.target_dead { 2 } else { 1 });
         builder.add_char(self.direction as EOChar);
         builder.add_short(self.target_player_id);
