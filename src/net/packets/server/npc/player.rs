@@ -30,18 +30,21 @@ impl Serializeable for Player {
         while reader.peek_byte() != EO_BREAK_CHAR {
             let mut npc_position = NPCPosition::default();
             npc_position.deserialize(&reader);
+            self.positions.push(npc_position);
         }
         reader.get_byte();
 
         while reader.peek_byte() != EO_BREAK_CHAR {
             let mut npc_attack = NPCAttack::default();
             npc_attack.deserialize(&reader);
+            self.attacks.push(npc_attack);
         }
         reader.get_byte();
 
         while reader.peek_byte() != EO_BREAK_CHAR {
             let mut npc_chat = NPCChat::default();
             npc_chat.deserialize(&reader);
+            self.chats.push(npc_chat);
         }
         reader.get_byte();
     }
