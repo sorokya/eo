@@ -68,13 +68,13 @@ impl Serializeable for Player {
         }
         builder.add_byte(EO_BREAK_CHAR);
 
-        for position in &self.positions {
-            builder.append(&mut position.serialize());
+        for attack in &self.attacks {
+            builder.append(&mut attack.serialize());
         }
         builder.add_byte(EO_BREAK_CHAR);
 
-        for position in &self.positions {
-            builder.append(&mut position.serialize());
+        for chat in &self.chats {
+            builder.append(&mut chat.serialize());
         }
         builder.add_byte(EO_BREAK_CHAR);
 
