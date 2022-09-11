@@ -51,11 +51,7 @@ impl Serializeable for Reply {
             }
         }
 
-        let mut npcs = Vec::with_capacity(if self.characters.is_none() {
-            num_entities as usize
-        } else {
-            3
-        });
+        let mut npcs = Vec::new();
 
         while !reader.eof() {
             let mut npc = NpcMapInfo::new();
@@ -79,20 +75,14 @@ impl Serializeable for Reply {
             size
         });
         builder.add_char({
-            (if let Some(characters) = &self.characters {
+            if let Some(characters) = &self.characters {
                 characters.len() as EOChar
             } else {
                 0
-            } + if let Some(npcs) = &self.npcs {
-                npcs.len() as EOChar
-            } else {
-                0
-            })
+            }
         });
 
-        if self.characters.is_some() {
-            builder.add_byte(EO_BREAK_CHAR);
-        }
+        builder.add_byte(EO_BREAK_CHAR);
 
         if let Some(characters) = &self.characters {
             for character in characters {

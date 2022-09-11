@@ -8,7 +8,7 @@ use crate::{
 
 pub const NPC_POSITION_SIZE: usize = 2 + TINY_COORDS_SIZE;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct NPCPosition {
     pub index: EOChar,
     pub coords: TinyCoords,
