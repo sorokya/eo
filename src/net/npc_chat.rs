@@ -2,7 +2,7 @@ use crate::data::{Serializeable, StreamBuilder, EOChar};
 
 pub const NPC_CHAT_SIZE: usize = 1;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct NPCChat {
     pub index: EOChar,
     pub message: String,
