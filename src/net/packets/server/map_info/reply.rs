@@ -116,7 +116,7 @@ mod tests {
         assert!(reply.characters.is_some());
         assert!(reply.npcs.is_none());
 
-        let buf: Vec<EOByte> = vec![2, 50, 2, 254, 41, 29, 1];
+        let buf: Vec<EOByte> = vec![1, 255, 50, 2, 254, 41, 29, 1];
         let reader = StreamReader::new(&buf);
         reply.deserialize(&reader);
         assert!(reply.characters.is_none());
@@ -144,7 +144,7 @@ mod tests {
         reply.deserialize(&reader);
         assert_eq!(reply.serialize(), buf);
 
-        let buf: Vec<EOByte> = vec![2, 50, 2, 254, 41, 29, 1];
+        let buf: Vec<EOByte> = vec![1, 255, 50, 2, 254, 41, 29, 1];
         let reader = StreamReader::new(&buf);
         reply.deserialize(&reader);
         assert_eq!(reply.serialize(), buf);
