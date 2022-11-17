@@ -1,6 +1,6 @@
 use crate::{
     character::PaperdollIcon,
-    data::{EOChar, Serializeable, StreamBuilder, StreamReader},
+    data::{EOChar, Serializeable, StreamBuilder, StreamReader, EO_BREAK_CHAR},
 };
 
 pub const ONLINE_ENTRY_SIZE: usize = 6;
@@ -28,7 +28,8 @@ impl Serializeable for OnlineEntry {
         self.unk = reader.get_char();
         self.icon = PaperdollIcon::from_char(reader.get_char());
         self.class_id = reader.get_char();
-        self.guild_tag = reader.get_break_string();
+        self.guild_tag = reader.get_fixed_string(3);
+        reader.seek(1);
     }
     fn serialize(&self) -> Vec<crate::data::EOByte> {
         let mut builder =
@@ -38,7 +39,8 @@ impl Serializeable for OnlineEntry {
         builder.add_char(self.unk);
         builder.add_char(self.icon as EOChar);
         builder.add_char(self.class_id);
-        builder.add_break_string(&self.guild_tag);
+        builder.add_fixed_string(&self.guild_tag, 3);
+        builder.add_byte(EO_BREAK_CHAR);
         builder.get()
     }
 }
