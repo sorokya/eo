@@ -71,6 +71,7 @@ pub fn packet_id_hash(family: Family, action: Action) -> EOInt {
 /// // Encoded data: •¡’äòÈìåïì÷ì ï¬
 /// ```
 ///
+#[derive(Default)]
 pub struct PacketProcessor {
     pub decode_multiple: EOByte,
     pub encode_multiple: EOByte,
@@ -123,7 +124,11 @@ impl PacketProcessor {
         }
     }
     fn valid_for_decode(&self, bytes: &[EOByte]) -> bool {
-        bytes[0] != Action::Init as EOByte && bytes[1] != Family::Init as EOByte
+        self.decode_multiple != 0 && bytes[0] != Action::Init as EOByte && bytes[1] != Family::Init as EOByte
+    }
+
+    fn valid_for_encode(&self, bytes: &[EOByte]) -> bool {
+        self.encode_multiple != 0 && bytes[0] != Action::Init as EOByte && bytes[1] != Family::Init as EOByte
     }
     /// decodes a packet byte array in place
     ///
@@ -156,7 +161,7 @@ impl PacketProcessor {
     /// Init_Init packets are ignored
     #[allow(clippy::needless_range_loop)]
     pub fn encode(&self, bytes: &mut [EOByte]) {
-        if self.valid_for_decode(bytes) {
+        if self.valid_for_encode(bytes) {
             let length = bytes.len();
             let mut buf: Vec<EOByte> = vec![0; length];
             self.swap_multiples(bytes, self.encode_multiple);
@@ -179,12 +184,6 @@ impl PacketProcessor {
                 bytes[i] = buf[i] ^ 0x80;
             }
         }
-    }
-}
-
-impl Default for PacketProcessor {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
