@@ -2,12 +2,6 @@
 //! This crate will contain most of the data structures and methods needed
 //! to create any kind of program for [Endless Online](https://game.eoserv.net/).
 
-#![allow(unused_imports)]
-
-#[macro_use]
-extern crate enum_primitive_derive;
-extern crate num_traits;
-
 #[cfg(feature = "serde")]
 extern crate serde;
 /// EO primitive types, stream reader, and stream builder
