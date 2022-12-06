@@ -1,5 +1,7 @@
+#[cfg(feature = "generate_protocol")]
 use npm_rs::*;
 
+#[cfg(feature = "generate_protocol")]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let exit_status = NpmEnv::default()
         .set_path(std::path::Path::new("eo_protocol_parser"))
@@ -28,4 +30,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
+}
+
+#[cfg(not(feature = "generate_protocol"))]
+fn main() {
+    // do nothing
 }

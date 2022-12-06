@@ -9,6 +9,8 @@ pub mod data;
 /// network related data structures
 pub mod net;
 /// EO protocol data structs, enumerations, and packets
+#[cfg(feature = "generate_protocol")]
 pub mod protocol;
 /// EO pub file data structs, and enumerations
+#[cfg(feature = "generate_protocol")]
 pub mod pubs;

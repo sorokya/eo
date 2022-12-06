@@ -1,9 +1,6 @@
 use rand::prelude::*;
 
-use crate::{
-    data::{EOByte, EOInt},
-    protocol::{PacketAction, PacketFamily},
-};
+use crate::data::EOByte;
 
 /// used for encoding/decoding packet data
 ///
@@ -112,14 +109,14 @@ impl PacketProcessor {
     }
     fn valid_for_decode(&self, bytes: &[EOByte]) -> bool {
         self.decode_multiple != 0
-            && bytes[0] != PacketAction::Init as EOByte
-            && bytes[1] != PacketFamily::Init as EOByte
+            && bytes[0] != 0xFF
+            && bytes[1] != 0xFF
     }
 
     fn valid_for_encode(&self, bytes: &[EOByte]) -> bool {
         self.encode_multiple != 0
-            && bytes[0] != PacketAction::Init as EOByte
-            && bytes[1] != PacketFamily::Init as EOByte
+            && bytes[0] != 0xFF
+            && bytes[1] != 0xFF
     }
     /// decodes a packet byte array in place
     ///
