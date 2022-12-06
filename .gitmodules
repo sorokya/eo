@@ -1,0 +1,3 @@
+[submodule "eo_protocol_parser"]
+	path = eo_protocol_parser
+	url = https://github.com/sorokya/eo_protocol_parser.git
