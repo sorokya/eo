@@ -195,6 +195,58 @@ pub fn decode_number(bytes: &[EOByte]) -> EOInt {
     (data[3] * MAX3) + (data[2] * MAX2) + (data[1] * MAX1) + data[0]
 }
 
+pub fn encode_map_string(s: &str, length: usize) -> Vec<EOByte> {
+    let mut buf = vec![0xFF; length];
+    for (i, c) in s.chars().enumerate() {
+        buf[i] = c as u8;
+    }
+
+    let mut flippy = buf.len() % 2 == 1;
+    for c in &mut buf {
+        if flippy {
+            if (0x22..=0x4F).contains(c) {
+                *c = 0x71 - *c;
+            } else if (0x50..=0x7E).contains(c) {
+                *c = 0xCD - *c;
+            }
+        } else if (0x22..=0x7E).contains(c) {
+            *c = 0x9F - *c;
+        }
+        flippy = !flippy;
+    }
+
+    buf.reverse();
+    buf
+}
+
+pub fn decode_map_string(mut buf: Vec<EOByte>) -> String {
+    buf.reverse();
+
+    let mut chars: Vec<EOByte> = vec![0xFF; buf.len()];
+    let mut flippy = buf.len() % 2 == 1;
+
+    for (i, c) in buf.iter_mut().enumerate() {
+        if *c == 0xFF {
+            chars.truncate(i);
+            break;
+        }
+
+        if flippy {
+            if (0x22..=0x4F).contains(c) {
+                *c = 0x71 - *c;
+            } else if (0x50..=0x7E).contains(c) {
+                *c = 0xCD - *c;
+            }
+        } else if (0x22..=0x7E).contains(c) {
+            *c = 0x9F - *c;
+        }
+        chars[i] = *c;
+        flippy = !flippy;
+    }
+
+    String::from_utf8_lossy(&chars).to_string()
+}
+
 mod stream_builder;
 pub use stream_builder::StreamBuilder;
 
@@ -203,11 +255,6 @@ pub use stream_reader::StreamReader;
 
 mod serializeable;
 pub use serializeable::Serializeable;
-
-/// provides structs and enums for reading and writing map files
-pub mod map;
-/// provides structs and enums for reading and writing pub files
-pub mod pubs;
 
 #[cfg(test)]
 mod tests {

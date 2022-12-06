@@ -1,4 +1,4 @@
-use super::{encode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR, MAX2, MAX3};
+use super::{encode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR, MAX2, MAX3, encode_map_string};
 
 /// used for building byte streams in EO format
 ///
@@ -117,6 +117,9 @@ impl StreamBuilder {
         for _ in 0..length - string.len() {
             self.add_string(" ");
         }
+    }
+    pub fn add_emf_string(&mut self, string: &str) {
+        self.append(&mut encode_map_string(string, string.len()));
     }
     /// Appends data from other Vec to the end of this StreamBuilder
     pub fn append(&mut self, other: &mut Vec<EOByte>) {

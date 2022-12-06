@@ -1,4 +1,4 @@
-use super::{decode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR};
+use super::{decode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR, decode_map_string};
 use std::{cell::Cell, cmp};
 
 /// used for reading byte streams
@@ -126,6 +126,11 @@ impl<'a> StreamReader<'a> {
         } else {
             String::from("")
         }
+    }
+    /// returns a UTF-8 encoded string of length `length` from the data stream (decodes map strings)
+    pub fn get_emf_string(&self, length: usize) -> String {
+        let raw_string = self.get_vec(length);
+        decode_map_string(raw_string)
     }
     /// returns a UTF-8 encoded string from the current read position to the next "break string" (0xff)
     pub fn get_break_string(&self) -> String {
