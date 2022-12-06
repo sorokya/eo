@@ -16,3 +16,5 @@ pub mod data;
 pub mod net;
 /// EO protocol data structs, enumerations, and packets
 pub mod protocol;
+/// EO pub file data structs, and enumerations
+pub mod pubs;

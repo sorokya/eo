@@ -13,10 +13,12 @@ use_serde = ["serde"]
 
 [dependencies]
 log = "0.4"
-enum-primitive-derive = "0.2"
-num-traits = "0.2"
 rand = "0.7"
 serde = { version = "1.0", features = ["derive"], optional = true }
+
+# Remove these after pub is generated from protocol
+enum-primitive-derive = "0.2"
+num-traits = "0.2"
 
 [build-dependencies]
 npm_rs = "1.0.0"

@@ -13,12 +13,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         panic!("npm failed");
     }
 
-    // copy protocol file to src
+    // copy files to src
     std::fs::copy("eo_protocol_parser/output/rust/protocol.rs", "src/protocol.rs").unwrap();
+    std::fs::copy("eo_protocol_parser/output/rust/pubs.rs", "src/pubs.rs").unwrap();
 
-    // format protocol file
+    // format files
     let format_status = std::process::Command::new("rustfmt")
         .arg("src/protocol.rs")
+        .arg("src/pubs.rs")
         .status()?;
 
     if !format_status.success() {

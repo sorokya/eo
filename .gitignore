@@ -2,3 +2,5 @@
 **/*.rs.bk
 Cargo.lock
 .DS_Store
+src/protocol.rs
+src/pubs.rs
