@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // copy files to src
     std::fs::copy("eo_protocol_parser/output/rust/protocol.rs", "src/protocol.rs").unwrap();
-    std::fs::copy("eo_protocol_parser/output/rust/pubs.rs", "src/pubs.rs").unwrap();
+    std::fs::copy("eo_protocol_parser/output/rust/pub.rs", "src/pubs.rs").unwrap();
 
     // format files
     let format_status = std::process::Command::new("rustfmt")
