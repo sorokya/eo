@@ -85,6 +85,11 @@ impl<'a> StreamReader<'a> {
     pub fn get_char(&self) -> EOChar {
         let position = self.position.get();
         let number = decode_number(&self.data[position..position + 1]);
+
+        if number == 254 {
+            return 0;
+        }
+
         self.position.set(position + 1);
         number as EOChar
     }

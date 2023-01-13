@@ -8,11 +8,11 @@ pub struct ClientSequencer {
 
 impl ClientSequencer {
     pub fn set_init_sequence(&mut self, s1: EOInt, s2: EOInt) {
-        self.sequence_start = s1 * 7 - 11 + s2 - 2;
+        self.sequence_start = ((s1 as i32) * 7 - 11 + (s2 as i32) - 2) as EOInt;
     }
 
     pub fn set_new_initial_sequence_number(&mut self, s1: EOInt, s2: EOInt) {
-        self.sequence_start = s1 - s2;
+        self.sequence_start = (s1 as i32 - s2 as i32) as EOInt;
     }
 
     fn get_next_sequence_number(&mut self) -> EOInt {
