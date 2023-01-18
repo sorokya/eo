@@ -3,6 +3,7 @@ use npm_rs::*;
 
 #[cfg(feature = "generate_protocol")]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("cargo:rerun-if-changed=eo_protocol_parser/protocol");
     let exit_status = NpmEnv::default()
         .set_path(std::path::Path::new("eo_protocol_parser"))
        .with_node_env(&NodeEnv::from_cargo_profile().unwrap_or_default())
