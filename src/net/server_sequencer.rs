@@ -47,8 +47,7 @@ impl ServerSequencer {
     }
 
     pub fn gen_sequence(&mut self) -> EOInt {
-        let result = self.sequence_start as EOInt + self.sequence;
         self.sequence = (self.sequence + 1) % 10;
-        result
+        self.sequence_start as EOInt + self.sequence
     }
 }
