@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::data::{EOChar, EOInt, EOShort, MAX1};
+use crate::data::{EOChar, EOInt, EOShort};
 
 #[derive(Debug, Default)]
 pub struct ServerSequencer {
