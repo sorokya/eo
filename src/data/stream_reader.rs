@@ -84,13 +84,13 @@ impl<'a> StreamReader<'a> {
     /// increases the read position by 1
     pub fn get_char(&self) -> EOChar {
         let position = self.position.get();
-        let number = decode_number(&self.data[position..position + 1]);
+        let mut buf = vec![254; 4];
 
-        if number == 254 {
-            return 0;
-        }
+        let bytes_to_copy = cmp::min(self.data.len() - position, 1);
+        buf[..bytes_to_copy].copy_from_slice(&self.data[position..position + bytes_to_copy]);
+        let number = decode_number(&buf);
 
-        self.position.set(position + 1);
+        self.position.set(position + bytes_to_copy);
         number as EOChar
     }
     /// returns two bytes from the data stream decoded into an [EOShort]
@@ -99,22 +99,34 @@ impl<'a> StreamReader<'a> {
     /// decodes two bytes using the [decode_number] method
     pub fn get_short(&self) -> EOShort {
         let position = self.position.get();
-        let number = decode_number(&self.data[position..position + 2]);
-        self.position.set(position + 2);
+        let mut buf = vec![254; 4];
+        let bytes_to_copy = cmp::min(self.data.len() - position, 2);
+        buf[..bytes_to_copy].copy_from_slice(&self.data[position..position + bytes_to_copy]);
+        let number = decode_number(&buf);
+
+        self.position.set(position + bytes_to_copy);
         number as EOShort
     }
     /// returns three bytes from the data stream decoded into an [EOThree]
     pub fn get_three(&self) -> EOThree {
         let position = self.position.get();
-        let number = decode_number(&self.data[position..position + 3]);
-        self.position.set(position + 3);
+        let mut buf = vec![254; 4];
+        let bytes_to_copy = cmp::min(self.data.len() - position, 3);
+        buf[..bytes_to_copy].copy_from_slice(&self.data[position..position + bytes_to_copy]);
+        let number = decode_number(&buf);
+
+        self.position.set(position + bytes_to_copy);
         number as EOThree
     }
     /// returns four bytes from the data stream decoded into an [EOInt]
     pub fn get_int(&self) -> EOInt {
         let position = self.position.get();
-        let number = decode_number(&self.data[position..position + 4]);
-        self.position.set(position + 4);
+        let mut buf = vec![254; 4];
+        let bytes_to_copy = cmp::min(self.data.len() - position, 4);
+        buf[..bytes_to_copy].copy_from_slice(&self.data[position..position + bytes_to_copy]);
+        let number = decode_number(&buf);
+
+        self.position.set(position + bytes_to_copy);
         number as EOInt
     }
     /// returns an int from the remaining bytes in the data stream
