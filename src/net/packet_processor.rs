@@ -125,8 +125,8 @@ impl PacketProcessor {
         if self.valid_for_decode(bytes) {
             let length = bytes.len();
             let mut buf: Vec<EOByte> = vec![0; length];
-            let big_half = ((length + 1) / 2) as usize;
-            let little_half = (length / 2) as usize;
+            let big_half = (length + 1) / 2;
+            let little_half = length / 2;
             for i in 0..big_half {
                 buf[i] = bytes[i * 2];
             }
@@ -160,8 +160,8 @@ impl PacketProcessor {
                     bytes[i] = 0;
                 }
             }
-            let big_half = ((length + 1) / 2) as usize;
-            let little_half = (length / 2) as usize;
+            let big_half = (length + 1) / 2;
+            let little_half = length / 2;
             for i in 0..big_half {
                 buf[i * 2] = bytes[i];
             }
