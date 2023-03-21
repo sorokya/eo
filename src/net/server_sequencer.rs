@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::data::{EOChar, EOInt, EOShort};
+use crate::data::{EOChar, EOInt, EOShort, MAX1};
 
 #[derive(Debug, Default)]
 pub struct ServerSequencer {
@@ -12,25 +12,16 @@ pub struct ServerSequencer {
 impl ServerSequencer {
     pub fn init_new_sequence(&mut self) {
         let mut rng = rand::thread_rng();
-        self.sequence_start = rng.gen_range(0, 1757);
+        self.sequence_start = rng.gen_range(0, 240);
     }
 
     pub fn get_sequence_start(&self) -> EOInt {
         self.sequence_start
     }
 
-    pub fn too_big_for_account_reply(&self) -> bool {
-        self.sequence_start > 240
-    }
-
-    pub fn account_reply_new_sequence(&mut self) {
-        let mut rng = rand::thread_rng();
-        self.sequence_start = rng.gen_range(0, 240);
-    }
-
     pub fn ping_new_sequence(&mut self) {
         let mut rng = rand::thread_rng();
-        self.upcoming_sequence_start = rng.gen_range(0, 1757);
+        self.upcoming_sequence_start = rng.gen_range(0, 240);
     }
 
     pub fn pong_new_sequence(&mut self) {
@@ -57,12 +48,6 @@ impl ServerSequencer {
 
     pub fn gen_sequence(&mut self) -> EOInt {
         let result = self.sequence_start as EOInt + self.sequence;
-        self.sequence = (self.sequence + 1) % 10;
-        result
-    }
-
-    pub fn gen_upcoming_sequence(&mut self) -> EOInt {
-        let result = self.upcoming_sequence_start as EOInt + self.sequence;
         self.sequence = (self.sequence + 1) % 10;
         result
     }
