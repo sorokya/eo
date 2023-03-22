@@ -118,8 +118,8 @@ impl StreamBuilder {
             self.add_string(" ");
         }
     }
-    pub fn add_emf_string(&mut self, string: &str) {
-        self.append(&mut encode_map_string(string, string.len()));
+    pub fn add_emf_string(&mut self, string: &str, length: usize) {
+        self.append(&mut encode_map_string(string, length));
     }
     /// Appends data from other Vec to the end of this StreamBuilder
     pub fn append(&mut self, other: &mut Vec<EOByte>) {
