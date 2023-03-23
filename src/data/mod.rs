@@ -195,14 +195,15 @@ pub fn decode_number(bytes: &[EOByte]) -> EOInt {
     (data[3] * MAX3) + (data[2] * MAX2) + (data[1] * MAX1) + data[0]
 }
 
-pub fn encode_map_string(s: &str, length: usize) -> Vec<EOByte> {
-    let mut buf = vec![0xFF; length];
+pub fn encode_map_string(s: &str, length: usize) -> Bytes {
+    let mut buf = BytesMut::with_capacity(length);
+    buf.put_bytes(0xFF, length);
     for (i, c) in s.chars().enumerate() {
         buf[i] = c as u8;
     }
 
     let mut flippy = buf.len() % 2 == 1;
-    for c in &mut buf {
+    for c in buf.iter_mut() {
         if flippy {
             if (0x22..=0x4F).contains(c) {
                 *c = 0x71 - *c;
@@ -216,13 +217,16 @@ pub fn encode_map_string(s: &str, length: usize) -> Vec<EOByte> {
     }
 
     buf.reverse();
-    buf
+    buf.freeze()
 }
 
-pub fn decode_map_string(mut buf: Vec<EOByte>) -> String {
+pub fn decode_map_string(bytes: Bytes) -> String {
+    let mut buf = BytesMut::with_capacity(bytes.len());
+    buf.put(bytes);
     buf.reverse();
 
-    let mut chars: Vec<EOByte> = vec![0xFF; buf.len()];
+    let mut chars = BytesMut::with_capacity(buf.len());
+    chars.put_bytes(0xFF, buf.len());
     let mut flippy = buf.len() % 2 == 1;
 
     for (i, c) in buf.iter_mut().enumerate() {
@@ -248,6 +252,7 @@ pub fn decode_map_string(mut buf: Vec<EOByte>) -> String {
 }
 
 mod stream_builder;
+use bytes::{Bytes, BytesMut, BufMut};
 pub use stream_builder::StreamBuilder;
 
 mod stream_reader;

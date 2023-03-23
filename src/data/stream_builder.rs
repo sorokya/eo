@@ -1,4 +1,6 @@
-use super::{encode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR, MAX2, MAX3, encode_map_string};
+use bytes::{BytesMut, BufMut, Bytes};
+
+use super::{encode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR, encode_map_string};
 
 /// used for building byte streams in EO format
 ///
@@ -24,7 +26,7 @@ use super::{encode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHA
 /// ```
 ///
 pub struct StreamBuilder {
-    data: Vec<EOByte>,
+    data: BytesMut,
 }
 
 impl StreamBuilder {
@@ -35,70 +37,47 @@ impl StreamBuilder {
     /// See [Capacity and reallocation](https://doc.rust-lang.org/std/vec/struct.Vec.html#capacity-and-reallocation)
     /// for more information
     pub fn new() -> Self {
-        Self { data: Vec::new() }
+        Self { data: BytesMut::new() }
     }
     /// Creates a [StreamBuilder] with a pre-allocated capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
-            data: Vec::with_capacity(capacity),
+            data: BytesMut::with_capacity(capacity),
         }
     }
     /// Adds a single [EOByte] to the data stream
     pub fn add_byte(&mut self, number: EOByte) {
-        self.data.push(number);
+        self.data.put_u8(number);
     }
     /// Adds an [EOChar] encoded as a single byte to the data stream
     pub fn add_char(&mut self, number: EOChar) {
         let bytes = encode_number(number.into());
-        self.data.push(bytes[0]);
+        self.data.put_slice(&bytes[0..1]);
     }
     /// Adds an [EOShort] encoded as two bytes to the data stream
     pub fn add_short(&mut self, number: EOShort) {
         let bytes = encode_number(number.into());
-        self.data.push(bytes[0]);
-        self.data.push(bytes[1]);
+        self.data.put_slice(&bytes[0..2]);
     }
     /// Adds an [EOThree] encoded as three bytes to the data stream
     pub fn add_three(&mut self, number: EOThree) {
         let bytes = encode_number(number);
-        self.data.push(bytes[0]);
-        self.data.push(bytes[1]);
-        self.data.push(bytes[2]);
+        self.data.put_slice(&bytes[0..3]);
     }
     /// Adds an [EOInt] encoded as four bytes to the data stream
     pub fn add_int(&mut self, number: EOInt) {
         let bytes = encode_number(number);
-        self.data.push(bytes[0]);
-        self.data.push(bytes[1]);
-        self.data.push(bytes[2]);
-        self.data.push(bytes[3]);
-    }
-    /// Adds an [EOInt] encoded as four, three, or two bytes to the data stream
-    pub fn add_end_int(&mut self, number: EOInt) {
-        let bytes = encode_number(number);
-        if number < MAX2 {
-            self.data.push(bytes[0]);
-            self.data.push(bytes[1]);
-        } else if number < MAX3 {
-            self.data.push(bytes[0]);
-            self.data.push(bytes[1]);
-            self.data.push(bytes[2]);
-        } else {
-            self.data.push(bytes[0]);
-            self.data.push(bytes[1]);
-            self.data.push(bytes[2]);
-            self.data.push(bytes[3]);
-        }
+        self.data.put_slice(&bytes[0..4]);
     }
     /// Adds the UTF-8 encoded version of `string` to the data stream
     pub fn add_string(&mut self, string: &str) {
-        self.data.extend_from_slice(string.as_bytes());
+        self.data.put_slice(string.as_bytes());
     }
     /// Adds the UTF-8 encoded version of `string` + [EO_BREAK_CHAR] to
     /// the data stream
     pub fn add_break_string(&mut self, string: &str) {
         self.add_string(string);
-        self.data.push(EO_BREAK_CHAR);
+        self.data.put_u8(EO_BREAK_CHAR);
     }
     /// Adds an [EOChar] of `string.len()` + the UTF-8 encoded version
     /// of `string` to the data stream
@@ -119,15 +98,15 @@ impl StreamBuilder {
         }
     }
     pub fn add_emf_string(&mut self, string: &str, length: usize) {
-        self.append(&mut encode_map_string(string, length));
+        self.append(encode_map_string(string, length));
     }
     /// Appends data from other Vec to the end of this StreamBuilder
-    pub fn append(&mut self, other: &mut Vec<EOByte>) {
-        self.data.append(other);
+    pub fn append(&mut self, other: Bytes) {
+        self.data.put(other);
     }
     /// Returns the data stream
-    pub fn get(self) -> Vec<EOByte> {
-        self.data
+    pub fn get(self) -> Bytes {
+        self.data.freeze()
     }
 }
 
@@ -139,7 +118,9 @@ impl Default for StreamBuilder {
 
 #[cfg(test)]
 mod tests {
-    use super::{EOByte, StreamBuilder, EO_BREAK_CHAR};
+    use bytes::{BytesMut, BufMut};
+
+    use super::{StreamBuilder, EO_BREAK_CHAR};
     #[test]
     fn add_byte() {
         let mut builder = StreamBuilder::with_capacity(1);
@@ -231,7 +212,7 @@ mod tests {
         let mut builder = StreamBuilder::new();
         builder.add_string("Hello, world!");
         assert_eq!(
-            builder.data,
+            &builder.get()[..],
             [0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21]
         );
     }
@@ -240,7 +221,7 @@ mod tests {
         let mut builder = StreamBuilder::new();
         builder.add_break_string("Hello, world!");
         assert_eq!(
-            builder.data,
+            &builder.get()[..],
             [
                 0x48,
                 0x65,
@@ -264,7 +245,7 @@ mod tests {
         let mut builder = StreamBuilder::new();
         builder.add_prefix_string("Hello, world!");
         assert_eq!(
-            builder.data,
+            &builder.get()[..],
             [0xE, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21]
         );
     }
@@ -273,10 +254,10 @@ mod tests {
         let mut builder = StreamBuilder::new();
         builder.add_short(42);
 
-        let mut vec: Vec<EOByte> = vec![1, 2, 3, 4, 5, 6];
-        builder.append(&mut vec);
+        let mut vec = BytesMut::with_capacity(6);
+        vec.put_slice(&[1, 2, 3, 4, 5, 6]);
+        builder.append(vec.freeze());
 
-        assert_eq!(vec.len(), 0);
-        assert_eq!(builder.data, [43, 254, 1, 2, 3, 4, 5, 6]);
+        assert_eq!(&builder.get()[..], [43, 254, 1, 2, 3, 4, 5, 6]);
     }
 }

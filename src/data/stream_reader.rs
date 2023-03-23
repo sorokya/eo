@@ -1,3 +1,5 @@
+use bytes::{Bytes, BytesMut, BufMut};
+
 use super::{decode_number, EOByte, EOChar, EOInt, EOShort, EOThree, EO_BREAK_CHAR, decode_map_string};
 use std::{cell::Cell, cmp};
 
@@ -11,12 +13,14 @@ use std::{cell::Cell, cmp};
 /// Init request data.
 /// ```
 /// use eo::data::StreamReader;
+/// use bytes::Bytes;
 ///
 /// // EO Init Request
-/// let buf = [
+/// let buf: Vec<u8> = [
 ///     162, 190, 2, 1, 1, 29, 113, 8, 50, 57, 48, 49, 49, 51, 50,
-/// ];
-/// let reader = StreamReader::new(&buf);
+/// ].to_vec();
+/// let buf = Bytes::from(buf);
+/// let reader = StreamReader::new(buf);
 /// let challenge = reader.get_three();
 /// let version_major = reader.get_char();
 /// let version_minor = reader.get_char();
@@ -29,14 +33,14 @@ use std::{cell::Cell, cmp};
 ///     challenge, version_major, version_minor, version_build, hdid
 /// );
 /// ```
-pub struct StreamReader<'a> {
-    data: &'a [EOByte],
+pub struct StreamReader {
+    data: Bytes,
     position: Cell<usize>,
 }
 
-impl<'a> StreamReader<'a> {
+impl StreamReader {
     /// Creates a [StreamReader] for an existing `&[EOByte]`
-    pub fn new(data: &'a [EOByte]) -> Self {
+    pub fn new(data: Bytes) -> Self {
         Self {
             data,
             position: Cell::new(0),
@@ -58,11 +62,13 @@ impl<'a> StreamReader<'a> {
     /// # Example
     /// ```
     /// use eo::data::StreamReader;
+    /// use bytes::Bytes;
     ///
-    /// let buf = [
+    /// let buf: Vec<u8> = [
     ///     255, 255, 255, 255, 255, 255
-    /// ];
-    /// let reader = StreamReader::new(&buf);
+    /// ].to_vec();
+    /// let buf = Bytes::from(buf);
+    /// let reader = StreamReader::new(buf);
     /// while !reader.eof() {
     ///     println!("{}", reader.get_byte());
     /// }
@@ -84,11 +90,8 @@ impl<'a> StreamReader<'a> {
     /// increases the read position by 1
     pub fn get_char(&self) -> EOChar {
         let position = self.position.get();
-        let mut buf = vec![254; 4];
-
         let bytes_to_copy = cmp::min(self.data.len() - position, 1);
-        buf[..bytes_to_copy].copy_from_slice(&self.data[position..position + bytes_to_copy]);
-        let number = decode_number(&buf);
+        let number = decode_number(&self.data[position..position + bytes_to_copy]);
 
         self.position.set(position + bytes_to_copy);
         number as EOChar
@@ -99,10 +102,8 @@ impl<'a> StreamReader<'a> {
     /// decodes two bytes using the [decode_number] method
     pub fn get_short(&self) -> EOShort {
         let position = self.position.get();
-        let mut buf = vec![254; 4];
         let bytes_to_copy = cmp::min(self.data.len() - position, 2);
-        buf[..bytes_to_copy].copy_from_slice(&self.data[position..position + bytes_to_copy]);
-        let number = decode_number(&buf);
+        let number = decode_number(&self.data[position..position + bytes_to_copy]);
 
         self.position.set(position + bytes_to_copy);
         number as EOShort
@@ -110,10 +111,8 @@ impl<'a> StreamReader<'a> {
     /// returns three bytes from the data stream decoded into an [EOThree]
     pub fn get_three(&self) -> EOThree {
         let position = self.position.get();
-        let mut buf = vec![254; 4];
         let bytes_to_copy = cmp::min(self.data.len() - position, 3);
-        buf[..bytes_to_copy].copy_from_slice(&self.data[position..position + bytes_to_copy]);
-        let number = decode_number(&buf);
+        let number = decode_number(&self.data[position..position + bytes_to_copy]);
 
         self.position.set(position + bytes_to_copy);
         number as EOThree
@@ -121,18 +120,10 @@ impl<'a> StreamReader<'a> {
     /// returns four bytes from the data stream decoded into an [EOInt]
     pub fn get_int(&self) -> EOInt {
         let position = self.position.get();
-        let mut buf = vec![254; 4];
         let bytes_to_copy = cmp::min(self.data.len() - position, 4);
-        buf[..bytes_to_copy].copy_from_slice(&self.data[position..position + bytes_to_copy]);
-        let number = decode_number(&buf);
+        let number = decode_number(&self.data[position..position + bytes_to_copy]);
 
         self.position.set(position + bytes_to_copy);
-        number as EOInt
-    }
-    /// returns an int from the remaining bytes in the data stream
-    /// only first first 4 bytes are used
-    pub fn get_end_int(&self) -> EOInt {
-        let number = decode_number(&self.data[self.position.get()..]);
         number as EOInt
     }
     /// returns a UTF-8 encoded string of length `length` from the data stream
@@ -183,11 +174,12 @@ impl<'a> StreamReader<'a> {
         self.position.set(0);
     }
     /// returns a Vec<EOByte> of the desired length
-    pub fn get_vec(&self, length: usize) -> Vec<EOByte> {
+    pub fn get_vec(&self, length: usize) -> Bytes {
         let position = self.position.get();
-        let buf = &self.data[position..cmp::min(self.length(), position + length)];
+        let mut buf = BytesMut::with_capacity(length);
+        buf.put_slice(&self.data[position..cmp::min(self.length(), position + length)]);
         self.position.set(position + length);
-        buf.to_vec()
+        buf.freeze()
     }
 
     /// returns a single [EOByte] from the data stream
@@ -200,84 +192,119 @@ impl<'a> StreamReader<'a> {
 
 #[cfg(test)]
 mod tests {
-    use super::{StreamReader, EO_BREAK_CHAR};
+    use super::{StreamReader, EO_BREAK_CHAR, BytesMut, BufMut};
     #[test]
     fn get_byte() {
-        let bytes = [0];
-        let reader = StreamReader::new(&bytes);
-        assert_eq!(reader.get_byte(), bytes[0]);
+        let mut bytes = BytesMut::with_capacity(1);
+        bytes.put_u8(1);
+        let reader = StreamReader::new(bytes.freeze());
+        assert_eq!(reader.get_byte(), 1);
     }
     #[test]
     fn get_char() {
-        let bytes = [1];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(1);
+        bytes.put_u8(1);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_char(), 0);
     }
     #[test]
     fn get_short_one_byte() {
-        let bytes = [2, 254];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(2);
+        bytes.put_u8(2);
+        bytes.put_u8(254);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_short(), 1);
     }
     #[test]
     fn get_short_two_bytes() {
-        let bytes = [1, 2];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(2);
+        bytes.put_u8(1);
+        bytes.put_u8(2);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_short(), 253);
     }
     #[test]
     fn get_three_one_byte() {
-        let bytes = [2, 254, 254];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(3);
+        bytes.put_u8(2);
+        bytes.put_u8(254);
+        bytes.put_u8(254);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_three(), 1);
     }
     #[test]
     fn get_three_two_bytes() {
-        let bytes = [1, 2, 254];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(3);
+        bytes.put_u8(1);
+        bytes.put_u8(2);
+        bytes.put_u8(254);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_three(), 253);
     }
     #[test]
     fn get_three_three_bytes() {
-        let bytes = [1, 1, 2];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(3);
+        bytes.put_u8(1);
+        bytes.put_u8(1);
+        bytes.put_u8(2);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_three(), 64009);
     }
     #[test]
     fn get_int_one_byte() {
-        let bytes = [2, 254, 254, 254];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(4);
+        bytes.put_u8(2);
+        bytes.put_u8(254);
+        bytes.put_u8(254);
+        bytes.put_u8(254);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_int(), 1);
     }
     #[test]
     fn get_int_two_bytes() {
-        let bytes = [1, 2, 254, 254];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(4);
+        bytes.put_u8(1);
+        bytes.put_u8(2);
+        bytes.put_u8(254);
+        bytes.put_u8(254);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_int(), 253);
     }
     #[test]
     fn get_int_three_bytes() {
-        let bytes = [1, 1, 2, 254];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(4);
+        bytes.put_u8(1);
+        bytes.put_u8(1);
+        bytes.put_u8(2);
+        bytes.put_u8(254);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_int(), 64009);
     }
     #[test]
     fn get_int_four_bytes() {
-        let bytes = [1, 1, 1, 2];
-        let reader = StreamReader::new(&bytes);
+        let mut bytes = BytesMut::with_capacity(4);
+        bytes.put_u8(1);
+        bytes.put_u8(1);
+        bytes.put_u8(1);
+        bytes.put_u8(2);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_int(), 16194277);
     }
     #[test]
     fn get_fixed_string() {
-        let bytes = [
+        let buf: Vec<u8> = [
             0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21,
-        ];
-        let reader = StreamReader::new(&bytes);
+        ].to_vec();
+
+        let mut bytes = BytesMut::with_capacity(buf.len());
+        bytes.put_slice(&buf);
+
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_fixed_string(13), "Hello, world!");
     }
     #[test]
     fn get_break_string() {
-        let bytes = [
+        let buf: Vec<u8> = [
             0x48,
             0x65,
             0x6C,
@@ -292,46 +319,70 @@ mod tests {
             0x64,
             0x21,
             EO_BREAK_CHAR,
-        ];
-        let reader = StreamReader::new(&bytes);
+        ].to_vec();
+
+        let mut bytes = BytesMut::with_capacity(buf.len());
+        bytes.put_slice(&buf);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_break_string(), "Hello, world!");
     }
     #[test]
     fn get_prefix_string() {
-        let bytes = [
+        let buf: Vec<u8> = [
             0xE, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21,
-        ];
-        let reader = StreamReader::new(&bytes);
+        ].to_vec();
+
+        let mut bytes = BytesMut::with_capacity(buf.len());
+        bytes.put_slice(&buf);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.get_prefix_string(), "Hello, world!");
     }
     #[test]
     fn length() {
-        let reader = StreamReader::new(&[255]);
+        let mut bytes = BytesMut::with_capacity(1);
+        bytes.put_u8(EO_BREAK_CHAR);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.length(), 1);
 
-        let reader = StreamReader::new(&[255, 255, 255]);
+        let mut bytes = BytesMut::with_capacity(3);
+        bytes.put_u8(EO_BREAK_CHAR);
+        bytes.put_u8(EO_BREAK_CHAR);
+        bytes.put_u8(EO_BREAK_CHAR);
+
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.length(), 3);
     }
     #[test]
     fn seek() {
-        let reader = StreamReader::new(&[1, 2]);
+        let mut bytes = BytesMut::with_capacity(2);
+        bytes.put_u8(1);
+        bytes.put_u8(2);
+        let reader = StreamReader::new(bytes.freeze());
         assert_eq!(reader.position.get(), 0);
         reader.seek(2);
         assert_eq!(reader.position.get(), 2);
     }
     #[test]
     fn eof() {
-        let reader = StreamReader::new(&[1]);
+        let mut bytes = BytesMut::with_capacity(1);
+        bytes.put_u8(1);
+        let reader = StreamReader::new(bytes.freeze());
         assert!(!reader.eof());
         reader.get_byte();
         assert!(reader.eof());
     }
     #[test]
     fn get_vec() {
-        let reader = StreamReader::new(&[1, 2, 3, 4, 5]);
+        let mut bytes = BytesMut::with_capacity(5);
+        bytes.put_u8(1);
+        bytes.put_u8(2);
+        bytes.put_u8(3);
+        bytes.put_u8(4);
+        bytes.put_u8(5);
+        let reader = StreamReader::new(bytes.freeze());
         let buf = reader.get_vec(3);
-        assert_eq!(buf, vec![1, 2, 3]);
+        assert_eq!(buf[..], vec![1, 2, 3]);
         let buf = reader.get_vec(2);
-        assert_eq!(buf, vec![4, 5]);
+        assert_eq!(buf[..], vec![4, 5]);
     }
 }
