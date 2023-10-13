@@ -150,6 +150,11 @@ impl StreamReader {
                     break;
                 }
             }
+
+            if temp_position == 0 {
+                temp_position = self.data.len();
+            }
+
             temp_position
         };
 
