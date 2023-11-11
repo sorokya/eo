@@ -107,17 +107,15 @@ impl PacketProcessor {
             }
         }
     }
+
     fn valid_for_decode(&self, bytes: &[EOByte]) -> bool {
-        self.decode_multiple != 0
-            && bytes[0] != 0xFF
-            && bytes[1] != 0xFF
+        self.decode_multiple != 0 && bytes[0..=1] != [0xFF, 0xFF]
     }
 
     fn valid_for_encode(&self, bytes: &[EOByte]) -> bool {
-        self.encode_multiple != 0
-            && bytes[0] != 0xFF
-            && bytes[1] != 0xFF
+        self.encode_multiple != 0 && bytes[0..=1] != [0xFF, 0xFF]
     }
+
     /// decodes a packet byte array in place
     ///
     /// Init_Init packets are ignored
