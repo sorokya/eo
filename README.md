@@ -12,6 +12,10 @@
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [mit-url]: https://github.com/sorokya/eo/blob/master/LICENSE
 
+# Archived
+
+Please use the new [eolib](https://github.com/sorokya/eolib-rs) crate
+
 # EO
 This crate will contain most of the data structures and methods needed
 to create any kind of program for [Endless Online](https://game.eoserv.net/).
