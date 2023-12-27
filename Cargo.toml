@@ -1,6 +1,6 @@
 [package]
 name = "eo"
-version = "0.0.3"
+version = "0.0.3-archived"
 authors = ["Richard Leek <richard@richardleek.com>"]
 description = "Data structures and methods for Endless Online"
 edition = "2018"
